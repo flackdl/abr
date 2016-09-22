@@ -1,15 +1,34 @@
 <html>
     <head>
         <style>
+            @page {
+                size: Letter;
+                /*margin: 0in 0.44in 0.2in 0.44in;*/
+                margin: 0;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .clear {
+                clear: both;
+            }
             .row {
                 height: .5in; 
+                float: left;
+                width: 2.83in;
+                height: .7in;
+                margin-bottom: .3in;
             }
         </style>
     </head>
     <body>
         {% for po in pos %}
-        <div class="row">
-            PO: {{ po }}
+        <div class="row {{ loop.index }} {% if (loop.index-1) % 3 == 0 %}clear{% endif %}">
+            Ritchey Comp 4 Axis Stem:
+            90mm, +/. 6 degree, 31.8, BB
+            Black
+            Stem.90.Ritchey.Comp $45.00
         </div>
         {% endfor %}
     </body>

@@ -23,11 +23,12 @@ def pdf(po_id):
     pdf = StringIO()
     html = StringIO()
     context = {
-        'pos': [i for i in range(0, 10)],
+        'pos': [i for i in range(0, 50)],
     }
+    print(render_template('labels.html', **context))
     html.write(render_template('labels.html', **context))
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
 
-
+app.config['DEBUG'] = True
 app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 8080)))
