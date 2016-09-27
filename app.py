@@ -1,7 +1,7 @@
 import os
 import json
 from cStringIO import StringIO
-from flask import render_template, render_template_string, Response, session, url_for, redirect
+from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
 from weasyprint import HTML
 from flask import Flask, request
 from quickbooks import QuickBooks
@@ -51,22 +51,14 @@ def callback():
     
     return redirect(url_for('input'))
     
+    
 @app.route('/input')
 def input():
     return render_template('input.html')
     
-@app.route('/html')
-def html(po_id):
-    context = {
-        'pos': [i for i in range(0, 10)],
-    }
-    return render_template('labels.html', **context)
 
-    
-@app.route('/pdf')
-def pdf():
-    bill_id = request.args.get('bill_id')
-    client = QuickBooks(
+def get_bill_client():
+    return QuickBooks(
         sandbox=True,
         consumer_key=secret.production_key,
         consumer_secret=secret.production_secret,
@@ -74,15 +66,38 @@ def pdf():
         access_token_secret=session['access_token_secret'],
         company_id=session['realm_id']
     )
+    
+    
+def get_html(bill_id):
+    client = get_bill_client()
     bill = Bill.get(int(bill_id), qb=client)
-    print type(bill)
-    return Response('bill id: %s' % bill_id)
-    pdf = StringIO()
-    html = StringIO()
+    print json.loads(bill.to_json())['Line']
     context = {
-        'pos': [i for i in range(0, 50)],
+        'bill': json.loads(bill.to_json()),
     }
-    html.write(render_template('labels.html', **context))
+    return render_template('labels.html', **context)
+    
+    
+@app.route('/json')
+def to_json():
+    client = get_bill_client()
+    bill_id = request.args.get('bill_id')
+    bill = Bill.get(int(bill_id), qb=client)
+    return jsonify(json.loads(bill.to_json()))
+    
+    
+@app.route('/html')
+def html():
+    bill_id = request.args.get('bill_id')
+    return get_html(bill_id)
+
+    
+@app.route('/pdf')
+def pdf():
+    html = StringIO()
+    pdf = StringIO()
+    bill_id = request.args.get('bill_id')
+    html.write(get_html(bill_id))
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
 
