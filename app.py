@@ -57,7 +57,7 @@ def input():
     return render_template('input.html')
     
 
-def get_bill_client():
+def get_client():
     return QuickBooks(
         sandbox=True,
         consumer_key=secret.production_key,
@@ -69,7 +69,7 @@ def get_bill_client():
     
     
 def get_html(bill_id):
-    client = get_bill_client()
+    client = get_client()
     bill = Bill.get(int(bill_id), qb=client)
     print json.loads(bill.to_json())['Line']
     context = {
@@ -80,7 +80,7 @@ def get_html(bill_id):
     
 @app.route('/json')
 def to_json():
-    client = get_bill_client()
+    client = get_client()
     bill_id = request.args.get('bill_id')
     bill = Bill.get(int(bill_id), qb=client)
     return jsonify(json.loads(bill.to_json()))
