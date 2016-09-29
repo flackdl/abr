@@ -4,7 +4,7 @@
         <style>
             @page {
                 size: Letter;
-                margin: 0;
+                margin: .5in;
             }
             .clear {
                 clear: both;
@@ -13,7 +13,6 @@
                 float: left;
                 width: 30%;
                 margin-bottom: .3in;
-                page-break-before: always; /* not working */
             }
             .item {
                 white-space: nowrap;
@@ -29,7 +28,7 @@
             <div class="item">
                 <div>{{ item['Description'] }}</div>
                 <div>{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}&nbsp;{% endif %}</div>
-                <div>$</div>
+                <div>{% if item.get('Price') %}${{ item['Price'] }}{% endif %}</div>
             </div>
         </div>
         {% endfor %}

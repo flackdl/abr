@@ -6,6 +6,7 @@ from weasyprint import HTML
 from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
+from quickbooks.objects.item import Item
 import secret  # not in version control. should define token, key & secret
 
 app = Flask(__name__)
@@ -71,11 +72,27 @@ def get_client():
 def get_html(bill_id):
     client = get_client()
     bill = Bill.get(int(bill_id), qb=client)
-    print json.loads(bill.to_json())['Line']
+    bill = json.loads(bill.to_json())
+    attach_prices(bill, client)
     context = {
-        'bill': json.loads(bill.to_json()),
+        'bill': bill,
     }
     return render_template('labels.html', **context)
+    
+    
+def get_items_for_bill(bill, client):
+    ids = [l['ItemBasedExpenseLineDetail']['ItemRef']['value'] for l in bill['Line'] if 'ItemBasedExpenseLineDetail' in l]
+    items = Item.choose(ids, field="Id", qb=client)
+    return [json.loads(i.to_json()) for i in items]
+    
+def attach_prices(bill, client):
+    items = get_items_for_bill(bill, client)
+    for line in bill['Line']:
+        for item in items: 
+            if 'ItemBasedExpenseLineDetail' in line and line['ItemBasedExpenseLineDetail']['ItemRef']['value'] == item.get('Id'):
+                line['Price'] = item.get('UnitPrice')
+                break
+    return bill
     
     
 @app.route('/json')
@@ -83,7 +100,9 @@ def to_json():
     client = get_client()
     bill_id = request.args.get('bill_id')
     bill = Bill.get(int(bill_id), qb=client)
-    return jsonify(json.loads(bill.to_json()))
+    bill = json.loads(bill.to_json())
+    attach_prices(bill, client)
+    return jsonify(bill)
     
     
 @app.route('/html')
