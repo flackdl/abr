@@ -68,6 +68,14 @@ def get_client():
         company_id=session['realm_id']
     )
     
+def multiply_items(items):
+    expanded = []
+    for item in items:
+        if 'ItemBasedExpenseLineDetail' in item:
+            expanded.extend(item['ItemBasedExpenseLineDetail']['Qty'] * [item]) 
+    print expanded
+    return expanded
+    
     
 def get_html(bill_id):
     client = get_client()
@@ -75,7 +83,7 @@ def get_html(bill_id):
     bill = json.loads(bill.to_json())
     attach_prices(bill, client)
     context = {
-        'bill': bill,
+        'items': multiply_items(bill['Line']),
     }
     return render_template('labels.html', **context)
     
