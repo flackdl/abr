@@ -57,7 +57,7 @@ def multiply_items(items):
     
     
 def get_html(bill_id):
-    ROWS = 3
+    COLS = 3
     css = request.args.get('css')
     client = get_client()
     bill = Bill.get(int(bill_id), qb=client)
@@ -65,8 +65,7 @@ def get_html(bill_id):
     attach_prices(bill, client)
     items = multiply_items(bill['Line'])
     context = {
-        'rows': (items[i:i+ROWS] for i in xrange(0, len(items), ROWS)),
-        'items': items,
+        'rows': (items[i:i+COLS] for i in xrange(0, len(items), COLS)),
         'css': css,
     }
     return render_template('labels.html', **context)
