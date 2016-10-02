@@ -7,7 +7,16 @@ from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
-import secret  # not in version control. should define token, key & secret
+try:
+    import secret  # not in version control. should define token, key & secret
+except Exception:
+    class S(object):
+        pass
+    secret = S()
+    secret.app_secret = os.environ.get('app_secret')
+    secret.production_token = os.environ.get('production_token')
+    secret.production_key = os.environ.get('production_key')
+    secret.production_secret = os.environ.get('production_secret')
 
 app = Flask(__name__)
 
