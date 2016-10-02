@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from functools import wraps
 from weasyprint import HTML
 from cStringIO import StringIO
@@ -30,9 +31,14 @@ def quickbooks_auth(f):
        try:
            return f(*args, **kwargs)
        except AuthorizationException:
+           logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
                return redirect(url_for('index'))
+       except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
+           logging.info('qb exception')
+           logging.info(e)
+           raise e
    return wrapper
    
    
@@ -161,7 +167,9 @@ def pdf():
     bill_id = request.args.get('bill_id')
     try:
         html.write(get_html(bill_id))
-    except (ValueError, TypeError, QuickbooksException):
+    except (ValueError, TypeError, QuickbooksException) as e:
+        logging.info('get_html exception') 
+        logging.info(e) 
         return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
