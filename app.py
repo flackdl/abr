@@ -17,6 +17,8 @@ except Exception:
     secret.production_token = os.environ.get('production_token')
     secret.production_key = os.environ.get('production_key')
     secret.production_secret = os.environ.get('production_secret')
+    
+# sample bill #36166
 
 app = Flask(__name__)
 
@@ -82,7 +84,6 @@ def multiply_items(items):
     for item in items:
         if 'ItemBasedExpenseLineDetail' in item:
             expanded.extend(item['ItemBasedExpenseLineDetail']['Qty'] * [item]) 
-    print expanded
     return expanded
     
     
