@@ -1,21 +1,19 @@
+<style>
+    .error {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+{% if error %}
+    <div class="error">{{ error }}</div>
+{% endif %}
 <form action="/pdf">
     <div>
         <label>Bill ID</label>
         <input type="text" name="bill_id">
     </div>
     <div>
-        <textarea rows="20" cols="50" name="css">
-            .col {
-                margin-bottom: .3in;
-            }
-            .item {
-                margin-top: 0;
-                margin-right: .2in; 
-                margin-bottom: 0in; 
-                margin-left: 0in; 
-                font-size: .1in;
-            }
-        </textarea>
+        <textarea rows="15" cols="35" name="css">{% include 'styles.css' %}</textarea>
     </div>
-    <input type="submit">Print
+    <input type="submit" value="Print">
 </form>

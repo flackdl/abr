@@ -57,12 +57,17 @@ def multiply_items(items):
     
     
 def get_html(bill_id):
+    ROWS = 3
+    css = request.args.get('css')
     client = get_client()
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
     attach_prices(bill, client)
+    items = multiply_items(bill['Line'])
     context = {
-        'items': multiply_items(bill['Line']),
+        'rows': (items[i:i+ROWS] for i in xrange(0, len(items), ROWS)),
+        'items': items,
+        'css': css,
     }
     return render_template('labels.html', **context)
     
@@ -156,7 +161,10 @@ def pdf():
     html = StringIO()
     pdf = StringIO()
     bill_id = request.args.get('bill_id')
-    html.write(get_html(bill_id))
+    try:
+        html.write(get_html(bill_id))
+    except:
+        return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
 
