@@ -10,8 +10,7 @@ RUN apt-get update && \
         libffi-dev \
         libxml2-dev libxslt1-dev \
         libz-dev \
-        libpango1.0-0 \
-        & rm -rf /var/lib/apt/lists/*
+        libpango1.0-0
 
 # upgrade easy setup
 RUN wget https://bootstrap.pypa.io/ez_setup.py -O - | python
