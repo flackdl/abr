@@ -5,9 +5,6 @@
     margin-right: .025in;
     margin-left: .025in;
 }
-.row {
-    width: 100%;
-}
 .col {
     min-height: .8in;
     float: left;
@@ -19,8 +16,19 @@
     padding-right: .1in;
     padding-bottom: .1in;
     padding-left: .1in;
-    font-size: .1in;
+}
+.description {
+    font-size: .12in;
+}
+.code {
+    font-size: .14in;
+}
+.price {
+    font-size: .16in;
 }
 .first {
     clear: both;
+}
+.row {
+    width: 100%;
 }

@@ -10,9 +10,9 @@
             <div class="row">
                 {% for item in row %}
                     <div class="col">
-                        <div>{{ item['Description'] }}</div>
-                        <div>{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}&nbsp;{% endif %}</div>
-                        <div>{% if item.get('Price') %}${{ item['Price'] }}{% endif %}</div>
+                        <div class="description">{{ item['Description'] }}</div>
+                        <div class"code">{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}&nbsp;{% endif %}</div>
+                        <div class="price">{% if item.get('Price') %}${{ item['Price'] }}{% endif %}</div>
                     </div>
                 {% endfor %}
             </div>

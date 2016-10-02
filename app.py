@@ -1,14 +1,14 @@
 import os
 import json
 from functools import wraps
-from cStringIO import StringIO
-from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
 from weasyprint import HTML
+from cStringIO import StringIO
 from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
-from quickbooks.exceptions import AuthorizationException
+from quickbooks.exceptions import AuthorizationException, QuickbooksException
+from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
 try:
     import secret  # not in version control. should define token, key & secret
 except Exception:
@@ -23,13 +23,12 @@ except Exception:
 
 app = Flask(__name__)
 
-
 # decorator to handle auth exceptions
 def quickbooks_auth(f):
    @wraps(f)
-   def wrapper():
+   def wrapper(*args, **kwargs):
        try:
-           return f()
+           return f(*args, **kwargs)
        except AuthorizationException:
            if 'access_token' in session:
                del session['access_token']
@@ -162,10 +161,11 @@ def pdf():
     bill_id = request.args.get('bill_id')
     try:
         html.write(get_html(bill_id))
-    except:
+    except (ValueError, TypeError, QuickbooksException):
         return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
+    
 
 app.config['DEBUG'] = True
 app.secret_key = secret.app_secret
