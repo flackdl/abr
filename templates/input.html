@@ -1,4 +1,21 @@
 <form action="/pdf">
-    <label>Bill ID</label><input type="text" name="bill_id">
+    <div>
+        <label>Bill ID</label>
+        <input type="text" name="bill_id">
+    </div>
+    <div>
+        <textarea rows="20" cols="50" name="css">
+            .col {
+                margin-bottom: .3in;
+            }
+            .item {
+                margin-top: 0;
+                margin-right: .2in; 
+                margin-bottom: 0in; 
+                margin-left: 0in; 
+                font-size: .1in;
+            }
+        </textarea>
+    </div>
     <input type="submit">Print
 </form>
