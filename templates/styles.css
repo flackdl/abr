@@ -9,6 +9,7 @@
     width: 100%;
 }
 .col {
+    min-height: .8in;
     float: left;
     width: 30%;
     border: 1px solid black;
