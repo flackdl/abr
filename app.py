@@ -15,7 +15,6 @@ try:
     # not in version control. should define token, key & secret
     import secret
 except Exception:
-    # otherwise, expects from env
     class S(object): pass
     secret = S()
     secret.app_secret = os.environ.get('app_secret')
@@ -138,13 +137,13 @@ def callback():
     
     
 @app.route('/input')
-@quickbooks_auth
+#@quickbooks_auth
 def input():
     return render_template('input.html')
     
     
 @app.route('/json')
-@quickbooks_auth
+#@quickbooks_auth
 def to_json():
     client = get_client()
     bill_id = request.args.get('bill_id')
@@ -155,14 +154,14 @@ def to_json():
     
     
 @app.route('/html')
-@quickbooks_auth
+#@quickbooks_auth
 def html():
     bill_id = request.args.get('bill_id')
     return get_html(bill_id)
 
     
 @app.route('/pdf')
-@quickbooks_auth
+#@quickbooks_auth
 def pdf():
     html = StringIO()
     pdf = StringIO()
