@@ -10,9 +10,12 @@ from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
 from quickbooks.exceptions import AuthorizationException, QuickbooksException
 from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
+# quickbooks auth values
 try:
-    import secret  # not in version control. should define token, key & secret
+    # not in version control. should define token, key & secret
+    import secret
 except Exception:
+    # otherwise, expects from env
     class S(object): pass
     secret = S()
     secret.app_secret = os.environ.get('app_secret')
