@@ -20,9 +20,8 @@ except Exception:
     secret.production_key = os.environ.get('production_key')
     secret.production_secret = os.environ.get('production_secret')
     
-# sample bill #36166
-
 app = Flask(__name__)
+
 
 # decorator to handle auth exceptions
 def quickbooks_auth(f):
