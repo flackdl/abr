@@ -7,7 +7,7 @@
     margin-left: .21975in;
 }
 .col {
-    min-height: .8in;
+    height: 1in;
     float: left;
     width:  2.625in;
     white-space: nowrap;
