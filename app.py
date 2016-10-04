@@ -32,7 +32,7 @@ def quickbooks_auth(f):
    def wrapper(*args, **kwargs):
        try:
            return f(*args, **kwargs)
-       except AuthorizationException:
+       except (AuthorizationException, QuickbooksException):
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
