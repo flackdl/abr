@@ -8,7 +8,7 @@ from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
-from quickbooks.exceptions import AuthorizationException, QuickbooksException
+from quickbooks.exceptions import AuthorizationException, QuickbooksException, UnsupportedException, GeneralException, ValidationException, SevereException
 from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
 # quickbooks auth values
 try:
@@ -36,9 +36,13 @@ def quickbooks_auth(f):
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
-               return redirect(url_for('index'))
+           return redirect(url_for('index'))
        except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
            logging.info('qb exception')
+           logging.info(e)
+           raise e
+       except Exception as e:
+           logging.info('other exception')
            logging.info(e)
            raise e
    return wrapper
@@ -49,9 +53,9 @@ def get_client():
         sandbox=True,
         consumer_key=secret.production_key,
         consumer_secret=secret.production_secret,
-        access_token=session['access_token'],
-        access_token_secret=session['access_token_secret'],
-        company_id=session['realm_id']
+        access_token=session.get('access_token'),
+        access_token_secret=session.get('access_token_secret'),
+        company_id=session.get('realm_id'),
     )
     
     
@@ -123,9 +127,9 @@ def callback():
         consumer_secret=secret.production_secret,
     )
     
-    client.authorize_url = session['authorize_url']
-    client.request_token = session['request_token']
-    client.request_token_secret = session['request_token_secret']
+    client.authorize_url = session.get('authorize_url')
+    client.request_token = session.get('request_token')
+    client.request_token_secret = session.get('request_token_secret')
     client.set_up_service()
     client.get_access_tokens(request.args['oauth_verifier'])
     
@@ -169,7 +173,7 @@ def pdf():
     bill_id = request.args.get('bill_id')
     try:
         html.write(get_html(bill_id))
-    except (ValueError, TypeError, QuickbooksException) as e:
+    except (ValueError, TypeError) as e:
         logging.info('get_html exception') 
         logging.info(e) 
         return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
