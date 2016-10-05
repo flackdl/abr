@@ -1,17 +1,20 @@
-/* http://www.worldlabel.com/Pages/wl-ol875.htm */
 @page {
     size: Letter;
-    margin-top: .25in;
+    margin-top: .5in;
     margin-bottom: .25in;
     margin-right: .21975in;
     margin-left: .21975in;
 }
 .col {
-    height: 1in;
-    float: left;
-    width:  2.625in;
+    width: 30%;
+    margin: 0 1%;
+    display: inline-block;
+    height: 100%;
     white-space: nowrap;
     overflow: hidden;
+}
+.item {
+    padding: .1in;
 }
 .description {
     font-size: .12in;
@@ -23,9 +26,7 @@
 .price {
     font-size: .18in;
 }
-.first {
-    clear: both;
-}
 .row {
+    height: 1in;
     width: 100%;
 }

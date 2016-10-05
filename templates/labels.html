@@ -10,9 +10,11 @@
             <div class="row">
                 {% for item in row %}
                     <div class="col">
-                        <div class="description">{{ item['Description'][:90]|wordwrap(35, True, '<br>')|safe }}</div>
-                        <div class="code">{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}&nbsp;{% endif %}</div>
-                        <div class="price">{% if item.get('Price') %}${{ item['Price'] }}{% endif %}</div>
+                        <div class="item">
+                            <div class="description">{{ item['Description'][:90]|wordwrap(32, True, '<br>')|safe }}</div>
+                            <div class="code">{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}&nbsp;{% endif %}</div>
+                            <div class="price">{% if item.get('Price') %}${{ item['Price'] }}{% endif %}</div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
