@@ -7,15 +7,16 @@
     margin-left: .21975in;
 }
 .col {
-    width: 30%;
-    margin: 0 1%;
-    display: inline-block;
+    width: 33%;
+    float: left;
     height: 100%;
     white-space: nowrap;
     overflow: hidden;
 }
 .item {
-    padding: .1in;
+    padding: .2in;
+    border: 1px solid black;
+    height: 100%;
 }
 .description {
     font-size: .12in;
