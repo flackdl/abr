@@ -20,6 +20,7 @@
 }
 .description {
     font-size: .12in;
+    line-height: .12in;
     font-weight: bold;
 }
 .code {
