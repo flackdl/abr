@@ -10,8 +10,6 @@
     width: 33%;
     float: left;
     height: 100%;
-    white-space: nowrap;
-    overflow: hidden;
 }
 .item {
     padding: .2in;
