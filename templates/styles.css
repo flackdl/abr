@@ -1,10 +1,10 @@
 @page {
     size: Letter;
     width: 8.5in;
-    margin-top: .5in;
+    margin-top: .49in;
     margin-bottom: .25in;
     margin-right: .21975in;
-    margin-left: .21975in;
+    margin-left: .19in;
 }
 .col {
     width: 33%;
@@ -15,7 +15,6 @@
 }
 .item {
     padding: .2in;
-    border: 1px solid black;
     height: 100%;
 }
 .description {
