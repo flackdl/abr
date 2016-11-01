@@ -1,6 +1,6 @@
 ### Print labels from QuickBooks inventory
 
-A simple Flask app that prints labels via QuickBooks inventory.  It uses WeasyPrint for the pdf generation and python-quickbooks for the api.
+A simple Flask app that prints labels via QuickBooks inventory.  It uses [WeasyPrint] (https://github.com/Kozea/WeasyPrint) for the pdf generation and [python-quickbooks] (https://github.com/sidecars/python-quickbooks/) for the api.
 
 There's a `Dockerfile` which builds all the dependencies and can be deployed to any container host provider.
 
