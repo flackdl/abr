@@ -63,9 +63,6 @@ def multiply_items(items):
     expanded = []
     # conditionally only print one of each item vs item's actual quantity when expanding
     single_print = request.args.get('single_print', '')
-    print '=========='
-    print single_print
-    print '=========='
     for item in items:
         if 'ItemBasedExpenseLineDetail' in item:
             quantity = 1 if single_print else item['ItemBasedExpenseLineDetail']['Qty']
