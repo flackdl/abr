@@ -188,7 +188,7 @@ def pdf():
 def get_items_in_stock(pos):
     client = get_client()
     # limit to items that are in stock
-    results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s' % pos, qb=client)
+    results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, MAX_RESULTS), qb=client)
     return [r for r in results if r.QtyOnHand > 0]
     
     
@@ -199,16 +199,17 @@ def single_print_all_items():
     # page through all items in stock that have a positive quantity
     results = get_items_in_stock(1)
     items = []
-    page = 1
+    page = 0
     while results:
-        items.extend(results)
-        results = get_items_in_stock((page * MAX_RESULTS) + 1)
         page += 1
+        position = (page * MAX_RESULTS) + 1
+        items.extend(results)
+        results = get_items_in_stock(position)
     items = [json.loads(item.to_json()) for item in items]
     context = {
         'rows': (items[i:i+COLS] for i in xrange(0, len(items), COLS)),
     }
-    rendered = render_template('labels.html', **context)
+    rendered = render_template('labels.html', **context).encode('utf-8')
     
     # write pdf
     html = StringIO()
