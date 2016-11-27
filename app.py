@@ -24,6 +24,8 @@ except Exception:
     secret.production_secret = os.environ.get('production_secret')
     
 app = Flask(__name__)
+COLS = 3
+MAX_RESULTS = 1000
 
 
 # decorator to handle auth exceptions
@@ -32,7 +34,7 @@ def quickbooks_auth(f):
    def wrapper(*args, **kwargs):
        try:
            return f(*args, **kwargs)
-       except (AuthorizationException, QuickbooksException):
+       except (AuthorizationException, QuickbooksException) as e:
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
@@ -71,7 +73,6 @@ def multiply_items(items):
     
     
 def get_html(bill_id):
-    COLS = 3
     css = request.args.get('css')
     client = get_client()
     bill = Bill.get(int(bill_id), qb=client)
@@ -96,7 +97,7 @@ def attach_prices(bill, client):
     for line in bill['Line']:
         for item in items: 
             if 'ItemBasedExpenseLineDetail' in line and line['ItemBasedExpenseLineDetail']['ItemRef']['value'] == item.get('Id'):
-                line['Price'] = item.get('UnitPrice')
+                line['UnitPrice'] = item.get('UnitPrice')
                 break
     return bill
     
@@ -180,6 +181,39 @@ def pdf():
         logging.info('get_html exception') 
         logging.info(e) 
         return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
+    HTML(html).write_pdf(pdf)
+    return Response(pdf.getvalue(), mimetype='application/pdf')
+    
+    
+def get_items_in_stock(pos):
+    client = get_client()
+    # limit to items that are in stock
+    results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s' % pos, qb=client)
+    return [r for r in results if r.QtyOnHand > 0]
+    
+    
+@app.route('/single-print-all-items')
+@quickbooks_auth
+def single_print_all_items():
+    
+    # page through all items in stock that have a positive quantity
+    results = get_items_in_stock(1)
+    items = []
+    page = 1
+    while results:
+        items.extend(results)
+        results = get_items_in_stock((page * MAX_RESULTS) + 1)
+        page += 1
+    items = [json.loads(item.to_json()) for item in items]
+    context = {
+        'rows': (items[i:i+COLS] for i in xrange(0, len(items), COLS)),
+    }
+    rendered = render_template('labels.html', **context)
+    
+    # write pdf
+    html = StringIO()
+    pdf = StringIO()
+    html.write(rendered)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
     

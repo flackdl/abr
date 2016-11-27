@@ -1,24 +1,34 @@
-<style>
-    .error {
-        color: red;
-        font-weight: bold;
-    }
-</style>
-{% if error %}
-    <div class="error">{{ error }}</div>
-{% endif %}
-<form action="/pdf" target="_blank">
-    <div>
-        <label>Bill ID</label>
-        <input type="text" name="bill_id">
-    </div>
-    <div>
-        <textarea rows="15" cols="35" name="css">{% include 'styles.css' %}</textarea>
-    </div>
-    <div>
-        <label>Single Print
-            <input type="checkbox" name="single_print">
-        </label>
-    </div>
-    <input type="submit" value="Print">
-</form>
+<html>
+    <head>
+        <style>
+            .error {
+                color: red;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <form action="/pdf" target="_blank">
+            <div>
+                <label>Bill ID</label>
+                <input type="text" name="bill_id">
+            </div>
+            <div>
+                <textarea rows="15" cols="35" name="css">{% include 'styles.css' %}</textarea>
+            </div>
+            <div>
+                <label>Single Print
+                    <input type="checkbox" name="single_print">
+                </label>
+            </div>
+            <input type="submit" value="Print">
+        </form>
+                
+        <div>
+            <a href="{{ url_for('single_print_all_items') }}" target="_blank">Single Print All Inventory</a>
+        </div>
+    </body>
+</html>
