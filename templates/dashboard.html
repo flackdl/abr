@@ -35,6 +35,12 @@
                 <td>{$ estimate.TxnDate $}</td>
                 <td>{$ moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') $}</td>
                 <td>{$ moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') $}</td>
+                <td>{$ estimate.CustomerRef.name $}</td>
+                <td>(bike)</td>
+                <td>(tag #)</td>
+                <td>(estimate #)</td>
+                <td>${$ total_labor(estimate) $}</td>
+                <td>{$ estimate.TxnStatus $}</td>
               </tr>
             </tbody>
           </table>
@@ -71,6 +77,16 @@
             (error) => {
               console.log('failure', error);
             });
+          },
+          total_labor: function (estimate) {
+            let total = 0;
+            _.forEach(estimate['Line'], (item) => {
+              // no tax indicates labor
+              if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'NON') {
+                total += item['SalesItemLineDetail']['UnitPrice'];
+              } 
+            }); 
+            return total;
           },
           moment: moment,
         },
