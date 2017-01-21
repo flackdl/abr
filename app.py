@@ -8,8 +8,10 @@ from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
+from quickbooks.objects.estimate import Estimate
 from quickbooks.exceptions import AuthorizationException, QuickbooksException, UnsupportedException, GeneralException, ValidationException, SevereException
-from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
+from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify, send_from_directory
+from datetime import datetime, timedelta
 # quickbooks auth values
 try:
     # not in version control. should define token, key & secret
@@ -50,6 +52,12 @@ def quickbooks_auth(f):
    return wrapper
    
    
+@app.route('/static/<path:path>')
+def send_static(path):
+    last_modified = datetime.now() - timedelta(days=10)
+    return send_from_directory('static', path, cache_timeout=0, last_modified=last_modified)
+
+
 def get_client():
     return QuickBooks(
         sandbox=True,
@@ -120,6 +128,7 @@ def index():
     session['authorize_url'] = client.get_authorize_url()
     session['request_token'] = client.request_token
     session['request_token_secret'] = client.request_token_secret
+    
     return render_template('login.html', authorize_url=session['authorize_url'])
     
     
@@ -217,6 +226,21 @@ def single_print_all_items():
     html.write(rendered)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
+    
+    
+@app.route('/estimates')
+@quickbooks_auth
+def estimate():
+    client = get_client()
+    estimates = Estimate.all(qb=client)
+    return jsonify({'estimates': [json.loads(e.to_json()) for e in estimates]})
+    
+    
+@app.route('/dashboard')
+@quickbooks_auth
+def dashboard():
+    context = {}
+    return render_template('dashboard.html', **context)
     
 
 app.config['DEBUG'] = True

@@ -1,0 +1,378 @@
+{
+    "estimates":
+        [
+                
+            {
+                "ApplyTaxAfterDiscount": false,
+                "BillAddr": {
+                    "City": "San Diego",
+                    "Country": "",
+                    "CountrySubDivisionCode": "CA",
+                    "Id": "3180",
+                    "Lat": "32.758824",
+                    "Line1": "3811 Monroe Ave",
+                    "Line2": "",
+                    "Line3": "",
+                    "Line4": "",
+                    "Line5": "",
+                    "Long": "-117.111115",
+                    "Note": "",
+                    "PostalCode": "92116"
+                },
+                "BillEmail": {
+                    "Address": "gimimac@sbcglobal.net"
+                },
+                "CurrencyRef": {
+                    "name": "United States Dollar",
+                    "type": "",
+                    "value": "USD"
+                },
+                "CustomField": [],
+                "CustomerRef": {
+                    "name": "Jimmie McCarthy",
+                    "type": "",
+                    "value": "1732"
+                },
+                "DeliveryInfo": {
+                    "DeliveryTime": "2017-01-09T18:25:35-08:00",
+                    "DeliveryType": "Email"
+                },
+                "DocNumber": "5720",
+                "EmailStatus": "EmailSent",
+                "ExchangeRate": 1,
+                "GlobalTaxCalculation": "TaxExcluded",
+                "Id": "38883",
+                "Line": [{
+                    "Amount": 70,
+                    "CustomField": [],
+                    "Description": "DerailleurHangers.com #373",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "1",
+                    "LineNum": 1,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-Hanger-#373",
+                            "type": "",
+                            "value": "6423"
+                        },
+                        "Qty": 2,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 35
+                    }
+                }, {
+                    "Amount": 70,
+                    "CustomField": [],
+                    "Description": "Ultegra 6700 11-25 10spd Cassette",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "2",
+                    "LineNum": 2,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "CS-10-6700-11/25",
+                            "type": "",
+                            "value": "560"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 70
+                    }
+                }, {
+                    "Amount": 45,
+                    "CustomField": [],
+                    "Description": "Ultegra 6701 10spd Chain w/Connecting Pin",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "3",
+                    "LineNum": 3,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "CH-10-6701",
+                            "type": "",
+                            "value": "496"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 45
+                    }
+                }, {
+                    "Amount": 100,
+                    "CustomField": [],
+                    "Description": "Shimano Ultegra 6700-SS 10 speed derailleur",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "4",
+                    "LineNum": 4,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-RR-10-SHIM-6700SS",
+                            "type": "",
+                            "value": "1002"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 100
+                    }
+                }, {
+                    "Amount": 60,
+                    "CustomField": [],
+                    "Description": "Install hanger, derailleur, chain, cassette and big chainring",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "5",
+                    "LineNum": 5,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "Labor",
+                            "type": "",
+                            "value": "25"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "NON"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 60
+                    }
+                }, {
+                    "Amount": 110,
+                    "CustomField": [],
+                    "Description": "Shimano Ultegra 6750 50t 110mm 10spd compact chainring Grey",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "10",
+                    "LineNum": 6,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "CHR-50T-10s-6750-G",
+                            "type": "",
+                            "value": "5491"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 110
+                    }
+                }, {
+                    "Amount": 30,
+                    "CustomField": [],
+                    "Description": "Bottom bracket overhaul and install big chainring",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "8",
+                    "LineNum": 7,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "BB-Overhaul-Tune",
+                            "type": "",
+                            "value": "5275"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "NON"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 30
+                    }
+                }, {
+                    "Amount": 3,
+                    "CustomField": [],
+                    "Description": "Derailleur Cable, Stainless Steel",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "11",
+                    "LineNum": 8,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-CB-SS",
+                            "type": "",
+                            "value": "36"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 3
+                    }
+                }, {
+                    "Amount": 6,
+                    "CustomField": [],
+                    "Description": "Shimano Derailleur Housing 5mm",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "12",
+                    "LineNum": 9,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-HOUS-5mm",
+                            "type": "",
+                            "value": "530"
+                        },
+                        "Qty": 2,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 3
+                    }
+                }, {
+                    "Amount": 6,
+                    "CustomField": [],
+                    "Description": "Derailleur Housing, per foot",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "13",
+                    "LineNum": 10,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-HOUS-4mm",
+                            "type": "",
+                            "value": "37"
+                        },
+                        "Qty": 2,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "TAX"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 3
+                    }
+                }, {
+                    "Amount": 30,
+                    "CustomField": [],
+                    "Description": "Install Rear Internal Derailleur Cable",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "14",
+                    "LineNum": 11,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "DER-CB-RR-Install-INTERNAL",
+                            "type": "",
+                            "value": "6124"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "NON"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 30
+                    }
+                }, {
+                    "Amount": 20,
+                    "CustomField": [],
+                    "Description": "Wrap Handlebars ** provided by customer **",
+                    "DetailType": "SalesItemLineDetail",
+                    "Id": "18",
+                    "LineNum": 12,
+                    "LinkedTxn": [],
+                    "SalesItemLineDetail": {
+                        "ItemRef": {
+                            "name": "Bartape-Install-Tune",
+                            "type": "",
+                            "value": "5595"
+                        },
+                        "Qty": 1,
+                        "ServiceDate": "",
+                        "TaxCodeRef": {
+                            "name": "",
+                            "type": "",
+                            "value": "NON"
+                        },
+                        "TaxInclusiveAmt": 0,
+                        "UnitPrice": 20
+                    }
+                }, {
+                    "Amount": 550,
+                    "CustomField": [],
+                    "DetailType": "SubTotalLineDetail",
+                    "LineNum": 0,
+                    "LinkedTxn": [],
+                    "SubTotalLineDetail": {}
+                }],
+                "LinkedTxn": [],
+                "MetaData": {
+                    "CreateTime": "2017-01-09T17:49:39-08:00",
+                    "LastUpdatedTime": "2017-01-20T18:17:00-08:00"
+                },
+                "PrintStatus": "NotSet",
+                "PrivateNote": "http://derailleurhanger.com/dh373.php\npcitures and wholesale pricing application sent over to website.  Order #373 after confirmation of fit and wholesale discount code.",
+                "SyncToken": "15",
+                "TotalAmt": 582.8,
+                "TxnDate": "2017-01-09",
+                "TxnStatus": "Pending",
+                "TxnTaxDetail": {
+                    "TaxLine": [{
+                        "Amount": 32.8,
+                        "DetailType": "TaxLineDetail",
+                        "TaxLineDetail": {
+                            "NetAmountTaxable": 410,
+                            "PercentBased": true,
+                            "TaxPercent": 8,
+                            "TaxRateRef": {
+                                "name": "",
+                                "type": "",
+                                "value": "10"
+                            }
+                        }
+                    }],
+                    "TotalTax": 32.8,
+                    "TxnTaxCodeRef": {
+                        "name": "",
+                        "type": "",
+                        "value": "7"
+                    }
+                },
+                "domain": "QBO",
+                "sparse": false
+        }
+    ]
+}
