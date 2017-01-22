@@ -1,6 +1,8 @@
 secret.py
 run_docker.sh
 
+static/estimates.sample.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
