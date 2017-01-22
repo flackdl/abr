@@ -1,0 +1,118 @@
+{% set tab = 'estimates' %}
+
+{% extends 'base.html' %}
+
+{% block extra_js %}
+    
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#abr',
+        delimiters: ['{$', '$}'],
+        data: {
+          headers: ['Id', 'Date',	'Due Date',	'Due Time',	'Customer',	'Bike',	'Tag #',	'Estimate #',	'Total Labor Cost',	'Status'],
+          estimates: [],
+        },
+        methods: {
+          get_estimates: function() {
+            this.$http.get('/static/estimates.example.json').then((response) => {
+            //this.$http.get('/json/estimates').then((response) => {
+              response.json().then((json) => {
+                if ('estimates' in json) {
+                  
+                  // group by statuses
+                  let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
+                  
+                  // update/remove existing estimates
+                  if (this.estimates.length) {
+                    _.forEach(statusGroups, (group) => {
+                      // TODO
+                    }); 
+                  }
+                  // add new estimates
+                  else {
+                  
+                    // build by status order preference
+                    _.forEach(['Accepted', 'Pending', 'Closed', 'Rejected'], (status) => {
+                      if (_.has(statusGroups, status)) {
+                        _.forEach(statusGroups[status], (estimate) => {
+                          this.estimates.push(estimate);
+                        });
+                      }
+                    })
+                  }
+                }
+              })
+            },
+            // failure
+            (error) => {
+              console.log('failure', error);
+            });
+          },
+          estimate_url: function(estimate) {
+           return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
+          },
+          total_labor: function (estimate) {
+            let total = 0;
+            _.forEach(estimate['Line'], (item) => {
+              // no tax indicates labor
+              if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'NON') {
+                total += item['SalesItemLineDetail']['UnitPrice'];
+              } 
+            }); 
+            return total;
+          },
+          moment: moment,
+        },
+      });
+      
+      app.get_estimates();
+      
+      // frequently refresh data
+      setInterval(() => {
+        app.get_estimates();
+      }, 60 * 1000);
+      
+    </script>
+{% endblock %}
+
+{% block container %}
+    
+  <style>
+    tr.Accepted {
+      background-color: green;  
+    }
+    tr.Pending {
+      background-color: #f1f150;  
+    }
+    tr.Closed {
+      background-color: #8383e0;  
+    }
+    tr.Rejected {
+      background-color: #f15050;  
+    }
+  </style>
+    
+  <div id="abr">
+    <div class="table-responsive">
+      <table class="table table-hover table-border table-condensed">
+        <thead>
+          <th v-for="header in headers">{$ header $}</th>
+        </thead>
+        <tbody>
+          <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
+            <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
+            <td>{$ estimate.TxnDate $}</td>
+            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
+            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
+            <td>{$ estimate.CustomerRef.name $}</td>
+            <td>{$ estimate.ShipMethodRef ? estimate.ShipMethodRef.name : '' $}</td>
+            <td>{$ estimate.TrackingNum ? estimate.TrackingNum : '' $}</td>
+            <td>{$ estimate.DocNumber $}</td>
+            <td>${$ total_labor(estimate) $}</td>
+            <td>{$ estimate.TxnStatus $}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

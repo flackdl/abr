@@ -8,8 +8,10 @@ from flask import Flask, request
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
+from quickbooks.objects.estimate import Estimate
 from quickbooks.exceptions import AuthorizationException, QuickbooksException, UnsupportedException, GeneralException, ValidationException, SevereException
-from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify
+from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify, send_from_directory
+from datetime import datetime, timedelta
 # quickbooks auth values
 try:
     # not in version control. should define token, key & secret
@@ -50,6 +52,12 @@ def quickbooks_auth(f):
    return wrapper
    
    
+@app.route('/static/<path:path>')
+def send_static(path):
+    last_modified = datetime.now() - timedelta(days=10)
+    return send_from_directory('static', path, cache_timeout=0, last_modified=last_modified)
+
+
 def get_client():
     return QuickBooks(
         sandbox=True,
@@ -103,24 +111,26 @@ def attach_prices(bill, client):
     
     
 @app.route('/')
-def index():
+def dashboard():
     
-    # already authenticated
-    if 'access_token' in session:
-        return redirect(url_for('input'))
+    # not authenticated
+    if 'access_token' not in session:
+            
+        client = QuickBooks(
+            sandbox=True,
+            consumer_key=secret.production_key,
+            consumer_secret=secret.production_secret,
+            callback_url='http://%s/callback' % request.host,
+        )
         
-    client = QuickBooks(
-        sandbox=True,
-        consumer_key=secret.production_key,
-        consumer_secret=secret.production_secret,
-        callback_url='http://%s/callback' % request.host,
-    )
+        # store for future use
+        session['authorize_url'] = client.get_authorize_url()
+        session['request_token'] = client.request_token
+        session['request_token_secret'] = client.request_token_secret
+        
+        return redirect(session['authorize_url'])
     
-    # store for future use
-    session['authorize_url'] = client.get_authorize_url()
-    session['request_token'] = client.request_token
-    session['request_token_secret'] = client.request_token_secret
-    return render_template('login.html', authorize_url=session['authorize_url'])
+    return render_template('dashboard.html')
     
     
 @app.route('/callback')
@@ -142,13 +152,13 @@ def callback():
     session['access_token'] = client.access_token
     session['access_token_secret'] = client.access_token_secret
     
-    return redirect(url_for('input'))
+    return redirect(url_for('dashboard'))
     
     
 @app.route('/input')
 @quickbooks_auth
 def input():
-    return render_template('input.html')
+    return render_template('input.html', title='Print Labels')
     
     
 @app.route('/json')
@@ -217,6 +227,20 @@ def single_print_all_items():
     html.write(rendered)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
+    
+    
+@app.route('/json/estimates')
+@quickbooks_auth
+def json_estimates():
+    client = get_client()
+    estimates = Estimate.all(qb=client)
+    return jsonify({'estimates': [json.loads(e.to_json()) for e in estimates]})
+    
+    
+@app.route('/estimates')
+@quickbooks_auth
+def estimates():
+    return render_template('estimates.html', title='In-House Repairs')
     
 
 app.config['DEBUG'] = True
