@@ -34,6 +34,24 @@ MAX_RESULTS = 1000
 def quickbooks_auth(f):
    @wraps(f)
    def wrapper(*args, **kwargs):
+        
+       # not authenticated so redirect them
+       if 'access_token' not in session:
+               
+           client = QuickBooks(
+               sandbox=True,
+               consumer_key=secret.production_key,
+               consumer_secret=secret.production_secret,
+               callback_url='http://%s/callback' % request.host,
+           )
+           
+           # store for future use
+           session['authorize_url'] = client.get_authorize_url()
+           session['request_token'] = client.request_token
+           session['request_token_secret'] = client.request_token_secret
+           
+           return redirect(session['authorize_url'])
+    
        try:
            return f(*args, **kwargs)
        except (AuthorizationException, QuickbooksException) as e:
@@ -112,24 +130,6 @@ def attach_prices(bill, client):
     
 @app.route('/')
 def dashboard():
-    
-    # not authenticated
-    if 'access_token' not in session:
-            
-        client = QuickBooks(
-            sandbox=True,
-            consumer_key=secret.production_key,
-            consumer_secret=secret.production_secret,
-            callback_url='http://%s/callback' % request.host,
-        )
-        
-        # store for future use
-        session['authorize_url'] = client.get_authorize_url()
-        session['request_token'] = client.request_token
-        session['request_token_secret'] = client.request_token_secret
-        
-        return redirect(session['authorize_url'])
-    
     return render_template('dashboard.html')
     
     

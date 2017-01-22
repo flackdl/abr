@@ -14,8 +14,8 @@
         },
         methods: {
           get_estimates: function() {
-            this.$http.get('/static/estimates.example.json').then((response) => {
-            //this.$http.get('/json/estimates').then((response) => {
+            //this.$http.get('/static/estimates.example.json').then((response) => {
+            this.$http.get('/json/estimates').then((response) => {
               response.json().then((json) => {
                 if ('estimates' in json) {
                   
