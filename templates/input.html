@@ -1,34 +1,53 @@
-<html>
-    <head>
-        <style>
-            .error {
-                color: red;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-    <body>
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
-        <form action="/pdf" target="_blank">
-            <div>
-                <label>Bill ID</label>
-                <input type="text" name="bill_id">
-            </div>
-            <div>
-                <textarea rows="15" cols="35" name="css">{% include 'styles.css' %}</textarea>
-            </div>
-            <div>
-                <label>Single Print
-                    <input type="checkbox" name="single_print">
-                </label>
-            </div>
-            <input type="submit" value="Print">
-        </form>
-                
-        <div>
-            <a href="{{ url_for('single_print_all_items') }}" target="_blank">Single Print All Inventory</a>
+{% set tab = 'labels' %}
+
+{% extends 'base.html' %}
+
+{% block container %}
+    <style>
+            
+        #css {
+            display: none;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    
+    <form action="/pdf" target="_blank">
+        <div class="form-group">
+            <label>Bill ID</label>
+            <input type="text" name="bill_id" class="form-control">
         </div>
-    </body>
-</html>
+        <div class="form-group">
+            <textarea id="css" rows="15" cols="35" name="css"  class="form-control">{% include 'styles.css' %}</textarea>
+        </div>
+        <div class="form-group">
+            <label>Single Print
+                <input type="checkbox" name="single_print">
+            </label>
+        </div>
+        <button type="submit" class="btn btn-block btn-primary">
+            <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print
+        </button>
+    </form>
+    
+    <ul>
+        <li>
+            <a href="{{ url_for('single_print_all_items') }}" target="_blank">Single Print All Inventory</a> 
+        </li>
+        <li>
+            <a href="#" id="custom-css">Custom CSS</button>
+        </li>
+    </ul>
+    
+    <script>
+        $('#custom-css').click(() => {
+            $('#css').css('display', 'block');
+        })
+    </script>
+{% endblock %}
