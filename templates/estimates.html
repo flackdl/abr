@@ -66,9 +66,12 @@
       });
       
       app.get_estimates();
-      //setInterval(() => {
-      //  app.get_estimates();
-      //}, 60 * 1000);
+      
+      // frequently refresh data
+      setInterval(() => {
+        app.get_estimates();
+      }, 60 * 1000);
+      
     </script>
 {% endblock %}
 
