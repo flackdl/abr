@@ -58,6 +58,9 @@ def quickbooks_auth(f):
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
+           # json requests should return contextual data vs getting redirected
+           if request.headers.get('content-type') == 'application/json':
+               return jsonify({'success': False, 'reason': 'authentication'})
            return redirect(url_for('dashboard'))
        except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
            logging.info('qb exception')
@@ -129,6 +132,7 @@ def attach_prices(bill, client):
     
     
 @app.route('/')
+@quickbooks_auth
 def dashboard():
     return render_template('dashboard.html')
     
@@ -234,7 +238,7 @@ def single_print_all_items():
 def json_estimates():
     client = get_client()
     estimates = Estimate.all(qb=client)
-    return jsonify({'estimates': [json.loads(e.to_json()) for e in estimates]})
+    return jsonify({'success': True, 'estimates': [json.loads(e.to_json()) for e in estimates]})
     
     
 @app.route('/estimates')

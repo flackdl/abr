@@ -1,4 +1,5 @@
 {% set tab = 'estimates' %}
+{% set container_class = 'container-fluid' %}
 
 {% extends 'base.html' %}
 
@@ -11,25 +12,35 @@
         data: {
           headers: ['Id', 'Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
           estimates: [],
+          alert_auth: false,
         },
         methods: {
           get_estimates: function() {
             //this.$http.get('/static/estimates.sample.json').then((response) => {
-            this.$http.get('/json/estimates').then((response) => {
+            this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
               response.json().then((json) => {
-                if ('estimates' in json) {
-                  
-                  // group by statuses
-                  let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
-                  
-                  // build by status order preference
-                  _.forEach(['Accepted', 'Pending', 'Closed'], (status) => {
-                    if (_.has(statusGroups, status)) {
-                      _.forEach(statusGroups[status], (estimate) => {
-                        this.estimates.push(estimate);
-                      });
-                    }
-                  })
+                
+                if (json['success']) {
+                  if (json['estimates']) {
+                    
+                    // wipe and rebuild
+                    this.estimates = [];
+                    
+                    // group by statuses
+                    let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
+                    
+                    // build by status order preference
+                    _.forEach(['Accepted', 'Pending', 'Closed'], (status) => {
+                      if (_.has(statusGroups, status)) {
+                        _.forEach(statusGroups[status], (estimate) => {
+                          this.estimates.push(estimate);
+                        });
+                      }
+                    })
+                  }
+                } else {
+                  console.log('json failure', json);
+                  this.alert_auth = true; 
                 }
               })
             },
@@ -92,6 +103,11 @@
   </style>
     
   <div id="abr">
+  
+    <div class="alert alert-danger" v-if="alert_auth">
+      Your session has expired. <a href="/">Please log in again</a>
+    </div>
+  
     <div class="table-responsive">
       <table class="table table-hover table-border table-condensed">
         <thead>
