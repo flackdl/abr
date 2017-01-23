@@ -58,7 +58,7 @@ def quickbooks_auth(f):
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
-           return redirect(url_for('index'))
+           return redirect(url_for('dashboard'))
        except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
            logging.info('qb exception')
            logging.info(e)

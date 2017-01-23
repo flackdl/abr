@@ -14,7 +14,7 @@
         },
         methods: {
           get_estimates: function() {
-            //this.$http.get('/static/estimates.example.json').then((response) => {
+            //this.$http.get('/static/estimates.sample.json').then((response) => {
             this.$http.get('/json/estimates').then((response) => {
               response.json().then((json) => {
                 if ('estimates' in json) {
@@ -22,24 +22,14 @@
                   // group by statuses
                   let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
                   
-                  // update/remove existing estimates
-                  if (this.estimates.length) {
-                    _.forEach(statusGroups, (group) => {
-                      // TODO
-                    }); 
-                  }
-                  // add new estimates
-                  else {
-                  
-                    // build by status order preference
-                    _.forEach(['Accepted', 'Pending', 'Closed', 'Rejected'], (status) => {
-                      if (_.has(statusGroups, status)) {
-                        _.forEach(statusGroups[status], (estimate) => {
-                          this.estimates.push(estimate);
-                        });
-                      }
-                    })
-                  }
+                  // build by status order preference
+                  _.forEach(['Accepted', 'Pending', 'Closed'], (status) => {
+                    if (_.has(statusGroups, status)) {
+                      _.forEach(statusGroups[status], (estimate) => {
+                        this.estimates.push(estimate);
+                      });
+                    }
+                  })
                 }
               })
             },
@@ -48,8 +38,17 @@
               console.log('failure', error);
             });
           },
-          estimate_url: function(estimate) {
+          estimate_url: function (estimate) {
            return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
+          },
+          get_custom_field: function (estimate, field) {
+            let value = '';
+            if(estimate['CustomField'] && estimate['CustomField'].length) {
+              value = _.find(estimate['CustomField'], (f) => {
+               return f['Name'] == field;
+              });
+            } 
+            return value['StringValue'];
           },
           total_labor: function (estimate) {
             let total = 0;
@@ -101,12 +100,12 @@
         <tbody>
           <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
             <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
-            <td>{$ estimate.TxnDate $}</td>
+            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
             <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
             <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
             <td>{$ estimate.CustomerRef.name $}</td>
-            <td>{$ estimate.ShipMethodRef ? estimate.ShipMethodRef.name : '' $}</td>
-            <td>{$ estimate.TrackingNum ? estimate.TrackingNum : '' $}</td>
+            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
+            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
             <td>{$ estimate.DocNumber $}</td>
             <td>${$ total_labor(estimate) $}</td>
             <td>{$ estimate.TxnStatus $}</td>
