@@ -238,6 +238,8 @@ def single_print_all_items():
 def json_estimates():
     client = get_client()
     estimates = Estimate.all(qb=client)
+    # TODO - implement paging since we can't filter by status (TxnStatus)
+    #estimates = Estimate.query('SELECT * from Estimate MAXRESULTS %s' % (MAX_RESULTS), qb=client)
     return jsonify({'success': True, 'estimates': [json.loads(e.to_json()) for e in estimates]})
     
     

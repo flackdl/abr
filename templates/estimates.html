@@ -12,10 +12,19 @@
         data: {
           headers: ['Id', 'Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
           estimates: [],
-          alert_auth: false,
+          error: {
+            auth: false,
+            unknown: false,
+          },
         },
         methods: {
           get_estimates: function() {
+            // reset errors
+            this.error = {
+              auth: false,
+              unknown: false,
+            }; 
+            
             //this.$http.get('/static/estimates.sample.json').then((response) => {
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
               response.json().then((json) => {
@@ -39,8 +48,13 @@
                     })
                   }
                 } else {
-                  console.log('json failure', json);
-                  this.alert_auth = true; 
+                  // authentication error
+                  if (json['reason'] == 'authentication') {
+                    this.error.auth = true; 
+                  } else {
+                    this.error.unknown = true; 
+                  }
+                  console.log('json failure', json, this.error);
                 }
               })
             },
@@ -70,6 +84,11 @@
               } 
             }); 
             return total;
+          },
+          has_error: function () {
+            return _.find(this.error, (type) => {
+              return type ? true : false;
+            });
           },
           moment: moment,
         },
@@ -101,8 +120,9 @@
     
   <div id="abr">
   
-    <div class="alert alert-danger" v-if="alert_auth">
-      Your session has expired. <a href="/">Please log in again</a>
+    <div class="alert alert-danger" v-if="has_error()">
+      <p v-if="error.auth">Your session has expired. <a href="/">Please log in again</a></p>
+      <p v-if="error.unknown">An Unknown Error Occurred</p>
     </div>
   
     <div class="table-responsive">
