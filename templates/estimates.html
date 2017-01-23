@@ -46,6 +46,14 @@
                         });
                       }
                     })
+                    
+                    // datatables
+                    let table_selector = '#abr table';
+                    if (!$.fn.DataTable.isDataTable(table_selector) ) {
+                      $(table_selector).DataTable({
+                        scrollX: true,
+                      });
+                    }
                   }
                 } else {
                   // authentication error
@@ -107,6 +115,10 @@
 {% block container %}
     
   <style>
+    #abr table {
+      width: 100%;
+    }
+    
     tr.Accepted {
       background-color: #54fb59;  /* green */  
     }
@@ -117,7 +129,6 @@
       background-color: #8383e0;  /* blue */
     }
   </style>
-    
   <div id="abr">
   
     <div class="alert alert-danger" v-if="has_error()">
@@ -125,8 +136,8 @@
       <p v-if="error.unknown">An Unknown Error Occurred</p>
     </div>
   
-    <div class="table-responsive">
-      <table class="table table-hover table-border table-condensed">
+    <div class="xtable-responsive">
+      <table class="table nowrap table-hover table-border table-condensed">
         <thead>
           <th v-for="header in headers">{$ header $}</th>
         </thead>
@@ -147,4 +158,9 @@
       </table>
     </div>
   </div>
+{% endblock %}
+
+{% block head_js %}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.13/fh-3.1.2/r-2.1.0/datatables.min.css"/>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.13/fh-3.1.2/r-2.1.0/datatables.min.js"></script>
 {% endblock %}
