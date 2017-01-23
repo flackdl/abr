@@ -9,7 +9,7 @@
         el: '#abr',
         delimiters: ['{$', '$}'],
         data: {
-          headers: ['Id', 'Date',	'Due Date',	'Due Time',	'Customer',	'Bike',	'Tag #',	'Estimate #',	'Total Labor Cost',	'Status'],
+          headers: ['Id', 'Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
           estimates: [],
         },
         methods: {
@@ -108,7 +108,7 @@
             <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
             <td>{$ estimate.DocNumber $}</td>
             <td>${$ total_labor(estimate) $}</td>
-            <td>{$ estimate.TxnStatus $}</td>
+            <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
           </tr>
         </tbody>
       </table>
