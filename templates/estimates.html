@@ -50,9 +50,11 @@
                     // datatables
                     let table_selector = '#abr table';
                     if (!$.fn.DataTable.isDataTable(table_selector) ) {
-                      $(table_selector).DataTable({
-                        scrollX: true,
-                      });
+                      setTimeout(() => {
+                        $(table_selector).DataTable({
+                          scrollX: true,
+                        });
+                      })
                     }
                   }
                 } else {
@@ -136,27 +138,25 @@
       <p v-if="error.unknown">An Unknown Error Occurred</p>
     </div>
   
-    <div class="xtable-responsive">
-      <table class="table nowrap table-hover table-border table-condensed">
-        <thead>
-          <th v-for="header in headers">{$ header $}</th>
-        </thead>
-        <tbody>
-          <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
-            <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
-            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
-            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
-            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
-            <td>{$ estimate.CustomerRef.name $}</td>
-            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
-            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-            <td>{$ estimate.DocNumber $}</td>
-            <td>${$ total_labor(estimate) $}</td>
-            <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="table nowrap table-hover table-border table-condensed">
+      <thead>
+        <th v-for="header in headers">{$ header $}</th>
+      </thead>
+      <tbody>
+        <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
+          <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
+          <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
+          <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
+          <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
+          <td>{$ estimate.CustomerRef.name $}</td>
+          <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
+          <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
+          <td>{$ estimate.DocNumber $}</td>
+          <td>${$ total_labor(estimate) $}</td>
+          <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 {% endblock %}
 
