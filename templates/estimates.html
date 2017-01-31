@@ -10,6 +10,7 @@
         el: '#abr',
         delimiters: ['{$', '$}'],
         data: {
+          isLoading: true,
           headers: ['Id', 'Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
           estimates: [],
           error: {
@@ -29,6 +30,8 @@
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
               response.json().then((json) => {
                 
+                this.isLoading = false;
+                
                 if (json['success']) {
                   if (json['estimates']) {
                     
@@ -46,16 +49,6 @@
                         });
                       }
                     })
-                    
-                    // datatables
-                    //let table_selector = '#abr table';
-                    //if (!$.fn.DataTable.isDataTable(table_selector) ) {
-                    //  setTimeout(() => {
-                    //    $(table_selector).DataTable({
-                    //      scrollX: true,
-                    //    });
-                    //  })
-                    //}
                   }
                 } else {
                   // authentication error
@@ -132,35 +125,34 @@
     }
   </style>
   <div id="abr">
+    
+    <div v-if="isLoading"><img src="static/loading.svg"></div>
   
     <div class="alert alert-danger" v-if="has_error()">
       <p v-if="error.auth">Your session has expired. <a href="/">Please log in again</a></p>
       <p v-if="error.unknown">An Unknown Error Occurred</p>
     </div>
   
-    <table class="table nowrap table-hover table-border table-condensed">
-      <thead>
-        <th v-for="header in headers">{$ header $}</th>
-      </thead>
-      <tbody>
-        <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
-          <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
-          <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
-          <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
-          <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
-          <td>{$ estimate.CustomerRef.name $}</td>
-          <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
-          <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-          <td>{$ estimate.DocNumber $}</td>
-          <td>${$ total_labor(estimate) $}</td>
-          <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="!isLoading" class="table-responsive">
+      <table class="table nowrap table-hover table-border table-condensed">
+        <thead>
+          <th v-for="header in headers">{$ header $}</th>
+        </thead>
+        <tbody>
+          <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
+            <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
+            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
+            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
+            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
+            <td>{$ estimate.CustomerRef.name $}</td>
+            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
+            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
+            <td>{$ estimate.DocNumber $}</td>
+            <td>${$ total_labor(estimate) $}</td>
+            <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-{% endblock %}
-
-{% block head_js %}
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.13/fh-3.1.2/r-2.1.0/datatables.min.css"/>
-  <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.13/fh-3.1.2/r-2.1.0/datatables.min.js"></script>
 {% endblock %}
