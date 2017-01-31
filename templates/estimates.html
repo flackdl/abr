@@ -25,7 +25,7 @@
               unknown: false,
             }; 
             
-            //this.$http.get('/static/estimates.sample.json').then((response) => {
+            //this.$http.get('/static/estimates.sample.json', {headers: {'content-type': 'application/json'}}).then((response) => {
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
               response.json().then((json) => {
                 
@@ -48,14 +48,14 @@
                     })
                     
                     // datatables
-                    let table_selector = '#abr table';
-                    if (!$.fn.DataTable.isDataTable(table_selector) ) {
-                      setTimeout(() => {
-                        $(table_selector).DataTable({
-                          scrollX: true,
-                        });
-                      })
-                    }
+                    //let table_selector = '#abr table';
+                    //if (!$.fn.DataTable.isDataTable(table_selector) ) {
+                    //  setTimeout(() => {
+                    //    $(table_selector).DataTable({
+                    //      scrollX: true,
+                    //    });
+                    //  })
+                    //}
                   }
                 } else {
                   // authentication error

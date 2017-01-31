@@ -54,7 +54,7 @@ def quickbooks_auth(f):
     
        try:
            return f(*args, **kwargs)
-       except (AuthorizationException, QuickbooksException) as e:
+       except (AuthorizationException) as e:
            logging.info('auth exception, clearing session and redirecting') 
            if 'access_token' in session:
                del session['access_token']
@@ -232,15 +232,25 @@ def single_print_all_items():
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
     
+
+def estimate_has_tag_number(estimate):
+    for custom_field in estimate.get('CustomField', []):
+        if custom_field['Name'] == 'Tag #' and custom_field['StringValue']:
+            return True
+    return False
+    
     
 @app.route('/json/estimates')
 @quickbooks_auth
 def json_estimates():
     client = get_client()
-    estimates = Estimate.all(qb=client)
-    # TODO - implement paging since we can't filter by status (TxnStatus)
-    #estimates = Estimate.query('SELECT * from Estimate MAXRESULTS %s' % (MAX_RESULTS), qb=client)
-    return jsonify({'success': True, 'estimates': [json.loads(e.to_json()) for e in estimates]})
+    # get a half year's worth of estimates
+    query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
+            (datetime.now() - timedelta(weeks=26)).date().isoformat(), MAX_RESULTS)
+    estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
+    # remove closed estimates without a "Tag #"
+    estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+    return jsonify({'success': True, 'estimates': estimates})
     
     
 @app.route('/estimates')
