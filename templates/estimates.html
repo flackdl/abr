@@ -112,6 +112,11 @@
   <style>
     #abr table {
       width: 100%;
+      font-size: 10px;
+    }
+    
+    th.Status {
+      width: 50%;
     }
     
     tr.Accepted {
@@ -136,9 +141,9 @@
       </div>
     
       <div class="table-responsive">
-        <table class="table nowrap table-hover table-border table-condensed">
+        <table class="table table-hover table-border table-condensed">
           <thead>
-            <th v-for="header in headers">{$ header $}</th>
+            <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
             <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
