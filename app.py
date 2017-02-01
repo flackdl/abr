@@ -246,9 +246,9 @@ def json_estimates():
     client = get_client()
     # get a half year's worth of estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
-            (datetime.now() - timedelta(weeks=26)).date().isoformat(), MAX_RESULTS)
+            (datetime.now() - timedelta(weeks=8)).date().isoformat(), MAX_RESULTS)
     estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
-    # remove closed estimates without a "Tag #"
+    # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
     estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
     return jsonify({'success': True, 'estimates': estimates})
     

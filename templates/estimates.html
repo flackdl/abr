@@ -11,7 +11,7 @@
         delimiters: ['{$', '$}'],
         data: {
           isLoading: true,
-          headers: ['Id', 'Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
+          headers: ['Date', 'Due Date', 'Due Time', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
           estimates: [],
           error: {
             auth: false,
@@ -102,7 +102,7 @@
       // frequently refresh data
       setInterval(() => {
         app.get_estimates();
-      }, 60 * 1000);
+      }, 60 * 2000);
       
     </script>
 {% endblock %}
@@ -128,31 +128,33 @@
     
     <div v-if="isLoading"><img src="static/loading.svg"></div>
   
-    <div class="alert alert-danger" v-if="has_error()">
-      <p v-if="error.auth">Your session has expired. <a href="/">Please log in again</a></p>
-      <p v-if="error.unknown">An Unknown Error Occurred</p>
-    </div>
-  
-    <div v-if="!isLoading" class="table-responsive">
-      <table class="table nowrap table-hover table-border table-condensed">
-        <thead>
-          <th v-for="header in headers">{$ header $}</th>
-        </thead>
-        <tbody>
-          <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
-            <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.Id $}</td>
-            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
-            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
-            <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
-            <td>{$ estimate.CustomerRef.name $}</td>
-            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
-            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-            <td>{$ estimate.DocNumber $}</td>
-            <td>${$ total_labor(estimate) $}</td>
-            <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-if="!isLoading">
+      
+      <div class="alert alert-danger" v-if="has_error()">
+        <p v-if="error.auth">Your session has expired. <a href="/">Please log in again</a></p>
+        <p v-if="error.unknown">An Unknown Error Occurred</p>
+      </div>
+    
+      <div class="table-responsive">
+        <table class="table nowrap table-hover table-border table-condensed">
+          <thead>
+            <th v-for="header in headers">{$ header $}</th>
+          </thead>
+          <tbody>
+            <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
+              <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
+              <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
+              <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
+              <td>{$ estimate.CustomerRef.name $}</td>
+              <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
+              <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
+              <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.DocNumber $}</a></td>
+              <td>${$ total_labor(estimate) $}</td>
+              <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
