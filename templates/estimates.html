@@ -19,6 +19,11 @@
           },
         },
         methods: {
+          estimate_has_tag_number: function(e) {
+            return _.find(e['CustomField'], (field) => {
+              return field['Name'] == 'Tag #' && field['StringValue'];
+            });
+          },
           get_estimates: function() {
             // reset errors
             this.error = {
@@ -41,10 +46,21 @@
                     // group by statuses
                     let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
                     
+                    // distinguish in-shop vs not-in-shop "Pending" estimates
+                    statusGroups['Pending-In'] = [];
+                    statusGroups['Pending-Out'] = [];
+                    _.each(statusGroups['Pending'], (estimate) => {
+                      let group = this.estimate_has_tag_number(estimate) ? 'Pending-In' : 'Pending-Out';
+                      statusGroups[group].push(estimate);    
+                    });
+                    // remove since we're splitting it out into two groups
+                    delete statusGroups['Pending'];
+                    
                     // build by status order preference
-                    _.forEach(['Accepted', 'Pending', 'Closed'], (status) => {
+                    _.forEach(['Accepted', 'Pending-In', 'Pending-Out', 'Closed'], (status) => {
                       if (_.has(statusGroups, status)) {
                         _.forEach(statusGroups[status], (estimate) => {
+                          estimate.class = status;
                           this.estimates.push(estimate);
                         });
                       }
@@ -122,8 +138,11 @@
     tr.Accepted {
       background-color: #54fb59;  /* green */  
     }
-    tr.Pending {
+    tr.Pending-In {
       background-color: #f1f150;  /* yellow */
+    }
+    tr.Pending-Out {
+      background-color: red;      /* red */
     }
     tr.Closed {
       background-color: #8383e0;  /* blue */
@@ -146,7 +165,7 @@
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="estimate in estimates" :class="estimate.TxnStatus">
+            <tr v-for="estimate in estimates" :class="estimate.class">
               <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
               <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
               <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
