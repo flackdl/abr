@@ -55,7 +55,7 @@ def quickbooks_auth(f):
        try:
            return f(*args, **kwargs)
        except (AuthorizationException) as e:
-           logging.info('auth exception, clearing session and redirecting') 
+           log('auth exception, clearing session and redirecting (%s)' % e) 
            if 'access_token' in session:
                del session['access_token']
            # json requests should return contextual data vs getting redirected
@@ -63,12 +63,12 @@ def quickbooks_auth(f):
                return jsonify({'success': False, 'reason': 'authentication'})
            return redirect(url_for('dashboard'))
        except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
-           logging.info('qb exception')
-           logging.info(e)
+           log('qb exception')
+           log(e)
            raise e
        except Exception as e:
-           logging.info('other exception')
-           logging.info(e)
+           log('other exception')
+           log(e)
            raise e
    return wrapper
    
@@ -134,7 +134,11 @@ def attach_prices(bill, client):
 @app.route('/')
 @quickbooks_auth
 def dashboard():
-    return render_template('dashboard.html')
+    import bmemcached
+    mc = bmemcached.Client(os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','), os.environ.get('MEMCACHEDCLOUD_USERNAME'), os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
+    #r = mc.set('msg', 'HI')
+    msg = mc.get('msg')
+    return render_template('dashboard.html', msg=msg)
     
     
 @app.route('/callback')
@@ -192,8 +196,8 @@ def pdf():
     try:
         html.write(get_html(bill_id))
     except (ValueError, TypeError) as e:
-        logging.info('get_html exception') 
-        logging.info(e) 
+        log('get_html exception') 
+        log(e) 
         return render_template('input.html', error='Could not retrieve bill id#%s' % bill_id)
     HTML(html).write_pdf(pdf)
     return Response(pdf.getvalue(), mimetype='application/pdf')
@@ -244,12 +248,15 @@ def estimate_has_tag_number(estimate):
 @quickbooks_auth
 def json_estimates():
     client = get_client()
-    # get a half year's worth of estimates
+    
+    # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
             (datetime.now() - timedelta(weeks=8)).date().isoformat(), MAX_RESULTS)
+            
     estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
     # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
     estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+    
     return jsonify({'success': True, 'estimates': estimates})
     
     
@@ -258,6 +265,15 @@ def json_estimates():
 def estimates():
     return render_template('estimates.html', title='In-House Repairs')
     
+    
+def log(m):
+   logging.info('===============') 
+   logging.info(m) 
+   logging.info('===============') 
+   print '==============='
+   print m
+   print '==============='
+
 
 app.config['DEBUG'] = True
 app.secret_key = secret.app_secret
