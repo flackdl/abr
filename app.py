@@ -18,7 +18,7 @@ try:
     # not in version control. should define token, key & secret
     import secret
 except Exception:
-    # otherwise, expects from env
+    # otherwise retrieve from env
     class S(object): pass
     secret = S()
     secret.app_secret = os.environ.get('app_secret')
@@ -33,11 +33,15 @@ MAX_RESULTS = 1000
 
 # decorator to handle auth exceptions
 def quickbooks_auth(f):
-   @wraps(f)
-   def wrapper(*args, **kwargs):
-        
-       # not authenticated so redirect them
-       if 'access_token' not in session:
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+       
+        if not session.get('authenticated'):
+           return redirect(url_for('login'))
+           
+        # not authenticated with qbo
+        mc = get_mc_client()
+        if not mc.get('access_token'):
                
            client = QuickBooks(
                sandbox=True,
@@ -47,48 +51,65 @@ def quickbooks_auth(f):
            )
            
            # store for future use
-           session['authorize_url'] = client.get_authorize_url()
-           session['request_token'] = client.request_token
-           session['request_token_secret'] = client.request_token_secret
+           authorize_url = client.get_authorize_url()
+           mc.set('authorize_url', authorize_url)
+           mc.set('request_token', client.request_token)
+           mc.set('request_token_secret', client.request_token_secret)
            
-           return redirect(session['authorize_url'])
+           return redirect(authorize_url)
+        
+        try:
+            return f(*args, **kwargs)
+        except (AuthorizationException, QuickbooksException) as e:
+            # session appears to have expired to wipe token
+            log('quickbooks exception, clearing token and redirecting (%s)' % e) 
+            mc.delete('access_token')
+            # json requests should return contextual data vs getting redirected
+            if request.headers.get('content-type') == 'application/json':
+                return jsonify({'success': False, 'reason': 'authentication'})
+            return redirect(url_for('dashboard'))
+        except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
+            log('qb exception')
+            log(e)
+            raise e
+        except Exception as e:
+            log('other exception')
+            log(e)
+            raise e
+    return wrapper
     
-       try:
-           return f(*args, **kwargs)
-       except (AuthorizationException) as e:
-           log('auth exception, clearing session and redirecting (%s)' % e) 
-           if 'access_token' in session:
-               del session['access_token']
-           # json requests should return contextual data vs getting redirected
-           if request.headers.get('content-type') == 'application/json':
-               return jsonify({'success': False, 'reason': 'authentication'})
-           return redirect(url_for('dashboard'))
-       except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
-           log('qb exception')
-           log(e)
-           raise e
-       except Exception as e:
-           log('other exception')
-           log(e)
-           raise e
-   return wrapper
+
+def get_client():
+    mc = get_mc_client()
+    # qbo client
+    return QuickBooks(
+        sandbox=True,
+        consumer_key=secret.production_key,
+        consumer_secret=secret.production_secret,
+        access_token=mc.get('access_token'),
+        access_token_secret=mc.get('access_token_secret'),
+        company_id=mc.get('realm_id'),
+    )
+
+    
+def get_mc_client():
+    # memcache client
+    return bmemcached.Client(
+        os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','),
+        os.environ.get('MEMCACHEDCLOUD_USERNAME'),
+        os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
+    
+
+def log(m):
+   logging.info(m) 
+   print m
+
    
    
 @app.route('/static/<path:path>')
 def send_static(path):
     last_modified = datetime.now() - timedelta(days=10)
     return send_from_directory('static', path, cache_timeout=0, last_modified=last_modified)
-
-
-def get_client():
-    return QuickBooks(
-        sandbox=True,
-        consumer_key=secret.production_key,
-        consumer_secret=secret.production_secret,
-        access_token=session.get('access_token'),
-        access_token_secret=session.get('access_token_secret'),
-        company_id=session.get('realm_id'),
-    )
     
     
 def multiply_items(items):
@@ -132,10 +153,6 @@ def attach_prices(bill, client):
     return bill
     
     
-def get_mc():
-    return bmemcached.Client(os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','), os.environ.get('MEMCACHEDCLOUD_USERNAME'), os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
-    
-    
 @app.route('/')
 @quickbooks_auth
 def dashboard():
@@ -149,17 +166,23 @@ def callback():
         consumer_key=secret.production_key,
         consumer_secret=secret.production_secret,
     )
+    mc = get_mc_client()
     
-    client.authorize_url = session.get('authorize_url')
-    client.request_token = session.get('request_token')
-    client.request_token_secret = session.get('request_token_secret')
+    client.authorize_url = mc.get('authorize_url')
+    client.request_token = mc.get('request_token')
+    client.request_token_secret = mc.get('request_token_secret')
     client.set_up_service()
     client.get_access_tokens(request.args['oauth_verifier'])
     
+    log(client.authorize_url)
+    log(client.request_token)
+    log(client.request_token_secret)
+    log(request.args['oauth_verifier'])
+    
     # store for future use
-    session['realm_id'] = request.args['realmId']
-    session['access_token'] = client.access_token
-    session['access_token_secret'] = client.access_token_secret
+    mc.set('realm_id', request.args['realmId'])
+    mc.set('access_token', client.access_token)
+    mc.set('access_token_secret', client.access_token_secret)
     
     return redirect(url_for('dashboard'))
     
@@ -168,6 +191,25 @@ def callback():
 @quickbooks_auth
 def input():
     return render_template('input.html', title='Print Labels')
+    
+    
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    context = {
+        'title': 'Login',
+    }
+    # verify credentials
+    if request.method == 'POST':
+        
+        if request.form['password'] == os.environ.get('password'):
+            log('successfully logged in')
+            session['authenticated'] = True
+            return redirect(url_for('dashboard'))
+        else:
+            context['error'] = 'Incorrect password'
+            log('incorrect logged in')
+        
+    return render_template('login.html', **context)
     
     
 @app.route('/json')
@@ -265,15 +307,6 @@ def json_estimates():
 @quickbooks_auth
 def estimates():
     return render_template('estimates.html', title='In-House Repairs')
-    
-    
-def log(m):
-   logging.info('===============') 
-   logging.info(m) 
-   logging.info('===============') 
-   print '==============='
-   print m
-   print '==============='
 
 
 app.config['DEBUG'] = True

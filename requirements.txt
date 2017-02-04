@@ -17,3 +17,4 @@ WeasyPrint==0.31
 webencodings==0.5
 Werkzeug==0.11.11
 python-quickbooks==0.5.6
+python-binary-memcached==0.26.0
