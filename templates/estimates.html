@@ -113,9 +113,10 @@
         },
       });
       
+      // load initial estimate data
       app.get_estimates();
       
-      // frequently refresh data
+      // frequently refresh estimate data
       setInterval(() => {
         app.get_estimates();
       }, 60 * 2000);
@@ -167,14 +168,14 @@
           <tbody>
             <tr v-for="estimate in estimates" :class="estimate.class">
               <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
-              <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('MM/DD/YY') : '' $}</td>
-              <td>{$ estimate.DeliveryInfo ? moment(estimate.DeliveryInfo.DeliveryTime).format('h:mm a') : '' $}</td>
+              <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY') : '' $}</td>
+              <td>{$ moment(get_custom_field(estimate, 'Expiration Time'), 'h:mm a').isValid() ? get_custom_field(estimate, 'Expiration Time') : '' $}</td>
               <td>{$ estimate.CustomerRef.name $}</td>
               <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
               <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
               <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.DocNumber $}</a></td>
               <td>${$ total_labor(estimate) $}</td>
-              <td>{$ estimate.CustomerMemo ? estimate.CustomerMemo.value : '' $}</td>
+              <td>{$ estimate.PrivateNote $}</td>
             </tr>
           </tbody>
         </table>

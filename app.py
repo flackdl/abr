@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import bmemcached
 from functools import wraps
 from weasyprint import HTML
 from cStringIO import StringIO
@@ -131,14 +132,14 @@ def attach_prices(bill, client):
     return bill
     
     
+def get_mc():
+    return bmemcached.Client(os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','), os.environ.get('MEMCACHEDCLOUD_USERNAME'), os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
+    
+    
 @app.route('/')
 @quickbooks_auth
 def dashboard():
-    import bmemcached
-    mc = bmemcached.Client(os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','), os.environ.get('MEMCACHEDCLOUD_USERNAME'), os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
-    #r = mc.set('msg', 'HI')
-    msg = mc.get('msg')
-    return render_template('dashboard.html', msg=msg)
+    return render_template('dashboard.html')
     
     
 @app.route('/callback')
@@ -253,8 +254,8 @@ def json_estimates():
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
             (datetime.now() - timedelta(weeks=8)).date().isoformat(), MAX_RESULTS)
             
-    estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
     # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
+    estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
     estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
     
     return jsonify({'success': True, 'estimates': estimates})
