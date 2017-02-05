@@ -31,8 +31,8 @@ app = Flask(__name__)
 
 COLS = 3
 MAX_RESULTS = 1000
-ESTIMATE_AGE_WEEKS = os.environ.get('ESTIMATE_AGE_WEEKS', 20)
-ESTIMATE_QUERY_MINUTES = os.environ.get('ESTIMATE_QUERY_MINUTES', 2)
+ESTIMATE_AGE_WEEKS = int(os.environ.get('ESTIMATE_AGE_WEEKS', 20))
+ESTIMATE_QUERY_MINUTES = int(os.environ.get('ESTIMATE_QUERY_MINUTES', 2))
 
 
 # decorator to handle auth exceptions

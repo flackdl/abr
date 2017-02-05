@@ -99,6 +99,7 @@
             },
             // failure
             (error) => {
+              this.error.unknown = true; 
               console.log('failure', error);
             });
           },
