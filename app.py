@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import bmemcached
+from dateutil import parser
 from functools import wraps
 from weasyprint import HTML
 from cStringIO import StringIO
@@ -27,8 +28,11 @@ except Exception:
     secret.production_secret = os.environ.get('production_secret')
     
 app = Flask(__name__)
+
 COLS = 3
 MAX_RESULTS = 1000
+ESTIMATE_AGE_WEEKS = os.environ.get('ESTIMATE_AGE_WEEKS', 20)
+ESTIMATE_QUERY_MINUTES = os.environ.get('ESTIMATE_QUERY_MINUTES', 2)
 
 
 # decorator to handle auth exceptions
@@ -174,11 +178,6 @@ def callback():
     client.set_up_service()
     client.get_access_tokens(request.args['oauth_verifier'])
     
-    log(client.authorize_url)
-    log(client.request_token)
-    log(client.request_token_secret)
-    log(request.args['oauth_verifier'])
-    
     # store for future use
     mc.set('realm_id', request.args['realmId'])
     mc.set('access_token', client.access_token)
@@ -290,15 +289,34 @@ def estimate_has_tag_number(estimate):
 @app.route('/json/estimates')
 @quickbooks_auth
 def json_estimates():
+    mc = get_mc_client()
     client = get_client()
+    utcnow = datetime.utcnow()
+    
+    cached = mc.get('estimates')
+    if cached:
+        log('has cache')
+        try:
+            cached = json.loads(cached)
+            # cache is fresh
+            if cached.get('estimates') and cached.get('date') and (parser.parse(cached.get('date')) + timedelta(minutes=ESTIMATE_QUERY_MINUTES)) >= utcnow:
+                log('cache is fresh')
+                return jsonify({'success': True, 'estimates': cached['estimates']})
+        except Exception as e:
+            log('exception getting cache: %s' % e)
+        
+    log('not cached')
     
     # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
-            (datetime.now() - timedelta(weeks=8)).date().isoformat(), MAX_RESULTS)
+            (datetime.now() - timedelta(weeks=ESTIMATE_AGE_WEEKS)).date().isoformat(), MAX_RESULTS)
             
     # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
     estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
     estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+    
+    log('caching')
+    mc.set('estimates', json.dumps({'estimates': estimates, 'date': utcnow.isoformat()}))
     
     return jsonify({'success': True, 'estimates': estimates})
     
