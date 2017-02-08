@@ -41,26 +41,34 @@ def quickbooks_auth(f):
     def wrapper(*args, **kwargs):
        
         if not session.get('authenticated'):
-           return redirect(url_for('login'))
+           
+            if request.headers.get('content-type') == 'application/json':
+                return jsonify({'success': False, 'reason': 'authentication'})
+                
+            return redirect(url_for('login'))
            
         # not authenticated with qbo
         mc = get_mc_client()
         if not mc.get('access_token'):
+            
                
-           client = QuickBooks(
-               sandbox=True,
-               consumer_key=secret.production_key,
-               consumer_secret=secret.production_secret,
-               callback_url='http://%s/callback' % request.host,
-           )
+            client = QuickBooks(
+                sandbox=True,
+                consumer_key=secret.production_key,
+                consumer_secret=secret.production_secret,
+                callback_url='http://%s/callback' % request.host,
+            )
            
-           # store for future use
-           authorize_url = client.get_authorize_url()
-           mc.set('authorize_url', authorize_url)
-           mc.set('request_token', client.request_token)
-           mc.set('request_token_secret', client.request_token_secret)
+            # store for future use
+            authorize_url = client.get_authorize_url()
+            mc.set('authorize_url', authorize_url)
+            mc.set('request_token', client.request_token)
+            mc.set('request_token_secret', client.request_token_secret)
            
-           return redirect(authorize_url)
+            if request.headers.get('content-type') == 'application/json':
+                return jsonify({'success': False, 'reason': 'authentication'})
+            
+            return redirect(authorize_url)
         
         try:
             return f(*args, **kwargs)
