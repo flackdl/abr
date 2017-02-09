@@ -6,6 +6,9 @@
 {% block extra_js %}
     
     <script type="text/javascript">
+    
+      let pollingRateSeconds = parseInt('{{ polling_rate_seconds }}' || 20);
+      
       var app = new Vue({
         el: '#abr',
         delimiters: ['{$', '$}'],
@@ -135,7 +138,7 @@
       // frequently refresh estimate data
       setInterval(() => {
         app.get_estimates();
-      }, 60 * 2000);
+      }, pollingRateSeconds * 1000);
       
     </script>
 {% endblock %}

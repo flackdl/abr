@@ -32,7 +32,7 @@ app = Flask(__name__)
 COLS = 3
 MAX_RESULTS = 1000
 ESTIMATE_AGE_WEEKS = int(os.environ.get('ESTIMATE_AGE_WEEKS', 20))
-ESTIMATE_QUERY_MINUTES = int(os.environ.get('ESTIMATE_QUERY_MINUTES', 2))
+ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 20))
 
 
 # decorator to handle auth exceptions
@@ -307,7 +307,7 @@ def json_estimates():
         try:
             cached = json.loads(cached)
             # cache is fresh
-            if cached.get('estimates') and cached.get('date') and (parser.parse(cached.get('date')) + timedelta(minutes=ESTIMATE_QUERY_MINUTES)) >= utcnow:
+            if cached.get('estimates') and cached.get('date') and (parser.parse(cached.get('date')) + timedelta(seconds=ESTIMATE_QUERY_SECONDS)) >= utcnow:
                 log('cache is fresh')
                 return jsonify({'success': True, 'estimates': cached['estimates']})
         except Exception as e:
