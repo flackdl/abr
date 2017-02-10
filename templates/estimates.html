@@ -34,7 +34,6 @@
               unknown: false,
             }; 
             
-            //this.$http.get('/static/estimates.sample.json', {headers: {'content-type': 'application/json'}}).then((response) => {
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
               response.json().then((json) => {
                 
@@ -103,6 +102,9 @@
           },
           estimate_url: function (estimate) {
            return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
+          },
+          customer_url: function (estimate) {
+            return 'https://qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
           },
           get_custom_field: function (estimate, field) {
             let value = '';
@@ -188,10 +190,10 @@
             <tr v-for="estimate in estimates" :class="estimate.class">
               <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
               <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-              <td>{$ estimate.CustomerRef.name $}</td>
+              <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
               <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
               <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-              <td><a v-bind:href="estimate_url(estimate)" target="_new">{$ estimate.DocNumber $}</a></td>
+              <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
               <td>${$ total_labor(estimate) $}</td>
               <td>{$ estimate.PrivateNote $}</td>
             </tr>
