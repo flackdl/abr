@@ -120,7 +120,7 @@
             _.forEach(estimate['Line'], (item) => {
               // no tax indicates labor
               if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'NON') {
-                total += item['SalesItemLineDetail']['UnitPrice'];
+                total += (item['SalesItemLineDetail']['UnitPrice'] * item['SalesItemLineDetail']['Qty']);
               } 
             }); 
             return total;
