@@ -6,7 +6,7 @@ from dateutil import parser
 from functools import wraps
 from weasyprint import HTML
 from cStringIO import StringIO
-from flask import Flask, request
+from flask import Flask, request, flash
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
@@ -260,20 +260,31 @@ def get_items_in_stock(pos):
     return [r for r in results if r.QtyOnHand > 0]
     
     
-@app.route('/single-print-all-items')
+@app.route('/json/single-print-all-items')
+@quickbooks_auth
+def json_single_print_pages():
+    page = int(request.args.get('page') or 1)
+    
+    # build query position from the page number
+    position = (page * MAX_RESULTS) + 1
+    
+    # get all items in stock that have a positive quantity
+    results = get_items_in_stock(position)
+    items = [json.loads(item.to_json()) for item in results]
+    
+    return jsonify({"items": items})
+    
+    
+@app.route('/single-print-all-items', methods=['POST'])
 @quickbooks_auth
 def single_print_all_items():
     
-    # page through all items in stock that have a positive quantity
-    results = get_items_in_stock(1)
-    items = []
-    page = 0
-    while results:
-        page += 1
-        position = (page * MAX_RESULTS) + 1
-        items.extend(results)
-        results = get_items_in_stock(position)
-    items = [json.loads(item.to_json()) for item in items]
+    try:
+        items = json.loads(request.form['items'])['items']
+    except Exception as e:
+        flash(str(e))
+        return redirect(url_for('input'))
+    
     context = {
         'rows': (items[i:i+COLS] for i in xrange(0, len(items), COLS)),
     }

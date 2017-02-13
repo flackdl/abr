@@ -4,10 +4,6 @@
 
 {% block container %}
     <style>
-            
-        #css {
-            display: none;
-        }
         .error {
             color: red;
             font-weight: bold;
@@ -17,37 +13,107 @@
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
+    {% with flash = get_flashed_messages() %}
+        {% if flash %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+    {% endwith %}
     
-    <form action="/pdf" target="_blank">
-        <div class="form-group">
-            <label>Bill ID</label>
-            <input type="text" name="bill_id" class="form-control">
+    <div id="abr">
+        <div v-if="isLoading">
+            <h3>Building pdf, please hold...</h3>
+            <img src="static/loading.svg">
         </div>
-        <div class="form-group">
-            <textarea id="css" rows="15" cols="35" name="css"  class="form-control">{% include 'styles.css' %}</textarea>
+        
+        <div v-if="!isLoading" class="row">
+            <h2>Print Inventory Labels</h2>
+            <form action="{{ url_for('pdf') }}" class="form-group col-md-6" target="_blank">
+                <div>
+                    <label>Bill ID</label>
+                    <input type="text" name="bill_id" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Single Print
+                        <input type="checkbox" name="single_print">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Use Custom CSS
+                        <input type="checkbox" name="custom_css" v-model="customCSS">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <textarea v-if=customCSS id="css" rows="15" cols="35" name="css"  class="form-control">{% include 'styles.css' %}</textarea>
+                </div>
+                <button type="submit" class="btn btn-block btn-primary">
+                    <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print
+                </button>
+            </form>
         </div>
-        <div class="form-group">
-            <label>Single Print
-                <input type="checkbox" name="single_print">
-            </label>
+            
+        <hr>
+        
+        <div v-if="!isLoading" class="row">
+            <h4>Print a single copy of all inventory</h4>
+            <form v-on:submit.prevent="singlePrint" id="single" target="_blank" action="{{ url_for('single_print_all_items') }}" method="post">
+                <input type="hidden" v-model="allItemsJSON" name="items">
+                <button class="btn btn-info">Print</button> 
+            </form>
         </div>
-        <button type="submit" class="btn btn-block btn-primary">
-            <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print
-        </button>
-    </form>
-    
-    <ul>
-        <li>
-            <a href="{{ url_for('single_print_all_items') }}" target="_blank">Single Print All Inventory</a> 
-        </li>
-        <li>
-            <a href="#" id="custom-css">Custom CSS</button>
-        </li>
-    </ul>
+    </div>
     
     <script>
+        var useCustomCSS = false;
         $('#custom-css').click(() => {
-            $('#css').css('display', 'block');
+            useCustomCSS = !useCustomCSS;
+            if (useCustomCSS) {
+                $('#css').css('display', 'block');
+            } else {
+                $('#css').css('display', 'none');
+            }
         })
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#abr',
+        delimiters: ['{$', '$}'],
+        data: {
+            customCSS: false,
+            isLoading: false,
+            allItems: [],
+            allItemsJSON: '',
+        },
+        methods: {
+            singlePrint: function () {
+                this.isLoading = true;
+                this.allItems = [];
+                this.getAllItems(0).then((response) => {
+                    console.log('complete with %s items', this.allItems.length);
+                    this.allItemsJSON = JSON.stringify({'items': this.allItems});
+                    this.isLoading = false;
+                    setTimeout(function() {
+                        $('form#single').submit();
+                    });
+                });
+            },
+            getAllItems: function(page) {
+                let headers = {'content-type': 'application/json'};
+                return this.$http.get('{{ url_for("json_single_print_pages") }}', {'params': {'page': page}, headers: headers}).then((response) => {
+                  return response.json().then((json) => {
+                    // potentially has more pages
+                    if (json.items.length) {
+                        this.allItems = this.allItems.concat(json.items);
+                        return this.getAllItems(++page);
+                    } else {
+                        return;
+                    }
+                  });
+                })
+            },
+        },
+      })
     </script>
 {% endblock %}
