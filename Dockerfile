@@ -4,16 +4,22 @@ FROM ubuntu:14.04
 RUN apt-get update && \
     apt-get install -y \
         wget \
-        python-pip python-dev \
+        python-pip \
+        python-dev \
+        gunicorn \
         build-essential \
         python-cairo \
         libffi-dev \
-        libxml2-dev libxslt1-dev \
+        libxml2-dev \
+        libxslt1-dev \
         libz-dev \
         libpango1.0-0
 
 # upgrade easy setup
 RUN wget https://bootstrap.pypa.io/ez_setup.py -O - | python
+
+# upgrade pip
+RUN pip install --upgrade setuptools pip
 
 # add app
 ADD . /app/
@@ -23,4 +29,4 @@ WORKDIR /app
 RUN pip install -qr /app/requirements.txt
 
 # run flask wsgi app
-CMD python /app/app.py
+CMD gunicorn -w 4 app:app
