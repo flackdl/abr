@@ -343,7 +343,7 @@ def json_estimates():
 @app.route('/estimates')
 @quickbooks_auth
 def estimates():
-    return render_template('estimates.html', title='In-House Repairs', polling_rate_seconds=ESTIMATE_QUERY_SECONDS)
+    return render_template('estimates.html', title='In-House Repairs')
 
 
 app.config['DEBUG'] = True
