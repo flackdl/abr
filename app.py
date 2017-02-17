@@ -81,7 +81,7 @@ def quickbooks_auth(f):
         
         try:
             return f(*args, **kwargs)
-        except (AuthorizationException, QuickbooksException) as e:
+        except (AuthorizationException) as e:
             # session appears to have expired to wipe token
             log('quickbooks exception, clearing token and redirecting (%s)' % e) 
             mc.delete('access_token')
