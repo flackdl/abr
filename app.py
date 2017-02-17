@@ -1,5 +1,6 @@
 import os
 import json
+import uuid
 import logging
 import bmemcached
 from dateutil import parser
@@ -35,6 +36,10 @@ ESTIMATE_AGE_WEEKS = int(os.environ.get('ESTIMATE_AGE_WEEKS', 20))
 ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 20))
 
 
+def get_key(key):
+    return '%s:%s' % (session['uid'], key)
+
+
 # decorator to handle auth exceptions
 def quickbooks_auth(f):
     @wraps(f)
@@ -46,12 +51,16 @@ def quickbooks_auth(f):
                 return jsonify({'success': False, 'reason': 'authentication'})
                 
             return redirect(url_for('login'))
+        
+        if 'uid' not in session:
+            session['uid'] = uuid.uuid4()
            
         # not authenticated with qbo
         mc = get_mc_client()
         if not mc.get('access_token'):
             
-               
+            log('no access token')
+            
             client = QuickBooks(
                 sandbox=True,
                 consumer_key=secret.production_key,
@@ -61,9 +70,9 @@ def quickbooks_auth(f):
            
             # store for future use
             authorize_url = client.get_authorize_url()
-            mc.set('authorize_url', authorize_url)
-            mc.set('request_token', client.request_token)
-            mc.set('request_token_secret', client.request_token_secret)
+            mc.set(get_key('authorize_url'), authorize_url)
+            mc.set(get_key('request_token'), client.request_token)
+            mc.set(get_key('request_token_secret'), client.request_token_secret)
            
             if request.headers.get('content-type') == 'application/json':
                 return jsonify({'success': False, 'reason': 'authentication'})
@@ -180,9 +189,9 @@ def callback():
     )
     mc = get_mc_client()
     
-    client.authorize_url = mc.get('authorize_url')
-    client.request_token = mc.get('request_token')
-    client.request_token_secret = mc.get('request_token_secret')
+    client.authorize_url = mc.get(get_key('authorize_url'))
+    client.request_token = mc.get(get_key('request_token'))
+    client.request_token_secret = mc.get(get_key('request_token_secret'))
     client.set_up_service()
     client.get_access_tokens(request.args['oauth_verifier'])
     
