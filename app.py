@@ -1,8 +1,8 @@
 import os
 import json
 import uuid
+import redis
 import logging
-import bmemcached
 from dateutil import parser
 from functools import wraps
 from weasyprint import HTML
@@ -55,8 +55,9 @@ def quickbooks_auth(f):
         if 'uid' not in session:
             session['uid'] = uuid.uuid4()
            
-        # not authenticated with qbo
         mc = get_mc_client()
+        
+        # not authenticated with qbo
         if not mc.get('access_token'):
             
             log('no access token')
@@ -114,11 +115,7 @@ def get_client():
 
     
 def get_mc_client():
-    # memcache client
-    return bmemcached.Client(
-        os.environ.get('MEMCACHEDCLOUD_SERVERS').split(','),
-        os.environ.get('MEMCACHEDCLOUD_USERNAME'),
-        os.environ.get('MEMCACHEDCLOUD_PASSWORD'))
+    return redis.from_url(os.environ.get("REDIS_URL"))
     
 
 def log(m):
