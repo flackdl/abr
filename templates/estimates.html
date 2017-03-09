@@ -20,8 +20,15 @@
             auth: false,
             unknown: false,
           },
+          estimate_showing_notes: null,
         },
         methods: {
+          show_estimate_notes: function(e) {
+            this.estimate_showing_notes = e;
+          },
+          should_show_estimate_notes: function(e) {
+            return this.estimate_showing_notes && e.Id == this.estimate_showing_notes.Id;
+          },
           estimate_has_tag_number: function(e) {
             return _.find(e['CustomField'], (field) => {
               return field['Name'] == 'Tag #' && field['StringValue'];
@@ -169,6 +176,9 @@
     tr.Closed {
       background-color: #8383e0;  /* blue */
     }
+    tr a {
+      color: black;
+    }
   </style>
   <div id="abr">
     
@@ -195,7 +205,7 @@
               <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
               <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
               <td>${$ total_labor(estimate) $}</td>
-              <td>{$ estimate.PrivateNote $}</td>
+              <td><button class="btn btn-xs" v-on:click="show_estimate_notes(estimate)" v-if="!should_show_estimate_notes(estimate)">Notes</button><span v-if="should_show_estimate_notes(estimate)">{$ estimate.PrivateNote $}</span></td>
             </tr>
           </tbody>
         </table>
