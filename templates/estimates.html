@@ -20,21 +20,16 @@
             auth: false,
             unknown: false,
           },
-          estimate_showing_notes: null,
+          max_length_note: 100,
         },
         methods: {
-          show_estimate_notes: function(e) {
-            this.estimate_showing_notes = e;
-          },
-          should_show_estimate_notes: function(e) {
-            return this.estimate_showing_notes && e.Id == this.estimate_showing_notes.Id;
-          },
           estimate_has_tag_number: function(e) {
             return _.find(e['CustomField'], (field) => {
               return field['Name'] == 'Tag #' && field['StringValue'];
             });
           },
           get_estimates: function() {
+            
             // reset errors
             this.error = {
               auth: false,
@@ -42,6 +37,7 @@
             }; 
             
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
+              
               response.json().then((json) => {
                 
                 this.isLoading = false;
@@ -88,7 +84,10 @@
                           this.estimates.push(estimate);
                         });
                       }
-                    })
+                    });
+                    
+                    // notes tooltip
+                    $('[data-toggle="tooltip"]').tooltip();
                   }
                 } else {
                   // authentication error
@@ -103,6 +102,7 @@
             },
             // failure
             (error) => {
+              
               this.error.unknown = true; 
               console.log('failure', error);
             });
@@ -136,6 +136,12 @@
             return _.find(this.error, (type) => {
               return type ? true : false;
             });
+          },
+          get_note_short: function(e) {
+            if (e.PrivateNote.length >= this.max_length_note) {
+              return e.PrivateNote.slice(0, this.max_length_note - 1) + '...';
+            }
+            return e.PrivateNote;
           },
           moment: moment,
         },
@@ -197,7 +203,7 @@
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="estimate in estimates" :class="estimate.class">
+            <tr v-for="estimate in estimates" :class="estimate.class" data-toggle="tooltip" v-bind:title="estimate.PrivateNote">
               <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
               <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
               <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
@@ -205,7 +211,7 @@
               <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
               <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
               <td>${$ total_labor(estimate) $}</td>
-              <td><button class="btn btn-xs" v-on:click="show_estimate_notes(estimate)" v-if="!should_show_estimate_notes(estimate)">Notes</button><span v-if="should_show_estimate_notes(estimate)">{$ estimate.PrivateNote $}</span></td>
+              <td>{$ get_note_short(estimate) $}</td>
             </tr>
           </tbody>
         </table>
