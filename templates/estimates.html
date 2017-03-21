@@ -20,7 +20,8 @@
             auth: false,
             unknown: false,
           },
-          max_length_note: 100,
+          max_length_note: 250,
+          isRequestingData: false,
         },
         methods: {
           estimate_has_tag_number: function(e) {
@@ -29,6 +30,12 @@
             });
           },
           get_estimates: function() {
+            if (this.isRequestingData) {
+              console.log('already fetching data...');
+              return;
+            }
+            
+            this.isRequestingData = true;
             
             // reset errors
             this.error = {
@@ -37,6 +44,7 @@
             }; 
             
             this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
+              this.isRequestingData = false;
               
               response.json().then((json) => {
                 
@@ -98,10 +106,11 @@
                   }
                   console.log('json failure', json, this.error);
                 }
-              })
+              });
             },
             // failure
             (error) => {
+              this.isRequestingData = false;
               
               this.error.unknown = true; 
               console.log('failure', error);
@@ -138,7 +147,7 @@
             });
           },
           get_note_short: function(e) {
-            if (e.PrivateNote.length >= this.max_length_note) {
+            if (e.PrivateNote && e.PrivateNote.length >= this.max_length_note) {
               return e.PrivateNote.slice(0, this.max_length_note - 1) + '...';
             }
             return e.PrivateNote;
@@ -165,9 +174,8 @@
       width: 100%;
       font-size: 10px;
     }
-    
-    th.Status {
-      width: 25%;
+    #abr table td {
+      min-height: 40px;
     }
     
     tr.Accepted {
@@ -203,7 +211,7 @@
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="estimate in estimates" :class="estimate.class" data-toggle="tooltip" v-bind:title="estimate.PrivateNote">
+            <tr v-for="estimate in estimates" :class="estimate.class" data-toggle="tooltip" data-placement="bottom" v-bind:title="estimate.PrivateNote">
               <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
               <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
               <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
