@@ -115,10 +115,10 @@
             });
           },
           estimate_url: function (estimate) {
-           return 'https://qdc.qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
+           return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
           },
           customer_url: function (estimate) {
-            return 'https://qdc.qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
+            return 'https://qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
           },
           get_custom_field: function (estimate, field) {
             let value = '';
