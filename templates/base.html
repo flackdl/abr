@@ -55,11 +55,9 @@
 </nav>
 
 <div class="{{ container_class | default('container') }}">
-    {% block container %}
-    {% endblock %}
+    {% block container %}{% endblock %}
 </div>
 
-{% block extra_js %}
-{% endblock %}
+{% block extra_js %}{% endblock %}
 </body>
 </html>
