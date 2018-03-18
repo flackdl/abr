@@ -1,8 +1,8 @@
-#abr table {
+table {
     width: 100%;
     font-size: 10px;
 }
-#abr table td {
+table td {
     min-height: 40px;
 }
 th.Status {
