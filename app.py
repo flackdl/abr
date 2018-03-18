@@ -12,9 +12,10 @@ from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.item import Item
 from quickbooks.objects.estimate import Estimate
-from quickbooks.exceptions import AuthorizationException, QuickbooksException, UnsupportedException, GeneralException, ValidationException, SevereException
-from flask import render_template, render_template_string, Response, session, url_for, redirect, jsonify, send_from_directory
+from quickbooks.exceptions import AuthorizationException, UnsupportedException, GeneralException, ValidationException, SevereException
+from flask import render_template, Response, session, url_for, redirect, jsonify, send_from_directory
 from datetime import datetime, timedelta
+
 # quickbooks auth values
 try:
     # not in version control. should define token, key & secret
@@ -23,10 +24,12 @@ except Exception:
     # otherwise retrieve from env
     class S(object): pass
     secret = S()
+    secret.password = os.environ.get('password')
     secret.app_secret = os.environ.get('app_secret')
     secret.production_token = os.environ.get('production_token')
     secret.production_key = os.environ.get('production_key')
     secret.production_secret = os.environ.get('production_secret')
+    secret.REDIS_URL = os.environ.get('REDIS_URL')
     
 app = Flask(__name__)
 
@@ -82,7 +85,7 @@ def quickbooks_auth(f):
         
         try:
             return f(*args, **kwargs)
-        except (AuthorizationException) as e:
+        except AuthorizationException as e:
             # session appears to have expired to wipe token
             log('quickbooks exception, clearing token and redirecting (%s)' % e) 
             mc.delete('access_token')
@@ -115,15 +118,14 @@ def get_client():
 
     
 def get_mc_client():
-    return redis.from_url(os.environ.get("REDIS_URL"))
-    
+    return redis.from_url(secret.REDIS_URL)
+
 
 def log(m):
-   logging.info(m) 
-   print m
+    logging.info(m)
+    print m
 
-   
-   
+
 @app.route('/static/<path:path>')
 def send_static(path):
     last_modified = datetime.now() - timedelta(days=10)
@@ -214,7 +216,7 @@ def login():
     # verify credentials
     if request.method == 'POST':
         
-        if request.form['password'] == os.environ.get('password'):
+        if request.form['password'] == secret.password:
             log('successfully logged in')
             session['authenticated'] = True
             return redirect(url_for('dashboard'))
@@ -350,6 +352,12 @@ def json_estimates():
 @quickbooks_auth
 def estimates():
     return render_template('estimates.html', title='In-House Repairs')
+
+
+@app.route('/needed-parts')
+@quickbooks_auth
+def needed_parts():
+    return render_template('needed-parts.html', title='Needed Parts')
 
 
 app.config['DEBUG'] = True
