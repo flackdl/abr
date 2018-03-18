@@ -9,6 +9,9 @@
     let pollingRateSeconds = 10;
     let app = new Vue({
       mixins: [estimatesMixin],
+      data: {
+        headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status', ],
+      },
     });
 
     // load initial estimate data

@@ -8,14 +8,28 @@
     let pollingRateSeconds = 10;
     let app = new Vue({
       mixins: [estimatesMixin],
+      data: {
+        headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+      },
+      methods: {
+        estimates_parts: function () {
+          return this.get_estimates().then(
+            (res) => {
+              console.log(res);
+            },
+            (error) => {
+              console.log(error);
+            });
+        },
+      },
     });
 
     // load initial estimate data
-    app.get_estimates();
+    app.estimates_parts();
 
     // frequently refresh estimate data
     setInterval(() => {
-      app.get_estimates();
+      app.estimates_parts();
     }, pollingRateSeconds * 1000);
 
   </script>
@@ -43,8 +57,10 @@
             <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
             <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
             <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
-            <td>${$ total_labor(estimate) $}</td>
-            <td>{$ get_notes(estimate) $}</td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
           </tr>
           </tbody>
         </table>

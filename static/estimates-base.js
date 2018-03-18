@@ -3,13 +3,12 @@ let estimatesMixin = {
   delimiters: ['{$', '$}'],
   data: {
     isLoading: true,
-    headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Total Labor Cost', 'Status'],
     estimates: [],
     error: {
       auth: false,
       unknown: false,
     },
-    max_length_note: 250,
+    maxLengthNote: 250,
     isRequestingData: false,
     showingEstimateNotes: null,
   },
@@ -33,10 +32,10 @@ let estimatesMixin = {
         unknown: false,
       };
 
-      this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
+      return this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
           this.isRequestingData = false;
 
-          response.json().then((json) => {
+          return response.json().then((json) => {
 
             this.isLoading = false;
 
@@ -93,6 +92,7 @@ let estimatesMixin = {
               }
               console.log('json failure', json, this.error);
             }
+            return this.estimates;
           });
         },
         // failure
@@ -145,8 +145,8 @@ let estimatesMixin = {
         return e.PrivateNote;
       }
       // truncated notes
-      else if (e.PrivateNote && e.PrivateNote.length >= this.max_length_note) {
-        return e.PrivateNote.slice(0, this.max_length_note - 1) + '...';
+      else if (e.PrivateNote && e.PrivateNote.length >= this.maxLengthNote) {
+        return e.PrivateNote.slice(0, this.maxLengthNote - 1) + '...';
       }
       return e.PrivateNote;
     },
