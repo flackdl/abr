@@ -1,0 +1,4 @@
+<div class="alert alert-danger" v-if="has_error()">
+  <p v-if="error.auth">Your session has expired. <a href="/">Please log in again</a></p>
+  <p v-if="error.unknown">An Unknown Error Occurred</p>
+</div>
