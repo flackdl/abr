@@ -24,9 +24,9 @@ A dynamic listing of all active/complete/pending repairs
 - push docker image to heroku
   - `docker push registry.heroku.com/abr-labels/web`
   
-  *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
-  - heroku redis:cli -a abr-labels -c abr-labels
-  - mget access_token access_token_secret
+ *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
+ - heroku redis:cli -a abr-labels -c abr-labels
+ - mget access_token access_token_secret
   
-  *Insert production auth values into dev redis instance*
-  - mset access_token BLAH access_token_secret BLAH
+ *Insert production auth values into dev redis instance*
+ - mset access_token BLAH access_token_secret BLAH
