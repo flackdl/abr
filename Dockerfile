@@ -22,7 +22,7 @@ RUN wget https://bootstrap.pypa.io/ez_setup.py -O - | python
 RUN pip install --upgrade setuptools pip
 
 # add app
-ADD old /app/
+ADD . /app/
 WORKDIR /app
 
 # install python dependencies
