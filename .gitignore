@@ -1,7 +1,5 @@
-secret.py
-run_docker.sh
-
-static/estimates.sample.json
+.idea/
+db.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

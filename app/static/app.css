@@ -1,0 +1,25 @@
+table {
+    width: 100%;
+    font-size: 10px;
+}
+table td {
+    min-height: 40px;
+}
+th.Status {
+    width: 50%;
+}
+tr.Accepted {
+    background-color: #54fb59;  /* green */
+}
+tr.Pending-In {
+    background-color: #f1f150;  /* yellow */
+}
+tr.Pending-Out {
+    background-color: rgba(255, 0, 0, 0.55);      /* red */
+}
+tr.Closed {
+    background-color: #8383e0;  /* blue */
+}
+tr a {
+    color: black;
+}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{%  comment %}
+{% set tab = 'needed-parts' %}
+{% set container_class = 'container-fluid' %}
+{% endcomment %}
+
+{% block extra_js %}
+  <script src="/static/estimates-base.js"></script>
+  <script>
+    let pollingRateSeconds = 10;
+    let app = new Vue({
+      mixins: [estimatesMixin],
+      data: {
+        headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+      },
+      methods: {
+        estimates_parts: function () {
+          return this.get_estimates().then(
+            (res) => {
+              console.log(res);
+            },
+            (error) => {
+              console.log(error);
+            });
+        },
+      },
+    });
+
+    // load initial estimate data
+    app.estimates_parts();
+
+    // frequently refresh estimate data
+    setInterval(() => {
+      app.estimates_parts();
+    }, pollingRateSeconds * 1000);
+
+  </script>
+{% endblock %}
+
+{% block container %}
+
+  <div id="abr">
+    <div v-if="isLoading"><img src="static/loading.svg"></div>
+
+    <div v-if="!isLoading">
+
+      {% include 'includes/session_expired.html' %}
+
+      <div class="table-responsive">
+        <table class="table table-hover table-border table-condensed">
+          <thead>
+          <th v-for="header in headers" :class="header">{$ header $}</th>
+          </thead>
+          <tbody>
+          <tr v-for="estimate in estimates" :class="estimate.class" v-on:click="show_estimate_notes(estimate)">
+            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
+            <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+            <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
+            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
+            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
+            <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
+            <td>{$ '' $}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block head_js %}
+{% endblock %}
