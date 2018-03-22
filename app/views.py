@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.shortcuts import render
+
+# Create your views here.
 import json
 from dateutil import parser
 from django.contrib import messages
@@ -12,10 +18,10 @@ from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.conf import settings
-
-# env/auth values
-from app.utils import quickbooks_auth, get_mc_client, get_key, log, get_client, attach_prices, get_html, \
-    get_items_in_stock, estimate_has_tag_number
+from app.utils import (
+    quickbooks_auth, get_mc_client, get_key, log, get_client, attach_prices,
+    get_items_in_stock, estimate_has_tag_number, get_html,
+)
 
 
 @quickbooks_auth
