@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import json
+from cStringIO import StringIO
 from dateutil import parser
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from weasyprint import HTML
-from io import StringIO
 from quickbooks import QuickBooks
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.estimate import Estimate
@@ -49,7 +49,7 @@ def callback(request):
 
 @quickbooks_auth
 def input(request):
-    return render(request, 'input.html', {'title': 'Print Labels'})
+    return render(request, 'input.html', {'title': 'Print Labels', 'tab': 'labels'})
 
 
 def login(request):
@@ -173,9 +173,9 @@ def json_estimates(request):
 
 @quickbooks_auth
 def estimates(request):
-    return render(request, 'estimates.html', {'title': 'In-House Repairs'})
+    return render(request, 'estimates.html', {'title': 'In-House Repairs', 'tab': 'estimates'})
 
 
 @quickbooks_auth
 def needed_parts(request):
-    return render(request, 'needed-parts.html', {'title': 'Needed Parts'})
+    return render(request, 'needed-parts.html', {'title': 'Needed Parts', 'tab': 'needed-parts'})

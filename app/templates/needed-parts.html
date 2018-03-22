@@ -18,6 +18,7 @@
       },
       methods: {
         get_estimates_parts: function () {
+          // expand estimates by part
           return this.get_estimates().then(
             (estimates) => {
               let estimates_parts = [];
@@ -29,7 +30,6 @@
                   });
                 });
               });
-              console.log(estimates_parts);
               this.estimates_parts = estimates_parts;
             },
             (error) => {
@@ -83,7 +83,7 @@
             <td>{$ get_custom_field(estimate_part.estimate, 'Bike/Model') $}</td>
             <td>{$ get_custom_field(estimate_part.estimate, 'Tag #') $}</td>
             <td><a v-bind:href="estimate_url(estimate_part.estimate)" target="qbo">{$ estimate_part.estimate.DocNumber $}</a></td>
-            <td>{$ '' $}</td>
+            <td>{$ estimate_part.part.SalesItemLineDetail.Qty $}</td>
             <td>{$ '' $}</td>
             <td>{$ '' $}</td>
             <td>{$ estimate_part.part.Description $}</td>

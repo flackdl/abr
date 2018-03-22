@@ -1,8 +1,8 @@
+{% extends 'base.html' %}
 {%  comment TODO %}
 {% set tab = 'labels' %}
 {% endcomment %}
 
-{% extends 'base.html' %}
 
 {% block container %}
     <style>
@@ -15,12 +15,12 @@
     {% if error %}
         <div class="error">{{ error }}</div>
     {% endif %}
-    {% with flash = get_flashed_messages() %}
-        {% if flash %}
-        <div class="error">{{ error }}</div>
-        {% endif %}
-    {% endwith %}
-    
+    {% if messages %}
+      {% for message in messages %}
+        <div class="error">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
     <div id="abr">
         <div v-if="isLoading">
             <h3>Building pdf, please hold...</h3>
@@ -103,7 +103,7 @@
             },
             getAllItems: function(page) {
                 let headers = {'content-type': 'application/json'};
-                return this.$http.get('{% url "json_single_print_pages" %}', {'params': {'page': page}, headers: headers}).then((response) => {
+                return this.$http.get('{% url "json_single_print_all_items" %}', {'params': {'page': page}, headers: headers}).then((response) => {
                   return response.json().then((json) => {
                     // potentially has more pages
                     if (json.items.length) {

@@ -11,9 +11,9 @@
                 {% for item in row %}
                     <div class="col">
                         <div class="item">
-                            <div class="description">{{ item['Description'][:90] }}</div>
-                            <div class="code">{% if 'ItemBasedExpenseLineDetail' in item %}{{ item['ItemBasedExpenseLineDetail']['ItemRef']['name'] }}{% else %}{{ item['FullyQualifiedName'] }}{% endif %}</div>
-                            <div class="price">{% if item.get('UnitPrice') %}${{ item['UnitPrice'] }}{% endif %}</div>
+                            <div class="description">{{ item.Description|slice:":90" }}</div>
+                            <div class="code">{% if 'ItemBasedExpenseLineDetail' in item %}{{ item.ItemBasedExpenseLineDetail.ItemRef.name }}{% else %}{{ item.FullyQualifiedName }}{% endif %}</div>
+                            <div class="price">{% if item.UnitPrice %}${{ item.UnitPrice }}{% endif %}</div>
                         </div>
                     </div>
                 {% endfor %}

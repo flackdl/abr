@@ -6,7 +6,8 @@ from functools import wraps
 import redis
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from quickbooks import QuickBooks
 from quickbooks.exceptions import (
@@ -123,10 +124,10 @@ def get_html(request, bill_id):
     single_print = request.GET.get('single_print', '')
     items = multiply_items(bill['Line'], single_print)
     context = {
-        'rows': (items[i:i+settings.COLS] for i in range(0, len(items), settings.COLS)),
+        'rows': [items[i:i+settings.COLS] for i in range(0, len(items), settings.COLS)],
         'css': css,
     }
-    return render(request, 'labels.html', context)
+    return render_to_string('labels.html', context)
 
 
 def get_items_for_bill(bill, client):
