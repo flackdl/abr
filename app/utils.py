@@ -84,16 +84,6 @@ def quickbooks_auth(f):
 
 def get_client():
     mc = get_mc_client()
-    print('===============')
-    print(dict(
-        sandbox=True,
-        consumer_key=settings.PRODUCTION_KEY,
-        consumer_secret=settings.PRODUCTION_SECRET,
-        access_token=mc.get('access_token'),
-        access_token_secret=mc.get('access_token_secret'),
-        company_id=mc.get('realm_id'),
-    ))
-    print('===============')
     # qbo client
     return QuickBooks(
         sandbox=True,

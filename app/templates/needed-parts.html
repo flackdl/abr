@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% comment TODO %}
 {% set tab = 'needed-parts' %}
@@ -6,33 +7,55 @@
 {% endcomment %}
 
 {% block extra_js %}
-  <script src="/static/estimates-base.js"></script>
+  <script src="{% static 'estimates-base.js' %}"></script>
   <script>
     let pollingRateSeconds = 10;
     let app = new Vue({
       mixins: [estimatesMixin],
       data: {
         headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+        estimates_parts: [],
       },
       methods: {
-        estimates_parts: function () {
+        get_estimates_parts: function () {
           return this.get_estimates().then(
-            (res) => {
-              console.log(res);
+            (estimates) => {
+              let estimates_parts = [];
+              _.forEach(estimates, (item) => {
+                _.forEach(this.parts(item), (part) => {
+                  estimates_parts.push({
+                    estimate: item,
+                    part: part,
+                  });
+                });
+              });
+              console.log(estimates_parts);
+              this.estimates_parts = estimates_parts;
             },
             (error) => {
               console.log(error);
             });
         },
+        parts: function (estimate) {
+          // returns only taxable parts (non service/labor items)
+          let estimate_parts = [];
+          _.forEach(estimate['Line'], (item) => {
+            // tax indicates part
+            if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
+              estimate_parts.push(item);
+            }
+          });
+          return estimate_parts;
+        },
       },
     });
 
     // load initial estimate data
-    app.estimates_parts();
+    app.get_estimates_parts();
 
     // frequently refresh estimate data
     setInterval(() => {
-      app.estimates_parts();
+      app.get_estimates_parts();
     }, pollingRateSeconds * 1000);
 
   </script>
@@ -53,17 +76,17 @@
           <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-          <tr v-for="estimate in estimates" :class="estimate.class" v-on:click="show_estimate_notes(estimate)">
-            <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
-            <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-            <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
-            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
-            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-            <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
+          <tr v-for="estimate_part in estimates_parts" :class="estimate_part.estimate.class" v-on:click="show_estimate_notes(estimate_part.estimate)">
+            <td>{$ moment(estimate_part.estimate.TxnDate).format('MM/DD/YY') $}</td>
+            <td>{$ estimate_part.estimate.ExpirationDate ? moment(estimate_part.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+            <td><a v-bind:href="customer_url(estimate_part.estimate)" target="qbo">{$ estimate_part.estimate.CustomerRef.name $}</a></td>
+            <td>{$ get_custom_field(estimate_part.estimate, 'Bike/Model') $}</td>
+            <td>{$ get_custom_field(estimate_part.estimate, 'Tag #') $}</td>
+            <td><a v-bind:href="estimate_url(estimate_part.estimate)" target="qbo">{$ estimate_part.estimate.DocNumber $}</a></td>
             <td>{$ '' $}</td>
             <td>{$ '' $}</td>
             <td>{$ '' $}</td>
-            <td>{$ '' $}</td>
+            <td>{$ estimate_part.part.Description $}</td>
           </tr>
           </tbody>
         </table>

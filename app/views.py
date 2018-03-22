@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-from django.shortcuts import render
-
-# Create your views here.
 import json
 from dateutil import parser
 from django.contrib import messages
