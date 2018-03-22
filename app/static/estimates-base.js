@@ -21,7 +21,7 @@ let estimatesMixin = {
     get_estimates: function() {
       if (this.isRequestingData) {
         console.log('already fetching data...');
-        return;
+        return Promise.resolve();
       }
 
       this.isRequestingData = true;
@@ -92,7 +92,6 @@ let estimatesMixin = {
               }
               console.log('json failure', json, this.error);
             }
-            return this.estimates;
           });
         },
         // failure

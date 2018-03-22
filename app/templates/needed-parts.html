@@ -2,7 +2,6 @@
 {% load static %}
 
 {% comment TODO %}
-{% set tab = 'needed-parts' %}
 {% set container_class = 'container-fluid' %}
 {% endcomment %}
 
@@ -20,9 +19,9 @@
         get_estimates_parts: function () {
           // expand estimates by part
           return this.get_estimates().then(
-            (estimates) => {
+            () => {
               let estimates_parts = [];
-              _.forEach(estimates, (item) => {
+              _.forEach(this.estimates, (item) => {
                 _.forEach(this.parts(item), (part) => {
                   estimates_parts.push({
                     estimate: item,
