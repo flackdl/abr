@@ -45,7 +45,7 @@ def quickbooks_auth(f):
             log('no access token')
 
             client = QuickBooks(
-                sandbox=True,
+                #sandbox=True,
                 consumer_key=settings.PRODUCTION_KEY,
                 consumer_secret=settings.PRODUCTION_SECRET,
                 callback_url='http://%s/callback' % request.get_host(),
@@ -87,7 +87,7 @@ def get_client():
     mc = get_mc_client()
     # qbo client
     return QuickBooks(
-        sandbox=True,
+        #sandbox=True,
         consumer_key=settings.PRODUCTION_KEY,
         consumer_secret=settings.PRODUCTION_SECRET,
         access_token=mc.get('access_token'),

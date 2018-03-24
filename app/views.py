@@ -27,7 +27,7 @@ def dashboard(request):
 
 def callback(request):
     client = QuickBooks(
-        sandbox=True,
+        #sandbox=True,
         consumer_key=settings.PRODUCTION_KEY,
         consumer_secret=settings.PRODUCTION_SECRET,
     )
@@ -139,6 +139,7 @@ def single_print_all_items(request):
 
 @quickbooks_auth
 def json_estimates(request):
+    return JsonResponse({'success': True, 'estimates': json.loads(open('estimates.json').read())['estimates']})  # TODO
     mc = get_mc_client()
     client = get_client()
     utcnow = datetime.utcnow()
