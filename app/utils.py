@@ -153,12 +153,13 @@ def estimate_has_tag_number(estimate):
     return False
 
 
-def get_inventory_items(pos, in_stock=True):
+def get_inventory_items(pos, all_stock=False):
     client = get_client()
     results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.MAX_RESULTS), qb=client)
 
-    # conditionally limit items that are in stock
-    if in_stock:
-        return [r for r in results if r.QtyOnHand > 0]
+    # conditionally return all items regardless if they're in stock or not
+    if all_stock:
+        return results
 
-    return results
+    # limit items that are in stock
+    return [r for r in results if r.QtyOnHand > 0]

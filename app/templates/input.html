@@ -89,7 +89,7 @@
             singlePrint: function () {
                 this.isLoading = true;
                 this.allInventoryItems = [];
-                this.getAllItems(0).then((response) => {
+                this.getAllInventoryItems(0).then((response) => {
                     console.log('complete with %s items', this.allInventoryItems.length);
                     this.allInventoryItemsJSON = JSON.stringify({'items': this.allInventoryItems});
                     this.isLoading = false;

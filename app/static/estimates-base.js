@@ -13,16 +13,25 @@ let estimatesMixin = {
 		showingEstimateNotes: null,
 		allInventoryItems: [],
 		allInventoryItemsJSON: '',
+		isFetchingInventory: false,
 	},
 	methods: {
-		getAllItems: function(page) {
+		getAllInventoryItems: function(page, all_stock) {
+			this.isFetchingInventory = true;
 			let headers = {'content-type': 'application/json'};
-			return this.$http.get('/json/inventory-items', {'params': {'page': page}, headers: headers}).then((response) => {
+			let params = {'page': page};
+			// conditionally get all items regardless of stock
+			if (all_stock) {
+				params['all_stock'] = true;
+			}
+			return this.$http.get('/json/inventory-items', {'params': params, headers: headers}).then((response) => {
 				return response.json().then((json) => {
 					// potentially has more pages
 					if (json.items.length) {
 						this.allInventoryItems = this.allInventoryItems.concat(json.items);
-						return this.getAllItems(++page);
+						return this.getAllInventoryItems(++page, all_stock);
+					} else {
+						this.isFetchingInventory = false;
 					}
 				});
 			})

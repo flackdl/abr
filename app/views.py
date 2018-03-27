@@ -171,13 +171,13 @@ def needed_parts(request):
 @quickbooks_auth
 def json_inventory_items(request):
     page = int(request.GET.get('page') or 1)
-    in_stock = 'in_stock' in request.GET
+    all_stock = 'all_stock' in request.GET
 
     # build query position from the page number
     position = (page * settings.MAX_RESULTS) + 1
 
     # get all inventory items (conditionally in stock)
-    results = get_inventory_items(position, in_stock=in_stock)
+    results = get_inventory_items(position, all_stock=all_stock)
     items = [json.loads(item.to_json()) for item in results]
 
     return JsonResponse({"items": items})
