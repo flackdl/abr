@@ -16,7 +16,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from app.utils import (
     quickbooks_auth, get_mc_client, get_key, log, get_client, attach_prices,
-    get_items_in_stock, estimate_has_tag_number, get_html,
+    get_inventory_items, estimate_has_tag_number, get_html,
 )
 
 
@@ -102,20 +102,6 @@ def pdf(request):
 
 
 @quickbooks_auth
-def json_single_print_pages(request):
-    page = int(request.GET.get('page') or 1)
-
-    # build query position from the page number
-    position = (page * settings.MAX_RESULTS) + 1
-
-    # get all items in stock that have a positive quantity
-    results = get_items_in_stock(position)
-    items = [json.loads(item.to_json()) for item in results]
-
-    return JsonResponse({"items": items})
-
-
-@quickbooks_auth
 def single_print_all_items(request):
 
     try:
@@ -180,3 +166,18 @@ def estimates(request):
 @quickbooks_auth
 def needed_parts(request):
     return render(request, 'needed-parts.html', {'title': 'Needed Parts', 'tab': 'needed-parts'})
+
+
+@quickbooks_auth
+def json_inventory_items(request):
+    page = int(request.GET.get('page') or 1)
+    in_stock = 'in_stock' in request.GET
+
+    # build query position from the page number
+    position = (page * settings.MAX_RESULTS) + 1
+
+    # get all inventory items (conditionally in stock)
+    results = get_inventory_items(position, in_stock=in_stock)
+    items = [json.loads(item.to_json()) for item in results]
+
+    return JsonResponse({"items": items})

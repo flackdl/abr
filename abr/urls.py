@@ -26,9 +26,9 @@ urlpatterns = [
     url(r'^json$', views.to_json),
     url(r'^html$', views.html),
     url(r'^pdf$', views.pdf, name='pdf'),
-    url(r'^json/single-print-all-items$', views.json_single_print_pages, name='json_single_print_all_items'),
     url(r'^single-print-all-items$', views.single_print_all_items, name='single_print_all_items'),
     url(r'^json/estimates$', views.json_estimates),
+    url(r'^json/inventory-items$', views.json_inventory_items, name='json-inventory-items'),
     url(r'^estimates$', views.estimates, name='estimates'),
     url(r'^needed-parts$', views.needed_parts, name='needed_parts'),
 ]

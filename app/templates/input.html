@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-{%  comment TODO %}
-{% set tab = 'labels' %}
-{% endcomment %}
-
+{% load static %}
 
 {% block container %}
     <style>
@@ -58,7 +55,7 @@
         <div v-if="!isLoading" class="row">
             <h4>Print a single copy of all inventory</h4>
             <form v-on:submit.prevent="singlePrint" id="single" target="_blank" action="{% url 'single_print_all_items' %}" method="post">
-                <input type="hidden" v-model="allItemsJSON" name="items">
+                <input type="hidden" v-model="allInventoryItemsJSON" name="items">
                 <button class="btn btn-info">Print</button> 
             </form>
         </div>
@@ -78,42 +75,28 @@
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'estimates-base.js' %}"></script>
     <script type="text/javascript">
-      var app = new Vue({
+      let app = new Vue({
         el: '#abr',
+        mixins: [estimatesMixin],
         delimiters: ['{$', '$}'],
         data: {
             customCSS: false,
             isLoading: false,
-            allItems: [],
-            allItemsJSON: '',
         },
         methods: {
             singlePrint: function () {
                 this.isLoading = true;
-                this.allItems = [];
+                this.allInventoryItems = [];
                 this.getAllItems(0).then((response) => {
-                    console.log('complete with %s items', this.allItems.length);
-                    this.allItemsJSON = JSON.stringify({'items': this.allItems});
+                    console.log('complete with %s items', this.allInventoryItems.length);
+                    this.allInventoryItemsJSON = JSON.stringify({'items': this.allInventoryItems});
                     this.isLoading = false;
                     setTimeout(function() {
                         $('form#single').submit();
                     });
                 });
-            },
-            getAllItems: function(page) {
-                let headers = {'content-type': 'application/json'};
-                return this.$http.get('{% url "json_single_print_all_items" %}', {'params': {'page': page}, headers: headers}).then((response) => {
-                  return response.json().then((json) => {
-                    // potentially has more pages
-                    if (json.items.length) {
-                        this.allItems = this.allItems.concat(json.items);
-                        return this.getAllItems(++page);
-                    } else {
-                        return;
-                    }
-                  });
-                })
             },
         },
       })
