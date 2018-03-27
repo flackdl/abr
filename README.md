@@ -27,8 +27,8 @@ A dynamic listing of all active/complete/pending repairs
 *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
 
     heroku redis:cli -a abr-labels -c abr-labels
-    mget access_token access_token_secret
+    mget access_token access_token_secret realm_id
  
 *Insert production auth values into dev redis instance*
 
-    docker-compose exec redis redis-cli mset access_token BLAH access_token_secret BLAH
+    docker-compose exec redis redis-cli mset access_token BLAH access_token_secret BLAH realm_id BLAH
