@@ -46,8 +46,8 @@ def quickbooks_auth(f):
 
             client = QuickBooks(
                 #sandbox=True,
-                consumer_key=settings.PRODUCTION_KEY,
-                consumer_secret=settings.PRODUCTION_SECRET,
+                consumer_key=settings.QBO_PRODUCTION_KEY,
+                consumer_secret=settings.QBO_PRODUCTION_SECRET,
                 callback_url='http://%s/callback' % request.get_host(),
             )
 
@@ -88,8 +88,8 @@ def get_client():
     # qbo client
     return QuickBooks(
         #sandbox=True,
-        consumer_key=settings.PRODUCTION_KEY,
-        consumer_secret=settings.PRODUCTION_SECRET,
+        consumer_key=settings.QBO_PRODUCTION_KEY,
+        consumer_secret=settings.QBO_PRODUCTION_SECRET,
         access_token=mc.get('access_token'),
         access_token_secret=mc.get('access_token_secret'),
         company_id=mc.get('realm_id'),
@@ -124,7 +124,7 @@ def get_html(request, bill_id):
     single_print = request.GET.get('single_print', '')
     items = multiply_items(bill['Line'], single_print)
     context = {
-        'rows': [items[i:i+settings.COLS] for i in range(0, len(items), settings.COLS)],
+        'rows': [items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)],
         'css': css,
     }
     return render_to_string('labels.html', context)
@@ -155,7 +155,7 @@ def estimate_has_tag_number(estimate):
 
 def get_inventory_items(pos, all_stock=False):
     client = get_client()
-    results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.MAX_RESULTS), qb=client)
+    results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.QBO_MAX_RESULTS), qb=client)
 
     # conditionally return all items regardless if they're in stock or not
     if all_stock:

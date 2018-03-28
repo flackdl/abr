@@ -28,8 +28,8 @@ def dashboard(request):
 def callback(request):
     client = QuickBooks(
         #sandbox=True,
-        consumer_key=settings.PRODUCTION_KEY,
-        consumer_secret=settings.PRODUCTION_SECRET,
+        consumer_key=settings.QBO_PRODUCTION_KEY,
+        consumer_secret=settings.QBO_PRODUCTION_SECRET,
     )
     mc = get_mc_client()
 
@@ -59,7 +59,7 @@ def login(request):
     # verify credentials
     if request.method == 'POST':
 
-        if request.POST['password'] == settings.PASSWORD:
+        if request.POST['password'] == settings.POS_PASSWORD:
             log('successfully logged in')
             request.session['authenticated'] = True
             return redirect(reverse('dashboard'))
@@ -111,7 +111,7 @@ def single_print_all_items(request):
         return redirect(reverse('input'))
 
     context = {
-        'rows': (items[i:i+settings.COLS] for i in range(0, len(items), settings.COLS)),
+        'rows': (items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)),
     }
     rendered = render_to_string(request, 'labels.html', context).encode('utf-8')
 
@@ -146,7 +146,7 @@ def json_estimates(request):
 
     # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
-        (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.MAX_RESULTS)
+        (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
 
     # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
     estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
@@ -174,7 +174,7 @@ def json_inventory_items(request):
     all_stock = 'all_stock' in request.GET
 
     # build query position from the page number
-    position = (page * settings.MAX_RESULTS) + 1
+    position = (page * settings.QBO_MAX_RESULTS) + 1
 
     # get all inventory items (conditionally in stock)
     results = get_inventory_items(position, all_stock=all_stock)

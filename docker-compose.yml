@@ -11,5 +11,6 @@ services:
   postgres:
     image: postgres
     ports:
-      - "5432:5432"
+      # TODO - fix port to 5432
+      - "5433:5432"
     container_name: postgres-abr
