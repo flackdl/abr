@@ -16,7 +16,7 @@
 				estimates_parts: [],
 			},
 			methods: {
-				get_estimates_parts: function () {
+				getEstimatesParts: function () {
 					// expand estimates by part
 					return this.get_estimates().then(
 						() => {
@@ -59,12 +59,12 @@
 		});
 
 		// load initial estimate and inventory data
-		app.get_estimates_parts();
+		app.getEstimatesParts();
 		app.getAllInventoryItems(0, true);
 
 		// frequently refresh estimate data
 		setInterval(() => {
-			app.get_estimates_parts();
+			app.getEstimatesParts();
 		}, pollingRateSeconds * 1000);
 
 	</script>

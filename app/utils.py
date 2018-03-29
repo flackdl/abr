@@ -27,7 +27,7 @@ def quickbooks_auth(f):
     @wraps(f)
     def wrapper(request, *args, **kwargs):
 
-        if not request.session.get('authenticated'):
+        if not request.user.is_authenticated:
 
             if request.META.get('content-type') == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
@@ -45,7 +45,6 @@ def quickbooks_auth(f):
             log('no access token')
 
             client = QuickBooks(
-                #sandbox=True,
                 consumer_key=settings.QBO_PRODUCTION_KEY,
                 consumer_secret=settings.QBO_PRODUCTION_SECRET,
                 callback_url='http://%s/callback' % request.get_host(),
@@ -87,7 +86,6 @@ def get_client():
     mc = get_mc_client()
     # qbo client
     return QuickBooks(
-        #sandbox=True,
         consumer_key=settings.QBO_PRODUCTION_KEY,
         consumer_secret=settings.QBO_PRODUCTION_SECRET,
         access_token=mc.get('access_token'),

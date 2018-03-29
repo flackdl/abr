@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import json
 from cStringIO import StringIO
 from dateutil import parser
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -27,7 +26,6 @@ def dashboard(request):
 
 def callback(request):
     client = QuickBooks(
-        #sandbox=True,
         consumer_key=settings.QBO_PRODUCTION_KEY,
         consumer_secret=settings.QBO_PRODUCTION_SECRET,
     )
@@ -52,16 +50,17 @@ def input(request):
     return render(request, 'input.html', {'title': 'Print Labels', 'tab': 'labels'})
 
 
-def login(request):
+def app_login(request):
     context = {
         'title': 'Login',
     }
+
     # verify credentials
     if request.method == 'POST':
-
-        if request.POST['password'] == settings.POS_PASSWORD:
+        user = authenticate(request, username=settings.POS_USER, password=request.POST.get('password'))
+        if user is not None:
+            login(request, user)
             log('successfully logged in')
-            request.session['authenticated'] = True
             return redirect(reverse('dashboard'))
         else:
             context['error'] = 'Incorrect password'

@@ -13,16 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from app import views
+import app.api.urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.dashboard, name='dashboard'),
     url(r'^callback$', views.callback),
     url(r'^input$', views.input, name='input'),
-    url(r'^login$', views.login, name='login'),
+    url(r'^login$', views.app_login, name='login'),
     url(r'^json$', views.to_json),
     url(r'^html$', views.html),
     url(r'^pdf$', views.pdf, name='pdf'),
@@ -31,4 +32,5 @@ urlpatterns = [
     url(r'^json/inventory-items$', views.json_inventory_items, name='json-inventory-items'),
     url(r'^estimates$', views.estimates, name='estimates'),
     url(r'^needed-parts$', views.needed_parts, name='needed_parts'),
+    url(r'^api', include(app.api.urls)),
 ]
