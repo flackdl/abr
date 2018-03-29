@@ -13,7 +13,8 @@
 			mixins: [estimatesMixin],
 			data: {
 				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
-				estimates_parts: [],
+				estimatesParts: [],
+				partsToOrder: [],
 			},
 			methods: {
 				getEstimatesParts: function () {
@@ -23,16 +24,16 @@
 							this.estimates = _.filter(this.estimates, (estimate) => {
 								return estimate.TxnStatus !== 'Accepted';
 							});
-							let estimates_parts = [];
+							let estimatesParts = [];
 							_.forEach(this.estimates, (item) => {
 								_.forEach(this.parts(item), (part) => {
-									estimates_parts.push({
+									estimatesParts.push({
 										estimate: item,
 										part: part,
 									});
 								});
 							});
-							this.estimates_parts = estimates_parts;
+							this.estimatesParts = estimatesParts;
 						},
 						(error) => {
 							console.log(error);
@@ -49,7 +50,7 @@
 					});
 					return estimate_parts;
 				},
-				get_inventory_quantity_on_hand(part) {
+				getInventoryQuantityOnHand(part) {
 					let found_part = _.find(this.allInventoryItems, (item) => {
 						return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
 					});
@@ -86,18 +87,18 @@
 					<th v-for="header in headers" :class="header">{$ header $}</th>
 					</thead>
 					<tbody>
-					<tr v-for="estimate_part in estimates_parts" :class="estimate_part.estimate.class" v-on:click="show_estimate_notes(estimate_part.estimate)">
-						<td><input type="checkbox"></td>
-						<td>{$ moment(estimate_part.estimate.TxnDate).format('MM/DD/YY') $}</td>
-						<td>{$ estimate_part.estimate.ExpirationDate ? moment(estimate_part.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-						<td><a v-bind:href="customer_url(estimate_part.estimate)" target="qbo">{$ estimate_part.estimate.CustomerRef.name $}</a></td>
-						<td>{$ get_custom_field(estimate_part.estimate, 'Bike/Model') $}</td>
-						<td>{$ get_custom_field(estimate_part.estimate, 'Tag #') $}</td>
-						<td><a v-bind:href="estimate_url(estimate_part.estimate)" target="qbo">{$ estimate_part.estimate.DocNumber $}</a></td>
-						<td>{$ estimate_part.part.SalesItemLineDetail.Qty $}</td>
-						<td><span v-if="!isFetchingInventory && allInventoryItems.length">{$ get_inventory_quantity_on_hand(estimate_part.part) $}</span></td>
+					<tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
+						<td><input type="checkbox" :value="estimatePart.part.SalesItemLineDetail.ItemRef.value" v-model="partsToOrder"></td>
+						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
+						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+						<td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
+						<td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
+						<td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
+						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
+						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
+						<td><span v-if="!isFetchingInventory && allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
 						<td>{$ '' $}</td>
-						<td>{$ estimate_part.part.Description $}</td>
+						<td>{$ estimatePart.part.Description $}</td>
 					</tr>
 					</tbody>
 				</table>
