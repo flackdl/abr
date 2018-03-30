@@ -57,7 +57,23 @@
 					return found_part ? found_part.QtyOnHand : 0;
 				},
 				order() {
-					console.log(this.partsToOrder);
+					let headers = {
+						'content-type': 'application/json',
+						'X-CSRFToken': Cookies.get('csrftoken'),
+					};
+					let params = {
+						order_id: "123",
+						vendor: 'hiya',
+						description: 'there',
+						estimates_parts: [
+							{estimate_id: "123", part_id: "456", quantity: "3"},
+						],
+					};
+					return this.$http.post('/api/orders/', params, {headers: headers}).then((response) => {
+						response.json().then((data) => {
+							console.log(data);
+						});
+					});
 				}
 			},
 		});
@@ -86,7 +102,7 @@
 			<div class="table-responsive">
 				<table class="table table-hover table-border table-condensed">
 					<thead>
-					<th><button v-on:click="order()" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+					<th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
 					<th v-for="header in headers" :class="header">{$ header $}</th>
 					</thead>
 					<tbody>
@@ -107,25 +123,38 @@
 				</table>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal fade" tabindex="-1" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Order</h4>
+		<!-- order modal -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="order-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Order</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label>Vendor</label>
+							<input type="text" name="vendor" class="form-control" placeholder="">
+						</div>
+						<div class="form-group">
+							<label>Order ID</label>
+							<input type="text" name="order_id" class="form-control" placeholder="">
+						</div>
+						<div class="form-group">
+							<label>Description</label>
+							<textarea class="form-control" rows="3" name="description"></textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary">Submit Order</button>
+					</div>
 				</div>
-				<div class="modal-body">
-					<p>One fine body&hellip;</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			</div>
+		</div>
+
+	</div>
 
 {% endblock %}
 

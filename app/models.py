@@ -12,5 +12,4 @@ class OrderEstimatePart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     estimate_id = models.IntegerField()
     part_id = models.IntegerField()
-    part_sku = models.CharField(max_length=255)
     quantity = models.IntegerField()
