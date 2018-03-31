@@ -9,6 +9,10 @@
 	<script src="{% static 'estimates-base.js' %}"></script>
 	<script>
 		let pollingRateSeconds = 10;
+		let apiHeaders = {
+      'content-type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    };
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
@@ -61,16 +65,20 @@
 					});
 					return found_part ? found_part.QtyOnHand : 0;
 				},
+        getOrdersParts() {
+          return this.$http.get('/api/orders-estimate-parts/', {headers: apiHeaders}).then(
+            (response) => {
+              response.json().then((data) => {
+                console.log(data);
+              })
+            });
+        },
 				order($event) {
 				  this.isOrdering = true;
 					// unset any previous error message
 					this.orderErrorMessage = '';
 
 					// post order
-					let headers = {
-						'content-type': 'application/json',
-						'X-CSRFToken': Cookies.get('csrftoken'),
-					};
 					let params = {
 						order_id: this.orderId,
 						vendor: this.vendor,
@@ -83,7 +91,7 @@
 							};
 						}),
 					};
-					return this.$http.post('/api/orders/', params, {headers: headers}).then(
+					return this.$http.post('/api/orders/', params, {headers: apiHeaders}).then(
 						(response) => {
 							response.json().then((data) => {
 								$('#order-modal').modal('hide');
