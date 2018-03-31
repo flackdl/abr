@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Permission
 from django.core.management import BaseCommand
 from django.conf import settings
-from app.models import Order, OrderEstimatePart
+from app.models import Order, OrderPart
 
 
 class Command(BaseCommand):
@@ -17,7 +17,7 @@ class Command(BaseCommand):
             user = User.objects.create_user(settings.POS_USER, password=settings.POS_PASSWORD)
 
         actions = ['add', 'change', 'delete']
-        models = [Order, OrderEstimatePart]
+        models = [Order, OrderPart]
         perms = []
         for model in models:
             for action in actions:

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from app.models import Order, OrderEstimatePart
-from app.api.serializers import OrderSerializer, OrderEstimatePartSerializer
+from app.models import Order, OrderPart
+from app.api.serializers import OrderSerializer, OrderPartSerializer
 
 
 class OrderViewset(viewsets.ModelViewSet):
@@ -16,11 +16,11 @@ class OrderViewset(viewsets.ModelViewSet):
         # attach the order instance to each estimate/part record
         for estimate_part in estimates_parts_data:
             estimate_part['order'] = serializer.instance.id
-        estimates_parts = OrderEstimatePartSerializer(data=estimates_parts_data, many=True)
+        estimates_parts = OrderPartSerializer(data=estimates_parts_data, many=True)
         estimates_parts.is_valid(raise_exception=True)
         estimates_parts.save()
 
 
-class OrderEstimatePartsViewset(viewsets.ModelViewSet):
-    queryset = OrderEstimatePart.objects.all()
-    serializer_class = OrderEstimatePartSerializer
+class OrderPartsViewset(viewsets.ModelViewSet):
+    queryset = OrderPart.objects.all()
+    serializer_class = OrderPartSerializer

@@ -18,6 +18,7 @@
 			data: {
 				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
 				estimatesParts: [],
+        orderParts: [],
 				partsToOrder: [],
 				vendor: '',
 				orderId: '',
@@ -65,11 +66,11 @@
 					});
 					return found_part ? found_part.QtyOnHand : 0;
 				},
-        getOrdersParts() {
-          return this.$http.get('/api/orders-estimate-parts/', {headers: apiHeaders}).then(
+        getOrderParts() {
+          return this.$http.get('/api/orders-parts/', {headers: apiHeaders}).then(
             (response) => {
               response.json().then((data) => {
-                console.log(data);
+                this.orderParts = data;
               })
             });
         },

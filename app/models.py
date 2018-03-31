@@ -8,7 +8,7 @@ class Order(models.Model):
     description = models.TextField(blank=True)
 
 
-class OrderEstimatePart(models.Model):
+class OrderPart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     estimate_id = models.IntegerField()
     part_id = models.IntegerField()

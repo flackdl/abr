@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import Order, OrderEstimatePart
+from app.models import Order, OrderPart
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OrderEstimatePartSerializer(serializers.ModelSerializer):
+class OrderPartSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OrderEstimatePart
+        model = OrderPart
         fields = '__all__'
