@@ -19,6 +19,7 @@
 				orderId: '',
 				orderDescription: '',
 				orderErrorMessage: '',
+        isOrdering: false,
 			},
 			methods: {
 				getEstimatesParts: function () {
@@ -61,13 +62,9 @@
 					return found_part ? found_part.QtyOnHand : 0;
 				},
 				order($event) {
+				  this.isOrdering = true;
 					// unset any previous error message
-
 					this.orderErrorMessage = '';
-
-					// toggle order button
-					let orderButton = $($event.srcElement);
-					orderButton.button('loading');
 
 					// post order
 					let headers = {
@@ -106,8 +103,7 @@
 									this.orderErrorMessage = 'An unknown error occurred';
 								});
 						}).finally(() => {
-							// always reset button
-							orderButton.button('reset');
+            this.isOrdering = false;
 					});
 				},
 				resetOrderForm() {
@@ -192,7 +188,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button :disabled="!orderFormValid()" type="button" data-loading-text="Ordering..." v-on:click="order($event)" class="btn btn-primary">Submit Order</button>
+						<button :disabled="!orderFormValid()" type="button" v-on:click="order($event)" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
 					</div>
 				</div>
 			</div>
