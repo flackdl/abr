@@ -79,7 +79,7 @@
 					// unset any previous error message
 					this.orderErrorMessage = '';
 
-					// post order
+					// setup new order params
 					let params = {
 						order_id: this.orderId,
 						vendor: this.vendor,
@@ -92,11 +92,14 @@
 							};
 						}),
 					};
+					// post new order
 					return this.$http.post('/api/orders/', params, {headers: apiHeaders}).then(
 						(response) => {
 							response.json().then((data) => {
 								$('#order-modal').modal('hide');
 								this.resetOrderForm();
+								// re-fetch the order parts
+								this.getOrderParts();
 							});
 						},
 						(error) => {
@@ -123,11 +126,19 @@
 				orderFormValid() {
 					return this.vendor.length > 0 && this.orderId.length > 0;
 				},
+        hasOrdered(estimatePart) {
+				  return _.find(this.orderParts, (orderPart) => {
+				    let isPart = orderPart.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
+            let isEstimate = orderPart.estimate_id == estimatePart.estimate.Id;
+				    return isPart && isEstimate;
+          });
+        },
 			},
 		});
 
 		// load initial estimate and inventory data
 		app.getEstimatesParts();
+    app.getOrderParts();
 		app.getAllInventoryItems(0, true);
 
 		// frequently refresh estimate data
@@ -155,7 +166,14 @@
 					</thead>
 					<tbody>
 					<tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
-						<td><input type="checkbox" :value="estimatePart" v-model="partsToOrder"></td>
+						<td>
+              <div v-if="!hasOrdered(estimatePart)">
+                <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
+              </div>
+              <div v-else>
+                (ordered)
+              </div>
+            </td>
 						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
 						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
 						<td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
