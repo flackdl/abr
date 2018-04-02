@@ -15,6 +15,7 @@ let estimatesMixin = {
 		},
 		maxLengthNote: 250,
 		isRequestingData: false,
+		isRequestingInventoryData: false,
 		showingEstimateNotes: null,
     tmpAllInventoryItems: [],
     allInventoryItems: [],
@@ -23,7 +24,11 @@ let estimatesMixin = {
     orderParts: [],
 	},
 	methods: {
-		getAllInventoryItems: function(page, all_stock) {
+		getAllInventoryItems: function(page, all_stock, items) {
+			this.isRequestingInventoryData = true;
+			if (!items || !items.length) {
+				items = [];
+			}
       // recursive function to page through all the inventory results
 			let headers = {'content-type': 'application/json'};
 			let params = {'page': page};
@@ -35,13 +40,16 @@ let estimatesMixin = {
 				return response.json().then((json) => {
 					// potentially has more pages
 					if (json.items.length) {
-						this.tmpAllInventoryItems = this.tmpAllInventoryItems.concat(json.items);
-						return this.getAllInventoryItems(++page, all_stock);
+						return this.getAllInventoryItems(++page, all_stock, items.concat(json.items));
 					} else {
 					  // recursion complete
-            this.allInventoryItems = this.tmpAllInventoryItems;
+            this.allInventoryItems = items;
+						this.isRequestingInventoryData = false;
 					}
 				});
+			}, (error) => {
+				// reset on error
+				this.isRequestingInventoryData = false;
 			});
 		},
 		estimate_has_tag_number: function(e) {

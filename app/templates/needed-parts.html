@@ -95,7 +95,12 @@
 
     // refresh inventory half as fast
     setInterval(() => {
-      app.getAllInventoryItems(0, true);
+    	// prevent requests from stacking up
+    	if (!this.isRequestingInventoryData) {
+		    app.getAllInventoryItems(0, true);
+	    } else {
+		    console.log('already fetching inventory data');
+	    }
     }, pollingRateSeconds * 2 * 1000);
 
 	</script>
