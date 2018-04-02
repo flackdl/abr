@@ -45,7 +45,7 @@
             order_id: this.orderId,
             vendor: this.orderVendor,
             description: this.orderDescription,
-            estimates_parts: _.map(this.partsToOrder, (estimate_part) => {
+            order_parts: _.map(this.partsToOrder, (estimate_part) => {
               return {
                 estimate_id: estimate_part.estimate.Id,
                 part_id: estimate_part.part.SalesItemLineDetail.ItemRef.value,

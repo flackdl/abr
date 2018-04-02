@@ -212,14 +212,14 @@ let estimatesMixin = {
     },
     parts: function (estimate) {
       // returns only taxable parts (non service/labor items)
-      let estimate_parts = [];
+      let parts = [];
       _.forEach(estimate['Line'], (item) => {
         // tax indicates part
         if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
-          estimate_parts.push(item);
+          parts.push(item);
         }
       });
-      return estimate_parts;
+      return parts;
     },
     getInventoryQuantityOnHand(part) {
       let found_part = _.find(this.allInventoryItems, (item) => {

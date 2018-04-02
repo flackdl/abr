@@ -12,17 +12,16 @@ class OrderViewset(viewsets.ModelViewSet):
         :rtype serializer: ModelSerializer
         """
         super(OrderViewset, self).perform_create(serializer)
-        estimates_parts_data = serializer.initial_data.get('estimates_parts')
+        order_parts_data = serializer.initial_data.get('order_parts')
         # attach the order instance to each estimate/part record
-        for estimate_part in estimates_parts_data:
+        for estimate_part in order_parts_data:
             estimate_part['order'] = serializer.instance.id
-        estimates_parts = OrderPartSerializer(data=estimates_parts_data, many=True)
-        estimates_parts.is_valid(raise_exception=True)
-        estimates_parts.save()
+        order_parts = OrderPartSerializer(data=order_parts_data, many=True)
+        order_parts.is_valid(raise_exception=True)
+        order_parts.save()
 
 
 class OrderPartsViewset(viewsets.ModelViewSet):
     queryset = OrderPart.objects.all()
     serializer_class = OrderPartSerializer
     filter_fields = ('order__id', 'order__arrived')
-
