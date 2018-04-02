@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^json/estimates$', views.json_estimates),
     url(r'^json/inventory-items$', views.json_inventory_items, name='json-inventory-items'),
     url(r'^estimates$', views.estimates, name='estimates'),
-    url(r'^needed-parts$', views.needed_parts, name='needed_parts'),
+    url(r'^needed-parts$', views.needed_parts, name='needed-parts'),
+    url(r'^ordered-parts$', views.ordered_parts, name='ordered-parts'),
     url(r'^api/', include(app.api.urls)),
 ]

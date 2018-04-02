@@ -24,3 +24,5 @@ class OrderViewset(viewsets.ModelViewSet):
 class OrderPartsViewset(viewsets.ModelViewSet):
     queryset = OrderPart.objects.all()
     serializer_class = OrderPartSerializer
+    filter_fields = ('order__id', 'order__arrived')
+

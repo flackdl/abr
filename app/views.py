@@ -1,8 +1,8 @@
 import json
 from cStringIO import StringIO
-from dateutil import parser
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.views.decorators.cache import cache_page
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -123,38 +123,19 @@ def single_print_all_items(request):
 
 
 @quickbooks_auth
+@cache_page(settings.ESTIMATE_QUERY_SECONDS)
 def json_estimates(request):
-    return JsonResponse({'success': True, 'estimates': json.loads(open('estimates.json').read())['estimates']})  # TODO
-    mc = get_mc_client()
     client = get_client()
-    utcnow = datetime.utcnow()
-
-    cached = mc.get('estimates')
-    if cached:
-        log('has cache')
-        try:
-            cached = json.loads(cached)
-            # cache is fresh
-            if cached.get('estimates') and cached.get('date') and (parser.parse(cached.get('date')) + timedelta(seconds=settings.ESTIMATE_QUERY_SECONDS)) >= utcnow:
-                log('cache is fresh')
-                return JsonResponse({'success': True, 'estimates': cached['estimates']})
-        except Exception as e:
-            log('exception getting cache: %s' % e)
-
-    log('not cached')
 
     # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
         (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
 
     # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
-    estimates = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
-    estimates = [e for e in estimates if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+    results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
+    results = [e for e in results if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
 
-    log('caching')
-    mc.set('estimates', json.dumps({'estimates': estimates, 'date': utcnow.isoformat()}))
-
-    return JsonResponse({'success': True, 'estimates': estimates})
+    return JsonResponse({'success': True, 'estimates': results})
 
 
 @quickbooks_auth
@@ -168,6 +149,12 @@ def needed_parts(request):
 
 
 @quickbooks_auth
+def ordered_parts(request):
+    return render(request, 'ordered-parts.html', {'title': 'Ordered Parts', 'tab': 'ordered-parts'})
+
+
+@quickbooks_auth
+@cache_page(60 * 5)
 def json_inventory_items(request):
     page = int(request.GET.get('page') or 1)
     all_stock = 'all_stock' in request.GET

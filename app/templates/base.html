@@ -49,7 +49,8 @@
 				<li {% if not tab %}class="active"{% endif %}><a href="/">Home</a></li>
 				<li {% if tab == 'labels' %}class="active"{% endif %}><a href="{% url 'input' %}">Print Labels</a></li>
 				<li {% if tab == 'estimates' %}class="active"{% endif %}><a href="{% url 'estimates' %}">In-House Repairs</a></li>
-				<li {% if tab == 'needed-parts' %}class="active"{% endif %}><a href="{% url 'needed_parts' %}">Needed Parts</a></li>
+				<li {% if tab == 'needed-parts' %}class="active"{% endif %}><a href="{% url 'needed-parts' %}">Needed Parts</a></li>
+        <li {% if tab == 'ordered-parts' %}class="active"{% endif %}><a href="{% url 'ordered-parts' %}">Ordered Parts</a></li>
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div>

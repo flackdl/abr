@@ -8,123 +8,25 @@
 {% block extra_js %}
 	<script src="{% static 'estimates-base.js' %}"></script>
 	<script>
-		let pollingRateSeconds = 10;
-		let apiHeaders = {
-      'content-type': 'application/json',
-      'X-CSRFToken': Cookies.get('csrftoken'),
-    };
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
 				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
-				estimatesParts: [],
-        orderParts: [],
 				partsToOrder: [],
-				vendor: '',
+				orderVendor: '',
 				orderId: '',
 				orderDescription: '',
 				orderErrorMessage: '',
         isOrdering: false,
 			},
 			methods: {
-				getEstimatesParts: function () {
-					// expand estimates by part
-					return this.get_estimates().then(
-						() => {
-							this.estimates = _.filter(this.estimates, (estimate) => {
-								return estimate.TxnStatus !== 'Accepted';
-							});
-							let estimatesParts = [];
-							_.forEach(this.estimates, (item) => {
-								_.forEach(this.parts(item), (part) => {
-									estimatesParts.push({
-										estimate: item,
-										part: part,
-									});
-								});
-							});
-							this.estimatesParts = estimatesParts;
-						},
-						(error) => {
-							console.log(error);
-						});
-				},
-				parts: function (estimate) {
-					// returns only taxable parts (non service/labor items)
-					let estimate_parts = [];
-					_.forEach(estimate['Line'], (item) => {
-						// tax indicates part
-						if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
-							estimate_parts.push(item);
-						}
-					});
-					return estimate_parts;
-				},
-				getInventoryQuantityOnHand(part) {
-					let found_part = _.find(this.allInventoryItems, (item) => {
-						return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
-					});
-					return found_part ? found_part.QtyOnHand : 0;
-				},
-        getOrderParts() {
-          return this.$http.get('/api/orders-parts/', {headers: apiHeaders}).then(
-            (response) => {
-              response.json().then((data) => {
-                this.orderParts = data;
-              })
-            });
-        },
-				order($event) {
-				  this.isOrdering = true;
-					// unset any previous error message
-					this.orderErrorMessage = '';
-
-					// setup new order params
-					let params = {
-						order_id: this.orderId,
-						vendor: this.vendor,
-						description: this.orderDescription,
-						estimates_parts: _.map(this.partsToOrder, (estimate_part) => {
-							return {
-								estimate_id: estimate_part.estimate.Id,
-								part_id: estimate_part.part.SalesItemLineDetail.ItemRef.value,
-								quantity: estimate_part.part.SalesItemLineDetail.Qty,
-							};
-						}),
-					};
-					// post new order
-					return this.$http.post('/api/orders/', params, {headers: apiHeaders}).then(
-						(response) => {
-							response.json().then((data) => {
-								$('#order-modal').modal('hide');
-								this.resetOrderForm();
-								// re-fetch the order parts
-								this.getOrderParts();
-							});
-						},
-						(error) => {
-							console.log(error);
-							// try and parse json
-							error.json().then(
-								(data) => {
-									// set message on form (simply stringify json)
-									this.orderErrorMessage = JSON.stringify(data);
-								},
-								// error parsing json
-								() => {
-									this.orderErrorMessage = 'An unknown error occurred';
-								});
-						}).finally(() => {
-            this.isOrdering = false;
-					});
-				},
 				resetOrderForm() {
-					this.vendor = '';
+					this.orderVendor = '';
 					this.orderId = '';
 					this.orderDescription = '';
 				},
 				orderFormValid() {
-					return this.vendor.length > 0 && this.orderId.length > 0;
+					return this.orderVendor.length > 0 && this.orderId.length > 0;
 				},
         hasOrdered(estimatePart) {
 				  return _.find(this.orderParts, (orderPart) => {
@@ -133,18 +35,68 @@
 				    return isPart && isEstimate;
           });
         },
+        placeOrder() {
+          // indicate that we're currently ordering and unset any previous error message
+          this.isOrdering = true;
+          this.orderErrorMessage = '';
+
+          // setup new order params
+          let params = {
+            order_id: this.orderId,
+            vendor: this.orderVendor,
+            description: this.orderDescription,
+            estimates_parts: _.map(this.partsToOrder, (estimate_part) => {
+              return {
+                estimate_id: estimate_part.estimate.Id,
+                part_id: estimate_part.part.SalesItemLineDetail.ItemRef.value,
+                quantity: estimate_part.part.SalesItemLineDetail.Qty,
+              };
+            }),
+          };
+          // post new order
+          return this.$http.post('/api/orders/', params, {headers: apiHeaders}).then(
+            (response) => {
+              response.json().then((data) => {
+                $('#order-modal').modal('hide');
+                this.resetOrderForm();
+                // re-fetch the order parts
+                this.getOrderParts();
+              });
+            },
+            (error) => {
+              console.log(error);
+              // try and parse json
+              error.json().then(
+                (data) => {
+                  // set message on form (simply stringify json)
+                  this.orderErrorMessage = JSON.stringify(data);
+                },
+                // error parsing json
+                () => {
+                  this.orderErrorMessage = 'An unknown error occurred';
+                });
+            }).finally(() => {
+            this.isOrdering = false;
+          });
+        },
 			},
 		});
 
-		// load initial estimate and inventory data
+		// load initial data
 		app.getEstimatesParts();
     app.getOrderParts();
 		app.getAllInventoryItems(0, true);
 
-		// frequently refresh estimate data
+		// frequently refresh
 		setInterval(() => {
 			app.getEstimatesParts();
+			app.getOrderParts();
 		}, pollingRateSeconds * 1000);
+
+    // refresh inventory half as fast
+    setInterval(() => {
+      app.getAllInventoryItems(0, true);
+    }, pollingRateSeconds * 2 * 1000);
 
 	</script>
 {% endblock %}
@@ -154,7 +106,7 @@
 	<div id="abr">
 		<div v-if="isLoading"><img src="static/loading.svg"></div>
 
-		<div v-if="!isLoading">
+		<div v-else>
 
 			{% include 'includes/session_expired.html' %}
 
@@ -181,7 +133,7 @@
 						<td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
 						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
 						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
-						<td><span v-if="!isFetchingInventory && allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
+						<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
 						<td>{$ '' $}</td>
 						<td>{$ estimatePart.part.Description $}</td>
 					</tr>
@@ -202,7 +154,7 @@
 						<div v-if="orderErrorMessage" class="alert alert-danger">{$ orderErrorMessage $}</div>
 						<div class="form-group">
 							<label>Vendor</label>
-							<input type="text" v-model="vendor" class="form-control" placeholder="">
+							<input type="text" v-model="orderVendor" class="form-control" placeholder="">
 						</div>
 						<div class="form-group">
 							<label>Order ID</label>
@@ -215,7 +167,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button :disabled="!orderFormValid()" type="button" v-on:click="order($event)" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
+						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
 					</div>
 				</div>
 			</div>

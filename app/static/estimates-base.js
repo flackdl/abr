@@ -1,3 +1,8 @@
+let pollingRateSeconds = 10;
+let apiHeaders = {
+  'content-type': 'application/json',
+  'X-CSRFToken': Cookies.get('csrftoken'),
+};
 let estimatesMixin = {
 	el: '#abr',
 	delimiters: ['{$', '$}'],
@@ -11,13 +16,15 @@ let estimatesMixin = {
 		maxLengthNote: 250,
 		isRequestingData: false,
 		showingEstimateNotes: null,
-		allInventoryItems: [],
+    tmpAllInventoryItems: [],
+    allInventoryItems: [],
 		allInventoryItemsJSON: '',
-		isFetchingInventory: false,
+    estimatesParts: [],
+    orderParts: [],
 	},
 	methods: {
 		getAllInventoryItems: function(page, all_stock) {
-			this.isFetchingInventory = true;
+      // recursive function to page through all the inventory results
 			let headers = {'content-type': 'application/json'};
 			let params = {'page': page};
 			// conditionally get all items regardless of stock
@@ -28,13 +35,14 @@ let estimatesMixin = {
 				return response.json().then((json) => {
 					// potentially has more pages
 					if (json.items.length) {
-						this.allInventoryItems = this.allInventoryItems.concat(json.items);
+						this.tmpAllInventoryItems = this.tmpAllInventoryItems.concat(json.items);
 						return this.getAllInventoryItems(++page, all_stock);
 					} else {
-						this.isFetchingInventory = false;
+					  // recursion complete
+            this.allInventoryItems = this.tmpAllInventoryItems;
 					}
 				});
-			})
+			});
 		},
 		estimate_has_tag_number: function(e) {
 			return _.find(e['CustomField'], (field) => {
@@ -172,6 +180,53 @@ let estimatesMixin = {
 			}
 			return e.PrivateNote;
 		},
+    getEstimatesParts: function () {
+      // "expand" estimates by part so there's one estimate per part it needs
+      return this.get_estimates().then(
+        () => {
+          this.estimates = _.filter(this.estimates, (estimate) => {
+            return estimate.TxnStatus !== 'Accepted';
+          });
+          let estimatesParts = [];
+          _.forEach(this.estimates, (item) => {
+            _.forEach(this.parts(item), (part) => {
+              estimatesParts.push({
+                estimate: item,
+                part: part,
+              });
+            });
+          });
+          this.estimatesParts = estimatesParts;
+        },
+        (error) => {
+          console.log(error);
+        });
+    },
+    parts: function (estimate) {
+      // returns only taxable parts (non service/labor items)
+      let estimate_parts = [];
+      _.forEach(estimate['Line'], (item) => {
+        // tax indicates part
+        if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
+          estimate_parts.push(item);
+        }
+      });
+      return estimate_parts;
+    },
+    getInventoryQuantityOnHand(part) {
+      let found_part = _.find(this.allInventoryItems, (item) => {
+        return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
+      });
+      return found_part ? found_part.QtyOnHand : 0;
+    },
+    getOrderParts() {
+      return this.$http.get('/api/orders-parts/', {headers: apiHeaders}).then(
+        (response) => {
+          response.json().then((data) => {
+            this.orderParts = data;
+          })
+        });
+    },
 		moment: moment,
 	},
 };

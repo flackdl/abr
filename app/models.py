@@ -2,7 +2,8 @@ from django.db import models
 
 
 class Order(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    arrived = models.BooleanField(default=False)
     order_id = models.CharField(max_length=255)
     vendor = models.CharField(max_length=255)
     description = models.TextField(blank=True)
