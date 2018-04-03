@@ -6,11 +6,13 @@ from app.api.serializers import OrderSerializer, OrderPartSerializer
 class OrderViewset(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_fields = ('arrived',)
 
     def perform_create(self, serializer):
         """
         :rtype serializer: ModelSerializer
         """
+        # save and then attach parts to the order
         super(OrderViewset, self).perform_create(serializer)
         order_parts_data = serializer.initial_data.get('order_parts')
         # attach the order instance to each estimate/part record
@@ -24,4 +26,3 @@ class OrderViewset(viewsets.ModelViewSet):
 class OrderPartsViewset(viewsets.ModelViewSet):
     queryset = OrderPart.objects.all()
     serializer_class = OrderPartSerializer
-    filter_fields = ('order__id', 'order__arrived')

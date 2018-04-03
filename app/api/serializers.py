@@ -2,13 +2,16 @@ from rest_framework import serializers
 from app.models import Order, OrderPart
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderPartSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = Order
+        model = OrderPart
         fields = '__all__'
 
 
-class OrderPartSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
+    parts = OrderPartSerializer(many=True, source='orderpart_set', required=False)
+
     class Meta:
-        model = OrderPart
+        model = Order
         fields = '__all__'

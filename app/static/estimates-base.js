@@ -21,7 +21,7 @@ let estimatesMixin = {
     allInventoryItems: [],
 		allInventoryItemsJSON: '',
     estimatesParts: [],
-    orderParts: [],
+    orders: [],
 	},
 	methods: {
 		getAllInventoryItems: function(page, all_stock, items) {
@@ -227,13 +227,16 @@ let estimatesMixin = {
       });
       return found_part ? found_part.QtyOnHand : 0;
     },
-    getOrderParts() {
-      return this.$http.get('/api/orders-parts/', {headers: apiHeaders}).then(
+    getOrders() {
+      return this.$http.get('/api/orders/', {headers: apiHeaders}).then(
         (response) => {
           response.json().then((data) => {
-            this.orderParts = data;
+            this.orders = data;
           })
-        });
+        }, (error) => {
+        	// TODO
+		      console.log(error);
+	      });
     },
 		moment: moment,
 	},

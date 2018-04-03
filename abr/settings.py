@@ -128,6 +128,9 @@ CACHES = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
     # Use Django's standard `django.contrib.auth` permissions
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissions',
@@ -150,4 +153,4 @@ QBO_MAX_RESULTS = 1000
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 PRINT_LABEL_COLS = 3
 ESTIMATE_AGE_WEEKS = int(os.environ.get('ESTIMATE_AGE_WEEKS', 20))
-ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 200))
+ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 900))

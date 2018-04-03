@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% comment TODO %}
+{% set container_class = 'container-fluid' %}
+{% endcomment %}
+
+{% block extra_js %}
+	<script src="{% static 'estimates-base.js' %}"></script>
+	<script>
+		let app = new Vue({
+			mixins: [estimatesMixin],
+			data: {
+				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+			},
+			methods: {
+			},
+		});
+
+		// load initial data
+		app.getEstimatesParts();
+		app.getOrders();
+
+		// frequently refresh
+		setInterval(() => {
+			app.getEstimatesParts();
+			app.getOrders();
+		}, pollingRateSeconds * 1000);
+
+	</script>
+{% endblock %}
+
+{% block container %}
+
+	<div id="abr">
+		<div v-if="isLoading"><img src="static/loading.svg"></div>
+
+		<div v-else>
+
+			{% include 'includes/session_expired.html' %}
+
+			<div class="table-responsive">
+				<table class="table table-hover table-border table-condensed">
+					<thead>
+					<th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+					<th v-for="header in headers" :class="header">{$ header $}</th>
+					</thead>
+					<tbody>
+					<tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
+						<td>
+							<div v-if="!hasOrdered(estimatePart)">
+								<input type="checkbox" :value="estimatePart" v-model="partsToOrder">
+							</div>
+							<div v-else>
+								(ordered)
+							</div>
+						</td>
+						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
+						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+						<td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
+						<td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
+						<td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
+						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
+						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
+						<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
+						<td>{$ '' $}</td>
+						<td>{$ estimatePart.part.Description $}</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- order modal -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="order-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Order</h4>
+					</div>
+					<div class="modal-body">
+						<div v-if="orderErrorMessage" class="alert alert-danger">{$ orderErrorMessage $}</div>
+						<div class="form-group">
+							<label>Vendor</label>
+							<input type="text" v-model="orderVendor" class="form-control" placeholder="">
+						</div>
+						<div class="form-group">
+							<label>Order ID</label>
+							<input type="text" v-model="orderId" class="form-control" placeholder="">
+						</div>
+						<div class="form-group">
+							<label>Description</label>
+							<textarea v-model="orderDescription" class="form-control" rows="3" name="description"></textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+{% endblock %}
+
+{% block head_js %}
+{% endblock %}
