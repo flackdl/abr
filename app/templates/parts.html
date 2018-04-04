@@ -6,8 +6,6 @@
 		{% include 'includes/estimates-base.js' %}
 	</script>
 	<script>
-	// TODO filter out blue
-	// TODO - TOTAL all estimates (including accepted)
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
@@ -197,7 +195,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
+						<button :disabled="!orderFormValid() || isOrdering" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
 					</div>
 				</div>
 			</div>

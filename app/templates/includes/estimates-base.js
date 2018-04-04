@@ -1,4 +1,4 @@
-let pollingRateSeconds = {{ polling_rate_seconds }};
+let pollingRateSeconds = parseInt('{{ polling_rate_seconds }}');
 let apiHeaders = {
 	'content-type': 'application/json',
 	'X-CSRFToken': Cookies.get('csrftoken'),
@@ -230,11 +230,16 @@ let estimatesMixin = {
 		},
 		getTotalInventoryOrderQuantity(part) {
 			// return the total quantity needed for this part (in all active estimates)
-			let identicalEstimatesParts = _.filter(app.estimatesParts, (estimatePart) => {
-				return estimatePart.part.SalesItemLineDetail.ItemRef.value == part.SalesItemLineDetail.ItemRef.value;
-			});
-			return _.sumBy(identicalEstimatesParts, (estimatePart) => {
-				return estimatePart.part.SalesItemLineDetail.Qty;
+      let parts = [];
+			for (let estimate of this.estimates) {
+			  for (let line of estimate.Line) {
+          if (line.SalesItemLineDetail && line.SalesItemLineDetail.ItemRef.value == part.SalesItemLineDetail.ItemRef.value) {
+            parts.push(line);
+					}
+				}
+			}
+			return _.sumBy(parts, (part) => {
+				return part.SalesItemLineDetail.Qty;
 			})
 		},
 		getOrders() {
