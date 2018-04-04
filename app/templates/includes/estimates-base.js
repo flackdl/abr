@@ -1,7 +1,7 @@
-let pollingRateSeconds = 100;  // TODO use settings
+let pollingRateSeconds = {{ polling_rate_seconds }};
 let apiHeaders = {
-  'content-type': 'application/json',
-  'X-CSRFToken': Cookies.get('csrftoken'),
+	'content-type': 'application/json',
+	'X-CSRFToken': Cookies.get('csrftoken'),
 };
 let estimatesMixin = {
 	el: '#abr',
@@ -17,11 +17,11 @@ let estimatesMixin = {
 		isRequestingData: false,
 		isRequestingInventoryData: false,
 		showingEstimateNotes: null,
-    tmpAllInventoryItems: [],
-    allInventoryItems: [],
+		tmpAllInventoryItems: [],
+		allInventoryItems: [],
 		allInventoryItemsJSON: '',
-    estimatesParts: [],
-    orders: [],
+		estimatesParts: [],
+		orders: [],
 	},
 	methods: {
 		getAllInventoryItems: function(page, all_stock, items) {
@@ -29,21 +29,21 @@ let estimatesMixin = {
 			if (!items || !items.length) {
 				items = [];
 			}
-      // recursive function to page through all the inventory results
+			// recursive function to page through all the inventory results
 			let headers = {'content-type': 'application/json'};
 			let params = {'page': page};
 			// conditionally get all items regardless of stock
 			if (all_stock) {
 				params['all_stock'] = true;
 			}
-			return this.$http.get('/json/inventory-items', {'params': params, headers: headers}).then((response) => {
+			return this.$http.get('{% url "json-inventory-items" %}', {'params': params, headers: headers}).then((response) => {
 				return response.json().then((json) => {
 					// potentially has more pages
 					if (json.items.length) {
 						return this.getAllInventoryItems(++page, all_stock, items.concat(json.items));
 					} else {
-					  // recursion complete
-            this.allInventoryItems = items;
+						// recursion complete
+						this.allInventoryItems = items;
 						this.isRequestingInventoryData = false;
 					}
 				});
@@ -71,7 +71,7 @@ let estimatesMixin = {
 				unknown: false,
 			};
 
-			return this.$http.get('/json/estimates', {headers: {'content-type': 'application/json'}}).then((response) => {
+			return this.$http.get('{% url "json-estimates" %}', {headers: {'content-type': 'application/json'}}).then((response) => {
 					this.isRequestingData = false;
 
 					return response.json().then((json) => {
@@ -188,45 +188,45 @@ let estimatesMixin = {
 			}
 			return e.PrivateNote;
 		},
-    getEstimatesParts: function () {
-      // "expand" estimates by part so there's one estimate per part it needs
-      return this.get_estimates().then(
-        () => {
-          this.estimates = _.filter(this.estimates, (estimate) => {
-            return estimate.TxnStatus !== 'Accepted';
-          });
-          let estimatesParts = [];
-          _.forEach(this.estimates, (item) => {
-            _.forEach(this.parts(item), (part) => {
-              estimatesParts.push({
-                estimate: item,
-                part: part,
-              });
-            });
-          });
-          this.estimatesParts = estimatesParts;
-        },
-        (error) => {
-          console.log(error);
-        });
-    },
-    parts: function (estimate) {
-      // returns only taxable parts (non service/labor items)
-      let parts = [];
-      _.forEach(estimate['Line'], (item) => {
-        // tax indicates part
-        if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
-          parts.push(item);
-        }
-      });
-      return parts;
-    },
-    getInventoryQuantityOnHand(part) {
-      let found_part = _.find(this.allInventoryItems, (item) => {
-        return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
-      });
-      return found_part ? found_part.QtyOnHand : 0;
-    },
+		getEstimatesParts: function () {
+			// "expand" estimates by part so there's one estimate per part it needs
+			return this.get_estimates().then(
+				() => {
+					this.estimates = _.filter(this.estimates, (estimate) => {
+						return estimate.TxnStatus !== 'Accepted';
+					});
+					let estimatesParts = [];
+					_.forEach(this.estimates, (item) => {
+						_.forEach(this.parts(item), (part) => {
+							estimatesParts.push({
+								estimate: item,
+								part: part,
+							});
+						});
+					});
+					this.estimatesParts = estimatesParts;
+				},
+				(error) => {
+					console.log(error);
+				});
+		},
+		parts: function (estimate) {
+			// returns only taxable parts (non service/labor items)
+			let parts = [];
+			_.forEach(estimate['Line'], (item) => {
+				// tax indicates part
+				if (item['SalesItemLineDetail'] && item['SalesItemLineDetail']['TaxCodeRef'] && item['SalesItemLineDetail']['TaxCodeRef']['value'] === 'TAX') {
+					parts.push(item);
+				}
+			});
+			return parts;
+		},
+		getInventoryQuantityOnHand(part) {
+			let found_part = _.find(this.allInventoryItems, (item) => {
+				return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
+			});
+			return found_part ? found_part.QtyOnHand : 0;
+		},
 		getTotalInventoryOrderQuantity(part) {
 			// return the total quantity needed for this part (in all active estimates)
 			let identicalEstimatesParts = _.filter(app.estimatesParts, (estimatePart) => {
@@ -236,17 +236,20 @@ let estimatesMixin = {
 				return estimatePart.part.SalesItemLineDetail.Qty;
 			})
 		},
-    getOrders() {
-      return this.$http.get('/api/orders/', {headers: apiHeaders}).then(
-        (response) => {
-          response.json().then((data) => {
-            this.orders = data;
-          })
-        }, (error) => {
-        	// TODO
-		      console.log(error);
-	      });
-    },
+		getOrders() {
+			let params = {
+				arrived: false,
+			};
+			return this.$http.get('{% url "order-list" %}', {params: params, headers: apiHeaders}).then(
+				(response) => {
+					response.json().then((data) => {
+						this.orders = data;
+					})
+				}, (error) => {
+					// TODO
+					console.log(error);
+				});
+		},
 		getOrderPartFromEstimatePart(estimatePart) {
 			for (let order of this.orders) {
 				let found_part = _.find(order.parts, (part) => {

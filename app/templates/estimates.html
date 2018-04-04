@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
-
-{% comment TODO %}
-{% set tab = 'estimates' %}
-{% set container_class = 'container-fluid' %}
-{% endcomment %}
+{% load static %}
 
 {% block extra_js %}
-  <script src="/static/estimates-base.js"></script>
+	<script>
+		{% include 'includes/estimates-base.js' %}
+	</script>
   <script>
-    let pollingRateSeconds = 10;
     let app = new Vue({
       mixins: [estimatesMixin],
       data: {

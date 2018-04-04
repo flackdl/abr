@@ -21,7 +21,7 @@
     <div id="abr">
         <div v-if="isLoading">
             <h3>Building pdf, please hold...</h3>
-            <img src="static/loading.svg">
+            <img src="{% static 'loading.svg' %}">
         </div>
         
         <div v-if="!isLoading" class="row">
@@ -75,7 +75,9 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'estimates-base.js' %}"></script>
+		<script>
+			{% include 'includes/estimates-base.js' %}
+		</script>
     <script type="text/javascript">
       let app = new Vue({
         el: '#abr',
