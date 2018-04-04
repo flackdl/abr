@@ -144,13 +144,8 @@ def estimates(request):
 
 
 @quickbooks_auth
-def needed_parts(request):
-    return render(request, 'needed-parts.html', {'title': 'Needed Parts', 'tab': 'needed-parts'})
-
-
-@quickbooks_auth
-def ordered_parts(request):
-    return render(request, 'ordered-parts.html', {'title': 'Ordered Parts', 'tab': 'ordered-parts'})
+def parts(request):
+    return render(request, 'parts.html', {'title': 'Parts', 'tab': 'parts'})
 
 
 @quickbooks_auth

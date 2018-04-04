@@ -192,8 +192,9 @@ let estimatesMixin = {
 			// "expand" estimates by part so there's one estimate per part it needs
 			return this.get_estimates().then(
 				() => {
+					// filter out Accepted & Closed
 					this.estimates = _.filter(this.estimates, (estimate) => {
-						return estimate.TxnStatus !== 'Accepted';
+						return !_.includes(['Accepted', 'Closed'], estimate.TxnStatus);
 					});
 					let estimatesParts = [];
 					_.forEach(this.estimates, (item) => {

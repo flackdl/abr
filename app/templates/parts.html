@@ -6,6 +6,8 @@
 		{% include 'includes/estimates-base.js' %}
 	</script>
 	<script>
+	// TODO filter out blue
+	// TODO - TOTAL all estimates (including accepted)
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
@@ -16,6 +18,9 @@
 				orderDescription: '',
 				orderErrorMessage: '',
         isOrdering: false,
+				partToRemove: null,
+				partToRemoveError: '',
+				isRemovingPart: false,
 			},
 			methods: {
 				resetOrderForm() {
@@ -74,6 +79,31 @@
             this.isOrdering = false;
           });
         },
+				removePartFromOrder () {
+					// reset any previous error message
+					this.partToRemoveError = '';
+					this.isRemovingPart = true;
+					return this.$http.delete(`/api/orders-parts/${this.partToRemove.id}/`, {headers: apiHeaders}).then(
+						() => {
+							// dismiss modal
+							$('#part-remove-modal').modal('hide');
+							// remove the part from the order
+							this.orders.map((order) => {
+								order.parts = order.parts.filter((part) => {
+									return part.id != this.partToRemove.id;
+								});
+							});
+						},
+						(error) => {
+							this.partToRemoveError = 'An unknown error occurred removing this part';
+							console.log('failed removing part from order');
+							console.log(error);
+						}).finally(() => {
+						// always reset the part to remove
+						this.partToRemove = null;
+						this.isRemovingPart = false;
+					});
+				}
 			},
 		});
 
@@ -122,7 +152,9 @@
               <div v-if="!hasOrdered(estimatePart)">
                 <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
               </div>
-              <div v-else>(ordered)</div>
+              <div v-else>
+	              <button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
+	            </div>
             </td>
 						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
 						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
@@ -166,6 +198,28 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- part remove modal -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="part-remove-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Remove Part</h4>
+					</div>
+					<div class="modal-body">
+						<div v-if="partToRemoveError" class="alert alert-danger">{$ partToRemoveError $}</div>
+						<div class="alert alert-danger">
+							<h6>Are you sure you want to remove this part from an existing order?</h6>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" v-on:click="removePartFromOrder()" class="btn btn-danger">{$ isRemovingPart ? 'Removing...' : 'REMOVE' $}</button>
 					</div>
 				</div>
 			</div>
