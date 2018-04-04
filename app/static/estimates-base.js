@@ -1,4 +1,4 @@
-let pollingRateSeconds = 10;
+let pollingRateSeconds = 100;  // TODO use settings
 let apiHeaders = {
   'content-type': 'application/json',
   'X-CSRFToken': Cookies.get('csrftoken'),

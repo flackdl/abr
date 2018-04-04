@@ -36,7 +36,7 @@
 					for (let order of this.orders) {
 						let found_part = _.find(order.parts, (part) => {
 							let isPart = part.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
-							let isEstimate = part.estimate_id == estimatePart.estimate.Id;
+							let isEstimate = part.estimate_id == estimatePart.estimate.DocNumber;
 							return isPart && isEstimate;
 						});
 						if (found_part) {
@@ -59,7 +59,7 @@
             description: this.orderDescription,
             order_parts: _.map(this.partsToOrder, (estimate_part) => {
               return {
-                estimate_id: estimate_part.estimate.Id,
+                estimate_id: estimate_part.estimate.DocNumber,
                 part_id: estimate_part.part.SalesItemLineDetail.ItemRef.value,
                 quantity: estimate_part.part.SalesItemLineDetail.Qty,
               };

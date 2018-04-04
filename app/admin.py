@@ -2,10 +2,15 @@ from django.contrib import admin
 from app.models import Order, OrderPart
 
 
+class PartsInline(admin.TabularInline):
+    model = OrderPart
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('date_created', 'arrived', 'order_id', 'vendor',)
     list_filter = ('date_created', 'arrived', 'order_id', 'vendor',)
+    inlines = (PartsInline,)
 
 
 @admin.register(OrderPart)
