@@ -247,6 +247,18 @@ let estimatesMixin = {
 		      console.log(error);
 	      });
     },
+		getOrderPartFromEstimatePart(estimatePart) {
+			for (let order of this.orders) {
+				let found_part = _.find(order.parts, (part) => {
+					let isPart = part.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
+					let isEstimate = part.estimate_id == estimatePart.estimate.DocNumber;
+					return isPart && isEstimate;
+				});
+				if (found_part) {
+					return found_part;
+				}
+			}
+		},
 		moment: moment,
 	},
 };

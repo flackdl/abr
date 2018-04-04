@@ -13,14 +13,11 @@
 			data: {
 				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
 				partsToOrder: [],
-				partToRemove: null,
-				partToRemoveError: '',
 				orderVendor: '',
 				orderId: '',
 				orderDescription: '',
 				orderErrorMessage: '',
         isOrdering: false,
-				isRemovingPart: false,
 			},
 			methods: {
 				resetOrderForm() {
@@ -31,18 +28,6 @@
 				},
 				orderFormValid() {
 					return this.orderVendor.length > 0 && this.orderId.length > 0;
-				},
-				getOrderPartFromEstimatePart(estimatePart) {
-					for (let order of this.orders) {
-						let found_part = _.find(order.parts, (part) => {
-							let isPart = part.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
-							let isEstimate = part.estimate_id == estimatePart.estimate.DocNumber;
-							return isPart && isEstimate;
-						});
-						if (found_part) {
-							return found_part;
-						}
-					}
 				},
         hasOrdered(estimatePart) {
 					return Boolean(this.getOrderPartFromEstimatePart(estimatePart));
@@ -91,31 +76,6 @@
             this.isOrdering = false;
           });
         },
-				removePartFromOrder () {
-					// reset any previous error message
-					this.partToRemoveError = '';
-					this.isRemovingPart = true;
-					return this.$http.delete(`/api/orders-parts/${this.partToRemove.id}/`, {headers: apiHeaders}).then(
-						() => {
-							// dismiss modal
-							$('#part-remove-modal').modal('hide');
-							// remove the part from the order
-							this.orders.map((order) => {
-								order.parts = order.parts.filter((part) => {
-									return part.id != this.partToRemove.id;
-								});
-							});
-						},
-						(error) => {
-							this.partToRemoveError = 'An unknown error occurred removing this part';
-							console.log('failed removing part from order');
-							console.log(error);
-						}).finally(() => {
-							// always reset the part to remove
-							this.partToRemove = null;
-							this.isRemovingPart = false;
-					});
-				}
 			},
 		});
 
@@ -164,9 +124,7 @@
               <div v-if="!hasOrdered(estimatePart)">
                 <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
               </div>
-              <div v-else>
-                <button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs" data-toggle="modal" data-target="#part-remove-modal">(ordered)</button>
-              </div>
+              <div v-else>(ordered)</div>
             </td>
 						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
 						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
@@ -210,28 +168,6 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- part remove modal -->
-		<div class="modal fade" tabindex="-1" role="dialog" id="part-remove-modal">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Remove Part</h4>
-					</div>
-					<div class="modal-body">
-						<div v-if="partToRemoveError" class="alert alert-danger">{$ partToRemoveError $}</div>
-						<div class="alert alert-danger">
-							<h6>Are you sure you want to remove this part from an existing order?</h6>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button type="button" v-on:click="removePartFromOrder()" class="btn btn-danger">{$ isRemovingPart ? 'Removing...' : 'REMOVE' $}</button>
 					</div>
 				</div>
 			</div>

@@ -12,20 +12,59 @@
 			mixins: [estimatesMixin],
 			data: {
 				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+				partToRemove: null,
+				partToRemoveError: '',
+				isRemovingPart: false,
 			},
 			methods: {
+				removePartFromOrder () {
+					// reset any previous error message
+					this.partToRemoveError = '';
+					this.isRemovingPart = true;
+					return this.$http.delete(`/api/orders-parts/${this.partToRemove.id}/`, {headers: apiHeaders}).then(
+						() => {
+							// dismiss modal
+							$('#part-remove-modal').modal('hide');
+							// remove the part from the order
+							this.orders.map((order) => {
+								order.parts = order.parts.filter((part) => {
+									return part.id != this.partToRemove.id;
+								});
+							});
+						},
+						(error) => {
+							this.partToRemoveError = 'An unknown error occurred removing this part';
+							console.log('failed removing part from order');
+							console.log(error);
+						}).finally(() => {
+						// always reset the part to remove
+						this.partToRemove = null;
+						this.isRemovingPart = false;
+					});
+				}
 			},
 		});
 
 		// load initial data
 		app.getEstimatesParts();
 		app.getOrders();
+		app.getAllInventoryItems(0, true);
 
 		// frequently refresh
 		setInterval(() => {
 			app.getEstimatesParts();
 			app.getOrders();
 		}, pollingRateSeconds * 1000);
+
+		// refresh inventory half as fast
+		setInterval(() => {
+			// prevent requests from stacking up
+			if (!this.isRequestingInventoryData) {
+				app.getAllInventoryItems(0, true);
+			} else {
+				console.log('already fetching inventory data');
+			}
+		}, pollingRateSeconds * 2 * 1000);
 
 	</script>
 {% endblock %}
@@ -42,18 +81,13 @@
 			<div class="table-responsive">
 				<table class="table table-hover table-border table-condensed">
 					<thead>
-					<th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+					<th></th>
 					<th v-for="header in headers" :class="header">{$ header $}</th>
 					</thead>
 					<tbody>
 					<tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
 						<td>
-							<div v-if="!hasOrdered(estimatePart)">
-								<input type="checkbox" :value="estimatePart" v-model="partsToOrder">
-							</div>
-							<div v-else>
-								(ordered)
-							</div>
+							<button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
 						</td>
 						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
 						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
@@ -63,7 +97,7 @@
 						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
 						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
 						<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
-						<td>{$ '' $}</td>
+						<td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
 						<td>{$ estimatePart.part.Description $}</td>
 					</tr>
 					</tbody>
@@ -71,32 +105,23 @@
 			</div>
 		</div>
 
-		<!-- order modal -->
-		<div class="modal fade" tabindex="-1" role="dialog" id="order-modal">
+		<!-- part remove modal -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="part-remove-modal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Order</h4>
+						<h4 class="modal-title">Remove Part</h4>
 					</div>
 					<div class="modal-body">
-						<div v-if="orderErrorMessage" class="alert alert-danger">{$ orderErrorMessage $}</div>
-						<div class="form-group">
-							<label>Vendor</label>
-							<input type="text" v-model="orderVendor" class="form-control" placeholder="">
-						</div>
-						<div class="form-group">
-							<label>Order ID</label>
-							<input type="text" v-model="orderId" class="form-control" placeholder="">
-						</div>
-						<div class="form-group">
-							<label>Description</label>
-							<textarea v-model="orderDescription" class="form-control" rows="3" name="description"></textarea>
+						<div v-if="partToRemoveError" class="alert alert-danger">{$ partToRemoveError $}</div>
+						<div class="alert alert-danger">
+							<h6>Are you sure you want to remove this part from an existing order?</h6>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button :disabled="!orderFormValid()" type="button" v-on:click="placeOrder()" class="btn btn-primary">{$ isOrdering ? 'Ordering...' : 'Submit Order' $}</button>
+						<button type="button" v-on:click="removePartFromOrder()" class="btn btn-danger">{$ isRemovingPart ? 'Removing...' : 'REMOVE' $}</button>
 					</div>
 				</div>
 			</div>
