@@ -8,6 +8,9 @@ class Order(models.Model):
     vendor = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
+    class Meta:
+        unique_together = ('order_id', 'vendor',)
+
     def __str__(self):
         return '{}: {}'.format(self.vendor, self.order_id)
 

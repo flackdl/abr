@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +10,9 @@
 
 	<title>{{ title|default:'ABR' }}</title>
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<link href="/static/theme.css" rel="stylesheet">
-	<link href="/static/app.css" rel="stylesheet">
+	<link href="{% static 'bootstrap-3.3.7.css' %}" rel="stylesheet">
+	<link href="{% static 'theme.css'%}" rel="stylesheet">
+	<link href="{% static 'app.css' %}" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!--[if lt IE 9]>
@@ -19,13 +20,13 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/vue/dist/vue.js"></script>
-	<script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-	<script src="/static/moment.min.js"></script>
+	<script src="{% static 'jquery-1.12.4.js' %}"></script>
+	<script src="{% static 'bootstrap-3.3.7.js' %}" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="{% static 'vue-2.5.16.js' %}"></script>
+	<script src="{% static 'vue-resource-1.0.3.js' %}"></script>
+	<script src="{% static 'lodash-4.16.4.js' %}"></script>
+	<script src="{% static 'js-cookie.js' %}"></script>
+	<script src="{% static 'moment.min.js' %}"></script>
 
 	{% block head_js %}{% endblock %}
 
