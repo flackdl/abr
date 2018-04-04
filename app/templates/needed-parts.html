@@ -176,7 +176,7 @@
 						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
 						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
 						<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
-						<td>{$ '' $}</td>
+						<td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
 						<td>{$ estimatePart.part.Description $}</td>
 					</tr>
 					</tbody>

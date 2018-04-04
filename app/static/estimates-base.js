@@ -227,6 +227,15 @@ let estimatesMixin = {
       });
       return found_part ? found_part.QtyOnHand : 0;
     },
+		getTotalInventoryOrderQuantity(part) {
+			// return the total quantity needed for this part (in all active estimates)
+			let identicalEstimatesParts = _.filter(app.estimatesParts, (estimatePart) => {
+				return estimatePart.part.SalesItemLineDetail.ItemRef.value == part.SalesItemLineDetail.ItemRef.value;
+			});
+			return _.sumBy(identicalEstimatesParts, (estimatePart) => {
+				return estimatePart.part.SalesItemLineDetail.Qty;
+			})
+		},
     getOrders() {
       return this.$http.get('/api/orders/', {headers: apiHeaders}).then(
         (response) => {
