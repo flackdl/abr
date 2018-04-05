@@ -9,7 +9,7 @@
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
-				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description' ],
+				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description'],
 				partsToOrder: [],
 				orderVendor: '',
 				orderId: '',
@@ -97,8 +97,6 @@
 							console.log('failed removing part from order');
 							console.log(error);
 						}).finally(() => {
-						// always reset the part to remove
-						this.partToRemove = null;
 						this.isRemovingPart = false;
 					});
 				}
