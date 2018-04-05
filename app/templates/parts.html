@@ -136,37 +136,52 @@
 
 			{% include 'includes/session_expired.html' %}
 
-			<div class="table-responsive">
-				<table class="table table-hover table-border table-condensed">
-					<thead>
-					<th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
-					<th v-for="header in headers" :class="header">{$ header $}</th>
-					</thead>
-					<tbody>
-					<tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
-						<td>
-              <div v-if="!hasOrdered(estimatePart)">
-                <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
-              </div>
-              <div v-else>
-	              <button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
-	            </div>
-            </td>
-						<td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
-						<td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-						<td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
-						<td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
-						<td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
-						<td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
-						<td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
-						<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
-						<td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
-						<td>{$ estimatePart.part.Description $}</td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+      <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a href="#needed" aria-controls="needed" role="tab" data-toggle="tab">Needed</a>
+          </li>
+          <li role="presentation">
+            <a href="#ordered" aria-controls="ordered" role="tab" data-toggle="tab">Ordered</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content">
+        <div class="table-responsive tab-pane active" role="tabpanel" id="needed">
+          <table class="table table-hover table-border table-condensed">
+            <thead>
+            <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+            <th v-for="header in headers" :class="header">{$ header $}</th>
+            </thead>
+            <tbody>
+            <tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
+              <td>
+                <div v-if="!hasOrdered(estimatePart)">
+                  <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
+                </div>
+                <div v-else>
+                  <button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
+                </div>
+              </td>
+              <td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
+              <td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+              <td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
+              <td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
+              <td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
+              <td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
+              <td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
+              <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
+              <td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
+              <td>{$ estimatePart.part.Description $}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="ordered">ordered</div>
+      </div>
+    </div>
 
 		<!-- order modal -->
 		<div class="modal fade" tabindex="-1" role="dialog" id="order-modal">
