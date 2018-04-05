@@ -99,6 +99,14 @@
 						}).finally(() => {
 						this.isRemovingPart = false;
 					});
+				},
+				groupPartsByOrder() {
+					let orderedEstimateParts = _.filter(this.estimatesParts, (estimatePart) => {
+						return this.hasOrdered(estimatePart);
+					});
+					return _.groupBy(orderedEstimateParts, (estimatePart) => {
+						return this.getOrderPartFromEstimatePart(estimatePart).id;
+					});
 				}
 			},
 		});
@@ -136,8 +144,8 @@
 
 			{% include 'includes/session_expired.html' %}
 
+			<!-- Nav tabs -->
       <div>
-        <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active">
             <a href="#needed" aria-controls="needed" role="tab" data-toggle="tab">Needed</a>
@@ -148,7 +156,9 @@
         </ul>
       </div>
 
+			<!-- Tab content -->
       <div class="tab-content">
+
         <div class="table-responsive tab-pane active" role="tabpanel" id="needed">
           <table class="table table-hover table-border table-condensed">
             <thead>
@@ -180,7 +190,9 @@
           </table>
         </div>
         <div role="tabpanel" class="tab-pane" id="ordered">ordered</div>
+
       </div>
+
     </div>
 
 		<!-- order modal -->
@@ -220,7 +232,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Remove Part</h4>
+						<h4 class="modal-title">Remove Part from Order</h4>
 					</div>
 					<div class="modal-body">
 						<div v-if="partToRemoveError" class="alert alert-danger">{$ partToRemoveError $}</div>
