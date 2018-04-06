@@ -30,9 +30,9 @@
 
     <div v-if="isLoading"><img src="static/loading.svg"></div>
 
-    <div v-if="!isLoading">
+    <div v-else>
 
-      {% include 'includes/session_expired.html' %}
+      {% include 'includes/app_errors.html' %}
 
       <div class="table-responsive">
         <table class="table table-hover table-border table-condensed">

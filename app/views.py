@@ -149,7 +149,7 @@ def parts(request):
 
 
 @quickbooks_auth
-@cache_page(60 * 5)
+@cache_page(settings.INVENTORY_QUERY_SECONDS)
 def json_inventory_items(request):
     page = int(request.GET.get('page') or 1)
     all_stock = 'all_stock' in request.GET

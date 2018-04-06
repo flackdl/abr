@@ -79,8 +79,7 @@ WSGI_APPLICATION = 'abr.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 DATABASES = {
-    # TODO - fix port to 5432
-    'default': dj_database_url.config(default='postgres://postgres@localhost:5433/postgres'),
+    'default': dj_database_url.config(default='postgres://postgres@localhost:5432/postgres'),
 }
 
 
@@ -154,4 +153,5 @@ QBO_MAX_RESULTS = 1000
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 PRINT_LABEL_COLS = 3
 ESTIMATE_AGE_WEEKS = int(os.environ.get('ESTIMATE_AGE_WEEKS', 20))
-ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 900))
+ESTIMATE_QUERY_SECONDS = int(os.environ.get('ESTIMATE_QUERY_SECONDS', 60 * 60 * 8))
+INVENTORY_QUERY_SECONDS = int(os.environ.get('INVENTORY_QUERY_SECONDS', 60 * 60 * 8))

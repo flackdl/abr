@@ -15,7 +15,7 @@ class OrderViewset(viewsets.ModelViewSet):
         if 'order_parts' in request.data and existing_vendor_order.exists():
             serializer = OrderSerializer(data=request.data, instance=existing_vendor_order[0])
             serializer.is_valid(raise_exception=True)
-            serializer.instance.description = '{}\n\nDescription updated when parts were added to order:\n\n{}'.format(
+            serializer.instance.description = '{}\n\n[PART(S) ADDED TO ORDER]\n\n{}'.format(
                 serializer.instance.description,
                 request.data.get('description'),
             )

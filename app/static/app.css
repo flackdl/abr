@@ -20,6 +20,13 @@ tr.Pending-Out {
 tr.Closed {
     background-color: #8383e0;  /* blue */
 }
+tr.order-details {
+    font-style: italic;
+    background-color: #54fb59;  /* green */
+}
+tr.order-begin {
+    border-top: 5px solid black;
+}
 tr a {
     color: black;
 }

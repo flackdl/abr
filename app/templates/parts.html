@@ -19,6 +19,7 @@
 				partToRemove: null,
 				partToRemoveError: '',
 				isRemovingPart: false,
+        NOT_ORDERED: 'NOT_ORDERED',
 			},
 			methods: {
 				resetOrderForm() {
@@ -87,27 +88,55 @@
 							$('#part-remove-modal').modal('hide');
 							// remove the part from the order
 							this.orders.map((order) => {
-								order.parts = order.parts.filter((part) => {
-									return part.id != this.partToRemove.id;
+								order['parts'] = order.parts.filter((part) => {
+									return part.id !== this.partToRemove.id;
 								});
 							});
 						},
 						(error) => {
 							this.partToRemoveError = 'An unknown error occurred removing this part';
-							console.log('failed removing part from order');
 							console.log(error);
 						}).finally(() => {
 						this.isRemovingPart = false;
 					});
 				},
-				groupPartsByOrder() {
-					let orderedEstimateParts = _.filter(this.estimatesParts, (estimatePart) => {
-						return this.hasOrdered(estimatePart);
+				groupedEstimatePartsByOrder() {
+				  let ordered = [];
+          let unordered = [];
+					let grouped = _.groupBy(this.estimatesParts, (estimatePart) => {
+					  let order_id = this.NOT_ORDERED;
+					  let part = this.getOrderPartFromEstimatePart(estimatePart);
+					  if (part) {
+					    order_id = part.order;
+            }
+						return order_id;
 					});
-					return _.groupBy(orderedEstimateParts, (estimatePart) => {
-						return this.getOrderPartFromEstimatePart(estimatePart).id;
-					});
-				}
+					_.each(grouped, (estimatePart, order_id) => {
+					  if (order_id === this.NOT_ORDERED) {
+					    unordered.push({
+                'order': null,
+                'estimateParts': estimatePart,
+              });
+            } else {
+              ordered.push({
+                'order': this.getOrderById(order_id),
+                'estimateParts': estimatePart,
+              });
+            }
+          });
+					return unordered.concat(ordered);
+				},
+        getOrderById(order_id) {
+				  return _.find(this.orders, (order) => {
+				    return order.id === parseInt(order_id);
+          })
+        },
+        getOrderRowClass(order, partIndex) {
+          if (order && partIndex === 0) {
+				    return 'order-begin';
+          }
+          return '';
+        }
 			},
 		});
 
@@ -142,31 +171,17 @@
 
 		<div v-else>
 
-			{% include 'includes/session_expired.html' %}
+			{% include 'includes/app_errors.html' %}
 
-			<!-- Nav tabs -->
-      <div>
-        <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active">
-            <a href="#needed" aria-controls="needed" role="tab" data-toggle="tab">Needed</a>
-          </li>
-          <li role="presentation">
-            <a href="#ordered" aria-controls="ordered" role="tab" data-toggle="tab">Ordered</a>
-          </li>
-        </ul>
-      </div>
-
-			<!-- Tab content -->
-      <div class="tab-content">
-
-        <div class="table-responsive tab-pane active" role="tabpanel" id="needed">
-          <table class="table table-hover table-border table-condensed">
-            <thead>
-            <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
-            <th v-for="header in headers" :class="header">{$ header $}</th>
-            </thead>
-            <tbody>
-            <tr v-for="estimatePart in estimatesParts" :class="estimatePart.estimate.class" v-on:click="show_estimate_notes(estimatePart.estimate)">
+      <div class="table-responsive tab-pane active" role="tabpanel">
+        <table class="table table-hover table-border table-condensed">
+          <thead>
+          <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+          <th v-for="header in headers" :class="header">{$ header $}</th>
+          </thead>
+          <tbody>
+          <template v-for="orderEstimateParts in groupedEstimatePartsByOrder()">
+            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
               <td>
                 <div v-if="!hasOrdered(estimatePart)">
                   <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
@@ -186,11 +201,17 @@
               <td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
               <td>{$ estimatePart.part.Description $}</td>
             </tr>
-            </tbody>
-          </table>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="ordered">ordered</div>
-
+            <tr v-if="orderEstimateParts.order" class="order-details">
+              <td align="right" colspan="100">
+                Ordered: {$ moment(orderEstimateParts.order.date_created).format('MM/DD/YY') $} &nbsp;&nbsp;
+                Vendor: {$ orderEstimateParts.order.vendor $} &nbsp;&nbsp;
+                Order #: {$ orderEstimateParts.order.order_id $} &nbsp;&nbsp;
+                Description: {$ orderEstimateParts.order.description $}
+              </td>
+            </tr>
+          </template>
+          </tbody>
+        </table>
       </div>
 
     </div>

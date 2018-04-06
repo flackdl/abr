@@ -5,7 +5,7 @@ from app.models import Order, OrderPart
 
 
 class Command(BaseCommand):
-    help = 'Init'
+    help = 'Initialize app'
 
     def handle(self, *args, **options):
         # create user and set permissions
@@ -13,8 +13,8 @@ class Command(BaseCommand):
         if users.exists():
             user = users[0]
         else:
-            # create pos user
-            user = User.objects.create_user(settings.POS_USER, password=settings.POS_PASSWORD)
+            # create pos user (staff status)
+            user = User.objects.create_user(settings.POS_USER, password=settings.POS_PASSWORD, is_staff=True)
 
         actions = ['add', 'change', 'delete']
         models = [Order, OrderPart]
