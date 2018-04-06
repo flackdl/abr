@@ -28,5 +28,5 @@ WORKDIR /app
 # install python dependencies
 RUN pip install -qr /app/requirements.txt
 
-# run flask wsgi app
-CMD gunicorn -w 4 app:app
+# run wsgi app
+CMD gunicorn -w 4 -b :${PORT:-80} wsgi
