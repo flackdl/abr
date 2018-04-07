@@ -6,7 +6,7 @@ RUN apt-get update && \
         wget \
         python-pip \
         python-dev \
-        gunicorn \
+        python-setuptools \
         build-essential \
         python-cairo \
         libffi-dev \
@@ -15,18 +15,16 @@ RUN apt-get update && \
         libz-dev \
         libpango1.0-0
 
-# upgrade easy setup
-RUN wget https://bootstrap.pypa.io/ez_setup.py -O - | python
-
-# upgrade pip
-RUN pip install --upgrade setuptools pip
+RUN easy_install pip
+RUN pip install virtualenv
+RUN virtualenv /opt/virtualenv
 
 # add app
 ADD . /app/
 WORKDIR /app
 
 # install python dependencies
-RUN pip install -qr /app/requirements.txt
+RUN /opt/virtualenv/bin/pip install -r requirements.txt
 
 # run wsgi app
-CMD gunicorn -w 4 -b :${PORT:-80} wsgi
+CMD /opt/virtualenv/bin/gunicorn -w 4 -b :${PORT:-80} abr.wsgi

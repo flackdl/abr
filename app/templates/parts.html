@@ -6,6 +6,11 @@
 		{% include 'includes/estimates-base.js' %}
 	</script>
 	<script>
+    // TODO sort orders: newest at bottom
+    // TODO update README
+    //  - replace abr-labels and update deploy instructions
+    //  - include "init" instructions (migrate, init, createsuperuser)
+    // TODO - handle heroku/postgress max 10k rows
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
