@@ -126,7 +126,7 @@ let estimatesMixin = {
               }
             } else {
               // authentication error
-              if (json['reason'] == 'authentication') {
+              if (json['reason'] === 'authentication') {
                 this.error.auth = true;
               } else {
                 this.error.unknown = true;
