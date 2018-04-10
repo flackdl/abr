@@ -6,7 +6,7 @@
 		{% include 'includes/estimates-base.js' %}
 	</script>
 	<script>
-    // TODO - handle heroku/postgress max 10k rows
+    // TODO - handle heroku/postgres max 10k rows
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
@@ -45,11 +45,11 @@
             order_id: this.orderId,
             vendor: this.orderVendor,
             description: this.orderDescription,
-            order_parts: _.map(this.partsToOrder, (estimate_part) => {
+            order_parts: _.map(this.partsToOrder, (partToOrder) => {
               return {
-                estimate_id: estimate_part.estimate.DocNumber,
-                part_id: estimate_part.part.SalesItemLineDetail.ItemRef.value,
-                quantity: estimate_part.part.SalesItemLineDetail.Qty,
+                estimate_id: partToOrder.estimateId,
+                part_id: partToOrder.partId,
+                quantity: partToOrder.quantity,
               };
             }),
           };
@@ -101,6 +101,28 @@
 						this.isRemovingPart = false;
 					});
 				},
+				getEstimatesPartsRows() {
+					let rows = [];
+					let groups = this.groupedEstimatePartsByOrder();
+					_.each(groups, (group) => {
+						// group that's been ordered
+						if (group.order) {
+							// include the order header
+							rows.push({
+								type: 'order-header',
+								order: group.order,
+							});
+						}
+						// flatten group
+						_.each(group.estimateParts, (estimatePart) => {
+							rows.push({
+								type: 'estimate-part',
+								estimatePart: estimatePart,
+							});
+						});
+					});
+					return rows;
+				},
 				groupedEstimatePartsByOrder() {
 				  let ordered = [];
           let unordered = [];
@@ -138,16 +160,21 @@
         getOrderById(order_id) {
 				  return _.find(this.orders, (order) => {
 				    return order.id === parseInt(order_id);
-          })
+          });
         },
-        getOrderRowClass(order, partIndex) {
-          if (order && partIndex === 0) {
-				    return 'order-begin';
+        getRowClass(row) {
+          if (row.type === 'order-header') {
+				    return 'order-details';
           }
           return '';
         },
-        getUniqueEstimatePartKey(estimatePart) {
-					return `${estimatePart.estimate.DocNumber}:${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
+        getUniqueEstimatePartKey(row) {
+					// if it's an order header, use the id
+					if (row.order) {
+						return row.order.id;
+					}
+					// otherwise use the estimate + part
+					return `${row.estimatePart.estimate.DocNumber}:${row.estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
         },
 				getAdminUrlForOrderId(orderId) {
 					let url = '{% url 'admin:app_order_change' 9999 %}';
@@ -190,42 +217,44 @@
 			{% include 'includes/app_errors.html' %}
 
       <div class="table-responsive tab-pane active" role="tabpanel">
-        <table class="table table-hover table-border table-condensed">
+        <table class="table table-hover table-striped table-border table-condensed">
           <thead>
           <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
           <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-          <template v-for="orderEstimateParts in groupedEstimatePartsByOrder()">
-	          <tr v-if="orderEstimateParts.order" class="order-details">
-		          <td align="left" colspan="100">
-			          <a :href="getAdminUrlForOrderId(orderEstimateParts.order.id)" target="_blank">Ordered: {$ moment(orderEstimateParts.order.date_created).format('MM/DD/YY') $}</a> &nbsp;&nbsp;
-			          Vendor: {$ orderEstimateParts.order.vendor $} &nbsp;&nbsp;
-			          Order #: {$ orderEstimateParts.order.order_id $} &nbsp;&nbsp;
-			          Description: {$ orderEstimateParts.order.description $}
-		          </td>
-	          </tr>
-            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :key="getUniqueEstimatePartKey(estimatePart)" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
-              <td>
-                <div v-if="!hasOrdered(estimatePart)">
-                  <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
-                </div>
-                <div v-else>
-                  <button v-on:click="partToRemove = getOrderPartFromEstimatePart(estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
-                </div>
-              </td>
-              <td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
-              <td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-              <td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
-              <td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
-              <td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
-              <td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
-              <td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
-              <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
-              <td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
-              <td>{$ estimatePart.part.Description $}</td>
-            </tr>
-          </template>
+					<tr v-for="row in getEstimatesPartsRows()" v-bind:t="getUniqueEstimatePartKey(row)" :key="getUniqueEstimatePartKey(row)" :class="getRowClass(row)">
+						<!-- order header row -->
+						<template v-if="row.type == 'order-header'">
+							<td align="left" colspan="100">
+								<a :href="getAdminUrlForOrderId(row.order.id)" target="_blank">Ordered: {$ moment(row.order.date_created).format('MM/DD/YY') $}</a> &nbsp;&nbsp;
+								Vendor: {$ row.order.vendor $} &nbsp;&nbsp;
+								Order # {$ row.order.order_id $} &nbsp;&nbsp;
+								Description: {$ row.order.description $}
+							</td>
+						</template>
+						<!-- estimate part row -->
+						<template v-else>
+							<td>
+								<div v-if="!hasOrdered(row.estimatePart)">
+									<input type="checkbox" :value="{quantity: row.estimatePart.part.SalesItemLineDetail.Qty, partId: row.estimatePart.part.SalesItemLineDetail.ItemRef.value, estimateId: row.estimatePart.estimate.DocNumber}" v-model="partsToOrder">
+								</div>
+								<div v-else>
+									<button v-on:click="partToRemove = getOrderPartFromEstimatePart(row.estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
+								</div>
+							</td>
+							<td>{$ moment(row.estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
+							<td>{$ row.estimatePart.estimate.ExpirationDate ? moment(row.estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
+							<td><a v-bind:href="customer_url(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
+							<td>{$ get_custom_field(row.estimatePart.estimate, 'Bike/Model') $}</td>
+							<td>{$ get_custom_field(row.estimatePart.estimate, 'Tag #') $}</td>
+							<td><a v-bind:href="estimate_url(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
+							<td>{$ row.estimatePart.part.SalesItemLineDetail.Qty $}</td>
+							<td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(row.estimatePart.part) $}</span></td>
+							<td>{$ getTotalInventoryOrderQuantity(row.estimatePart.part) $}</td>
+							<td>{$ row.estimatePart.part.Description $}</td>
+						</template>
+					</tr>
           </tbody>
         </table>
       </div>

@@ -25,7 +25,7 @@ tr.Closed {
 }
 tr.order-details {
     font-style: italic;
-    background-color: #fba510;  /* orange */
+    background-color: #fba510 !important;  /* orange */
 }
 tr.order-begin {
     border-top: 5px solid black;
