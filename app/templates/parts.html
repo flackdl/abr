@@ -190,7 +190,7 @@
           </thead>
           <tbody>
           <template v-for="orderEstimateParts in groupedEstimatePartsByOrder()">
-            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
+            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="showEstimateNotes(estimatePart.estimate)">
               <td>
                 <div v-if="!hasOrdered(estimatePart)">
                   <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
@@ -201,10 +201,10 @@
               </td>
               <td>{$ moment(estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
               <td>{$ estimatePart.estimate.ExpirationDate ? moment(estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-              <td><a v-bind:href="customer_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
-              <td>{$ get_custom_field(estimatePart.estimate, 'Bike/Model') $}</td>
-              <td>{$ get_custom_field(estimatePart.estimate, 'Tag #') $}</td>
-              <td><a v-bind:href="estimate_url(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
+              <td><a v-bind:href="customerUrl(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.CustomerRef.name $}</a></td>
+              <td>{$ getCustomField(estimatePart.estimate, 'Bike/Model') $}</td>
+              <td>{$ getCustomField(estimatePart.estimate, 'Tag #') $}</td>
+              <td><a v-bind:href="estimateUrl(estimatePart.estimate)" target="qbo">{$ estimatePart.estimate.DocNumber $}</a></td>
               <td>{$ estimatePart.part.SalesItemLineDetail.Qty $}</td>
               <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
               <td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>

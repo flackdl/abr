@@ -14,11 +14,11 @@
     });
 
     // load initial estimate data
-    app.get_estimates();
+    app.getEstimates();
 
     // frequently refresh estimate data
     setInterval(() => {
-      app.get_estimates();
+      app.getEstimates();
     }, pollingRateSeconds * 1000);
 
   </script>
@@ -40,15 +40,15 @@
           <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-          <tr v-for="estimate in estimates" :class="estimate.class" v-on:click="show_estimate_notes(estimate)">
+          <tr v-for="estimate in estimates" :class="estimate.class" v-on:click="showEstimateNotes(estimate)">
             <td>{$ moment(estimate.TxnDate).format('MM/DD/YY') $}</td>
             <td>{$ estimate.ExpirationDate ? moment(estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-            <td><a v-bind:href="customer_url(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
-            <td>{$ get_custom_field(estimate, 'Bike/Model') $}</td>
-            <td>{$ get_custom_field(estimate, 'Tag #') $}</td>
-            <td><a v-bind:href="estimate_url(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
-            <td>${$ total_labor(estimate) $}</td>
-            <td>{$ get_notes(estimate) $}</td>
+            <td><a v-bind:href="customerUrl(estimate)" target="qbo">{$ estimate.CustomerRef.name $}</a></td>
+            <td>{$ getCustomField(estimate, 'Bike/Model') $}</td>
+            <td>{$ getCustomField(estimate, 'Tag #') $}</td>
+            <td><a v-bind:href="estimateUrl(estimate)" target="qbo">{$ estimate.DocNumber $}</a></td>
+            <td>${$ totalLabor(estimate) $}</td>
+            <td>{$ getNotes(estimate) $}</td>
           </tr>
           </tbody>
         </table>

@@ -53,12 +53,12 @@ let estimatesMixin = {
         this.isRequestingInventoryData = false;
       });
     },
-    estimate_has_tag_number: function(e) {
+    estimateHasTagNumber: function(e) {
       return _.find(e['CustomField'], (field) => {
-        return field['Name'] == 'Tag #' && field['StringValue'];
+        return field['Name'] === 'Tag #' && field['StringValue'];
       });
     },
-    get_estimates: function() {
+    getEstimates: function() {
       if (this.isRequestingData) {
         console.log('already fetching data...');
         return Promise.resolve();
@@ -88,7 +88,7 @@ let estimatesMixin = {
 
                 // attempt to create a "due date+time" using the ExpirationDate and a custom time field
                 _.forEach(json.estimates, (estimate) => {
-                  let due_time = moment(this.get_custom_field(estimate, 'Expiration Time'), 'h:mma');
+                  let due_time = moment(this.getCustomField(estimate, 'Expiration Time'), 'h:mma');
                   if (due_time.isValid()) {
                     estimate.ExpirationDate = moment(estimate.ExpirationDate).hour(due_time.hours()).minute(due_time.minutes()).format();
                   }
@@ -108,7 +108,7 @@ let estimatesMixin = {
                 statusGroups['Pending-In'] = [];
                 statusGroups['Pending-Out'] = [];
                 _.each(statusGroups['Pending'], (estimate) => {
-                  let group = this.estimate_has_tag_number(estimate) ? 'Pending-In' : 'Pending-Out';
+                  let group = this.estimateHasTagNumber(estimate) ? 'Pending-In' : 'Pending-Out';
                   statusGroups[group].push(estimate);
                 });
                 // remove since we're splitting it out into two groups
@@ -143,22 +143,22 @@ let estimatesMixin = {
           console.log('failure', error);
         });
     },
-    estimate_url: function (estimate) {
+    estimateUrl: function (estimate) {
       return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
     },
-    customer_url: function (estimate) {
+    customerUrl: function (estimate) {
       return 'https://qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
     },
-    get_custom_field: function (estimate, field) {
+    getCustomField: function (estimate, field) {
       let value = '';
       if(estimate['CustomField'] && estimate['CustomField'].length) {
         value = _.find(estimate['CustomField'], (f) => {
-          return f['Name'] == field;
+          return f['Name'] === field;
         });
       }
       return value['StringValue'];
     },
-    total_labor: function (estimate) {
+    totalLabor: function (estimate) {
       let total = 0;
       _.forEach(estimate['Line'], (item) => {
         // no tax indicates labor
@@ -168,20 +168,20 @@ let estimatesMixin = {
       });
       return total;
     },
-    has_error: function () {
+    hasError: function () {
       return _.find(this.error, (type) => {
-        return type ? true : false;
+        return !!type;
       });
     },
-    show_estimate_notes: function(e) {
+    showEstimateNotes: function(e) {
       this.showingEstimateNotes = e;
     },
-    should_show_estimate_notes: function(e) {
+    shouldShowEstimateNotes: function(e) {
       return this.showingEstimateNotes && this.showingEstimateNotes.Id == e.Id;
     },
-    get_notes: function(e) {
+    getNotes: function(e) {
       // show full notes
-      if (this.should_show_estimate_notes(e)) {
+      if (this.shouldShowEstimateNotes(e)) {
         return e.PrivateNote;
       }
       // truncated notes
@@ -192,7 +192,7 @@ let estimatesMixin = {
     },
     getEstimatesParts: function () {
       // "expand" estimates by part so there's one estimate per part it needs
-      return this.get_estimates().then(
+      return this.getEstimates().then(
         () => {
           // filter out Accepted & Closed
           this.estimates = _.filter(this.estimates, (estimate) => {
