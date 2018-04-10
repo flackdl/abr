@@ -145,6 +145,9 @@
 				    return 'order-begin';
           }
           return '';
+        },
+        getUniqueEstimatePartKey(estimatePart) {
+					return `${estimatePart.estimate.DocNumber}:${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
         }
 			},
 		});
@@ -190,7 +193,7 @@
           </thead>
           <tbody>
           <template v-for="orderEstimateParts in groupedEstimatePartsByOrder()">
-            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
+            <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :key="getUniqueEstimatePartKey(estimatePart)" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
               <td>
                 <div v-if="!hasOrdered(estimatePart)">
                   <input type="checkbox" :value="estimatePart" v-model="partsToOrder">
