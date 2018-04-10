@@ -148,7 +148,11 @@
         },
         getUniqueEstimatePartKey(estimatePart) {
 					return `${estimatePart.estimate.DocNumber}:${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
-        }
+        },
+				getAdminUrlForOrderId(orderId) {
+					let url = '{% url 'admin:app_order_change' 9999 %}';
+					return url.replace(9999, orderId);
+				}
 			},
 		});
 
@@ -193,6 +197,14 @@
           </thead>
           <tbody>
           <template v-for="orderEstimateParts in groupedEstimatePartsByOrder()">
+	          <tr v-if="orderEstimateParts.order" class="order-details">
+		          <td align="left" colspan="100">
+			          <a :href="getAdminUrlForOrderId(orderEstimateParts.order.id)" target="_blank">Ordered: {$ moment(orderEstimateParts.order.date_created).format('MM/DD/YY') $}</a> &nbsp;&nbsp;
+			          Vendor: {$ orderEstimateParts.order.vendor $} &nbsp;&nbsp;
+			          Order #: {$ orderEstimateParts.order.order_id $} &nbsp;&nbsp;
+			          Description: {$ orderEstimateParts.order.description $}
+		          </td>
+	          </tr>
             <tr v-for="(estimatePart, partIndex) in orderEstimateParts.estimateParts" :key="getUniqueEstimatePartKey(estimatePart)" :class="getOrderRowClass(orderEstimateParts.order, partIndex)"  v-on:click="show_estimate_notes(estimatePart.estimate)">
               <td>
                 <div v-if="!hasOrdered(estimatePart)">
@@ -212,14 +224,6 @@
               <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(estimatePart.part) $}</span></td>
               <td>{$ getTotalInventoryOrderQuantity(estimatePart.part) $}</td>
               <td>{$ estimatePart.part.Description $}</td>
-            </tr>
-            <tr v-if="orderEstimateParts.order" class="order-details">
-              <td align="right" colspan="100">
-                Ordered: {$ moment(orderEstimateParts.order.date_created).format('MM/DD/YY') $} &nbsp;&nbsp;
-                Vendor: {$ orderEstimateParts.order.vendor $} &nbsp;&nbsp;
-                Order #: {$ orderEstimateParts.order.order_id $} &nbsp;&nbsp;
-                Description: {$ orderEstimateParts.order.description $}
-              </td>
             </tr>
           </template>
           </tbody>
