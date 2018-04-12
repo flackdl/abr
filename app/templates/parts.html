@@ -166,20 +166,23 @@
           if (row.type === 'order-header') {
 				    return 'order-details';
           }
-          return '';
+          return row.estimatePart.estimate.class;
         },
         getUniqueEstimatePartKey(row) {
 					// if it's an order header, use the id
 					if (row.order) {
 						return row.order.id;
 					}
-					// otherwise use the estimate + part
-					return `${row.estimatePart.estimate.DocNumber}:${row.estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
+					// otherwise use the estimate DocNumber + part.Id (unique to estimate)
+					return `${row.estimatePart.estimate.DocNumber}:${row.estimatePart.part.Id}`;
         },
 				getAdminUrlForOrderId(orderId) {
 					let url = '{% url 'admin:app_order_change' 9999 %}';
 					return url.replace(9999, orderId);
-				}
+				},
+        getInventoryItemUrlFromPart(estimatePart) {
+				 return `https://c21.qbo.intuit.com/app/inventory_quantity_adj?itemIds=${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
+        }
 			},
 		});
 
@@ -217,13 +220,13 @@
 			{% include 'includes/app_errors.html' %}
 
       <div class="table-responsive tab-pane active" role="tabpanel">
-        <table class="table table-hover table-striped table-border table-condensed">
+        <table class="table table-hover table-border table-condensed">
           <thead>
             <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="row in getEstimatesPartsRows()" v-bind:t="getUniqueEstimatePartKey(row)" :key="getUniqueEstimatePartKey(row)" :class="getRowClass(row)">
+            <tr v-for="row in getEstimatesPartsRows()" v-bind:x-key="getUniqueEstimatePartKey(row)" :key="getUniqueEstimatePartKey(row)" :class="getRowClass(row)">
               <!-- order header row -->
               <template v-if="row.type == 'order-header'">
                 <td align="left" colspan="100">
@@ -245,15 +248,14 @@
                 </td>
                 <td>{$ moment(row.estimatePart.estimate.TxnDate).format('MM/DD/YY') $}</td>
                 <td>{$ row.estimatePart.estimate.ExpirationDate ? moment(row.estimatePart.estimate.ExpirationDate).format('MM/DD/YY h:mma') : '' $}</td>
-                <td><a v-bind:href="customer_url(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
-                <td>{$ get_custom_field(row.estimatePart.estimate, 'Bike/Model') $}</td>
-                <td>{$ get_custom_field(row.estimatePart.estimate, 'Tag #') $}</td>
-                <td><a v-bind:href="estimate_url(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
+                <td><a v-bind:href="customerUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
+                <td>{$ getCustomField(row.estimatePart.estimate, 'Bike/Model') $}</td>
+                <td>{$ getCustomField(row.estimatePart.estimate, 'Tag #') $}</td>
+                <td><a v-bind:href="estimateUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
                 <td>{$ row.estimatePart.part.SalesItemLineDetail.Qty $}</td>
                 <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(row.estimatePart.part) $}</span></td>
                 <td>{$ getTotalInventoryOrderQuantity(row.estimatePart.part) $}</td>
-                <td>{$ row.estimatePart.part.Description $}</td>
-              </template>
+                <td><a :href="getInventoryItemUrlFromPart(row.estimatePart)" target="qbo">{$ row.estimatePart.part.Description $}</a></td> </template>
             </tr>
           </tbody>
         </table>
