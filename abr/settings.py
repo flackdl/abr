@@ -148,6 +148,8 @@ REST_FRAMEWORK = {
 
 POS_USER = os.environ.get('POS_USER', 'pos')
 POS_PASSWORD = os.environ.get('POS_PASSWORD', 'cookie123')
+MANAGER_USER = os.environ.get('MANAGER_USER', 'manager')
+MANAGER_PASSWORD = os.environ.get('MANAGER_PASSWORD', 'cookie123')
 QBO_PRODUCTION_KEY = os.environ.get('QBO_PRODUCTION_KEY')
 QBO_PRODUCTION_SECRET = os.environ.get('QBO_PRODUCTION_SECRET')
 QBO_MAX_RESULTS = 1000
