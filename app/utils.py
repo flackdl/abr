@@ -18,7 +18,7 @@ from quickbooks.objects.item import Item
 
 
 QBO_DEFAULT_ARGS = dict(
-    minorversion=4,
+    minorversion=23,
 )
 
 
