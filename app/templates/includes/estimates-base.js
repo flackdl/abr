@@ -224,10 +224,13 @@ let estimatesMixin = {
       });
       return parts;
     },
+	  getInventoryPartFromEstimatePart(part) {
+		  return _.find(this.allInventoryItems, (item) => {
+			  return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
+		  });
+	  },
     getInventoryQuantityOnHand(part) {
-      let found_part = _.find(this.allInventoryItems, (item) => {
-        return String(item.Id) === part.SalesItemLineDetail.ItemRef.value;
-      });
+      let found_part = this.getInventoryPartFromEstimatePart(part);
       return found_part ? found_part.QtyOnHand : 0;
     },
     getTotalInventoryOrderQuantity(part) {

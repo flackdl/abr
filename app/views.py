@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from app.utils import (
     quickbooks_auth, get_mc_client, get_key, log, get_client, attach_prices,
-    get_inventory_items, estimate_has_tag_number, get_html,
+    get_inventory_items, estimate_has_tag_number, get_html, QBO_DEFAULT_ARGS,
 )
 
 
@@ -28,6 +28,7 @@ def callback(request):
     client = QuickBooks(
         consumer_key=settings.QBO_PRODUCTION_KEY,
         consumer_secret=settings.QBO_PRODUCTION_SECRET,
+        **QBO_DEFAULT_ARGS
     )
     mc = get_mc_client()
 

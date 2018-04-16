@@ -2,7 +2,6 @@ import json
 import logging
 import uuid
 from functools import wraps
-
 import redis
 from django.conf import settings
 from django.http import JsonResponse
@@ -16,6 +15,11 @@ from quickbooks.exceptions import (
 )
 from quickbooks.objects import Bill
 from quickbooks.objects.item import Item
+
+
+QBO_DEFAULT_ARGS = dict(
+    minorversion=4,
+)
 
 
 def get_key(key, request):
@@ -48,6 +52,7 @@ def quickbooks_auth(f):
                 consumer_key=settings.QBO_PRODUCTION_KEY,
                 consumer_secret=settings.QBO_PRODUCTION_SECRET,
                 callback_url='http://%s/callback' % request.get_host(),
+                **QBO_DEFAULT_ARGS
             )
 
             # store for future use
@@ -91,6 +96,7 @@ def get_client():
         access_token=mc.get('access_token'),
         access_token_secret=mc.get('access_token_secret'),
         company_id=mc.get('realm_id'),
+        **QBO_DEFAULT_ARGS
     )
 
 

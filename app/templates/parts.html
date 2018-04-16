@@ -10,7 +10,7 @@
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
-				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description'],
+				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Sku', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description'],
 				partsToOrder: [],
 				orderVendor: '',
 				orderId: '',
@@ -184,7 +184,7 @@
         getInventoryItemUrlFromPart(estimatePart) {
 				 return `https://c21.qbo.intuit.com/app/inventory_quantity_adj?itemIds=${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
         },
-				getPartsToOrderValueFromRow(row) {
+				getPartToOrderValueFromRow(row) {
 					return {
 						partId: row.estimatePart.part.SalesItemLineDetail.ItemRef.value,
 						partDescription: row.estimatePart.part.Description,
@@ -236,6 +236,7 @@
           </thead>
           <tbody>
             <tr v-for="row in getEstimatesPartsRows()" v-bind:x-key="getUniqueEstimatePartKey(row)" :key="getUniqueEstimatePartKey(row)" :class="getRowClass(row)">
+
               <!-- order header row -->
               <template v-if="row.type == 'order-header'">
                 <td align="left" colspan="100">
@@ -245,11 +246,12 @@
                   Description: {$ row.order.description $}
                 </td>
               </template>
+
               <!-- estimate part row -->
               <template v-else>
                 <td>
                   <div v-if="!hasOrdered(row.estimatePart)">
-                    <input type="checkbox" :value="getPartsToOrderValueFromRow(row)" v-model="partsToOrder">
+                    <input type="checkbox" :value="getPartToOrderValueFromRow(row)" v-model="partsToOrder">
                   </div>
                   <div v-else>
                     <button v-on:click="partToRemove = getOrderPartFromEstimatePart(row.estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>
@@ -260,6 +262,7 @@
                 <td><a v-bind:href="customerUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Bike/Model') $}</td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Tag #') $}</td>
+	              <td>{$ getInventoryPartFromEstimatePart(row.estimatePart.part).Sku $}</td>
                 <td><a v-bind:href="estimateUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
                 <td>{$ row.estimatePart.part.SalesItemLineDetail.Qty $}</td>
                 <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(row.estimatePart.part) $}</span></td>
