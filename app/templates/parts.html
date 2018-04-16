@@ -262,7 +262,7 @@
                 <td><a v-bind:href="customerUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Bike/Model') $}</td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Tag #') $}</td>
-	              <td>{$ getInventoryPartFromEstimatePart(row.estimatePart.part).Sku $}</td>
+	              <td>{$ getSkuFromPart(row.estimatePart.part) $}</td>
                 <td><a v-bind:href="estimateUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
                 <td>{$ row.estimatePart.part.SalesItemLineDetail.Qty $}</td>
                 <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(row.estimatePart.part) $}</span></td>

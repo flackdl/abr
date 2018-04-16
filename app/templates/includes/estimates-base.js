@@ -280,6 +280,10 @@ let estimatesMixin = {
         }
       }
     },
+    getSkuFromPart(part) {
+      let item = this.getInventoryPartFromEstimatePart(part);
+      return item ? item.Sku : '';
+    },
     moment: moment,
   },
 };
