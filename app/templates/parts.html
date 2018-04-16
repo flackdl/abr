@@ -49,6 +49,7 @@
               return {
                 estimate_id: partToOrder.estimateId,
                 part_id: partToOrder.partId,
+	              part_description: partToOrder.partDescription,
                 quantity: partToOrder.quantity,
               };
             }),
@@ -182,7 +183,15 @@
 				},
         getInventoryItemUrlFromPart(estimatePart) {
 				 return `https://c21.qbo.intuit.com/app/inventory_quantity_adj?itemIds=${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
-        }
+        },
+				getPartsToOrderValueFromRow(row) {
+					return {
+						partId: row.estimatePart.part.SalesItemLineDetail.ItemRef.value,
+						partDescription: row.estimatePart.part.Description,
+						estimateId: row.estimatePart.estimate.DocNumber,
+						quantity: row.estimatePart.part.SalesItemLineDetail.Qty,
+					}
+				}
 			},
 		});
 
@@ -240,7 +249,7 @@
               <template v-else>
                 <td>
                   <div v-if="!hasOrdered(row.estimatePart)">
-                    <input type="checkbox" :value="{quantity: row.estimatePart.part.SalesItemLineDetail.Qty, partId: row.estimatePart.part.SalesItemLineDetail.ItemRef.value, estimateId: row.estimatePart.estimate.DocNumber}" v-model="partsToOrder">
+                    <input type="checkbox" :value="getPartsToOrderValueFromRow(row)" v-model="partsToOrder">
                   </div>
                   <div v-else>
                     <button v-on:click="partToRemove = getOrderPartFromEstimatePart(row.estimatePart)" class="btn btn-info btn-xs btn-link" data-toggle="modal" data-target="#part-remove-modal">detach</button>

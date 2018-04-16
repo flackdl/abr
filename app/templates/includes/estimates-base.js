@@ -235,7 +235,7 @@ let estimatesMixin = {
       let parts = [];
       for (let estimate of this.estimates) {
         for (let line of estimate.Line) {
-          if (line.SalesItemLineDetail && line.SalesItemLineDetail.ItemRef.value == part.SalesItemLineDetail.ItemRef.value) {
+          if (line.SalesItemLineDetail && line.SalesItemLineDetail.ItemRef.value === part.SalesItemLineDetail.ItemRef.value) {
             parts.push(line);
           }
         }
@@ -263,7 +263,12 @@ let estimatesMixin = {
     getOrderPartFromEstimatePart(estimatePart) {
       for (let order of this.orders) {
         let found_part = _.find(order.parts, (part) => {
-          let isPart = part.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
+        	let isPart = part.part_id == estimatePart.part.SalesItemLineDetail.ItemRef.value;
+	        // NOTE: the "MiscHardware" part means multiple/generic parts get grouped under the same QBO Item so we need to
+	        // check uniqueness by the part id and description
+	        if (isPart && estimatePart.part.SalesItemLineDetail.ItemRef.name === 'MiscHardware') {
+		        isPart = part.part_description === estimatePart.part.Description;
+	        }
           let isEstimate = part.estimate_id == estimatePart.estimate.DocNumber;
           return isPart && isEstimate;
         });

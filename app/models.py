@@ -19,6 +19,7 @@ class OrderPart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     estimate_id = models.IntegerField()
     part_id = models.IntegerField()
+    part_description = models.TextField(blank=True)
     quantity = models.IntegerField()
 
     def __str__(self):
