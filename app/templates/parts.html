@@ -10,7 +10,7 @@
 		let app = new Vue({
 			mixins: [estimatesMixin],
 			data: {
-				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Sku', 'Estimate #', 'Qty', 'Stock', 'Total', 'Part Description'],
+				headers: ['Date', 'Due Date', 'Customer','Bike', 'Tag #', 'Estimate #', 'Qty', 'Stock', 'Total', 'Sku', 'Part Description'],
 				partsToOrder: [],
 				orderVendor: '',
 				orderId: '',
@@ -271,11 +271,11 @@
                 <td><a v-bind:href="customerUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.CustomerRef.name $}</a></td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Bike/Model') $}</td>
                 <td>{$ getCustomField(row.estimatePart.estimate, 'Tag #') $}</td>
-	              <td>{$ getSkuFromPart(row.estimatePart.part) $}</td>
                 <td><a v-bind:href="estimateUrl(row.estimatePart.estimate)" target="qbo">{$ row.estimatePart.estimate.DocNumber $}</a></td>
                 <td>{$ row.estimatePart.part.SalesItemLineDetail.Qty $}</td>
                 <td><span v-if="allInventoryItems.length">{$ getInventoryQuantityOnHand(row.estimatePart.part) $}</span></td>
                 <td>{$ getTotalInventoryOrderQuantity(row.estimatePart.part) $}</td>
+                <td>{$ getSkuFromPart(row.estimatePart.part) $}</td>
                 <td><a :href="getInventoryItemUrlFromPart(row.estimatePart)" target="qbo">{$ row.estimatePart.part.Description $}</a></td> </template>
             </tr>
           </tbody>
