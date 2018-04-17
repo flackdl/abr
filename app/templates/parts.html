@@ -112,14 +112,29 @@
 							rows.push({
 								type: 'order-header',
 								order: group.order,
+                class: 'order-details',
 							});
 						}
 						// flatten group
+            let docNumber = null;
 						_.each(group.estimateParts, (estimatePart) => {
+						  // always set the estimate's status as the class
+              let cssClasses = [estimatePart.estimate.class];
+              // set the initial estimate group value to compare against later
+						  if (docNumber === null) {
+						    docNumber = estimatePart.estimate.DocNumber;
+              }
+              // flag this row as a new estimate group
+						  if (docNumber !== estimatePart.estimate.DocNumber) {
+						    cssClasses.push('new-estimate-group');
+              }
 							rows.push({
 								type: 'estimate-part',
 								estimatePart: estimatePart,
+                class: cssClasses.join(' '),
 							});
+						  // reset the doc number
+              docNumber = estimatePart.estimate.DocNumber;
 						});
 					});
 					return rows;
@@ -162,12 +177,6 @@
 				  return _.find(this.orders, (order) => {
 				    return order.id === parseInt(order_id);
           });
-        },
-        getRowClass(row) {
-          if (row.type === 'order-header') {
-				    return 'order-details';
-          }
-          return row.estimatePart.estimate.class;
         },
         getUniqueEstimatePartKey(row) {
 					// if it's an order header, use the id
@@ -235,7 +244,7 @@
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="row in getEstimatesPartsRows()" v-bind:x-key="getUniqueEstimatePartKey(row)" :key="getUniqueEstimatePartKey(row)" :class="getRowClass(row)">
+            <tr v-for="row in getEstimatesPartsRows()" :key="getUniqueEstimatePartKey(row)" :class="row.class">
 
               <!-- order header row -->
               <template v-if="row.type == 'order-header'">

@@ -33,3 +33,6 @@ tr.order-begin {
 tr a {
     color: black;
 }
+tr.new-estimate-group {
+    border-top: 5px solid white;
+}

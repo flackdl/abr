@@ -138,7 +138,6 @@ let estimatesMixin = {
         // failure
         (error) => {
           this.isRequestingData = false;
-
           this.error.unknown = true;
           console.log('failure', error);
         });
@@ -195,11 +194,11 @@ let estimatesMixin = {
       return this.getEstimates().then(
         () => {
           // filter out Accepted & Closed
-          this.estimates = _.filter(this.estimates, (estimate) => {
+          let estimates = _.filter(this.estimates, (estimate) => {
             return !_.includes(['Accepted', 'Closed'], estimate.TxnStatus);
           });
           let estimatesParts = [];
-          _.forEach(this.estimates, (item) => {
+          _.forEach(estimates, (item) => {
             _.forEach(this.parts(item), (part) => {
               estimatesParts.push({
                 estimate: item,
@@ -234,7 +233,7 @@ let estimatesMixin = {
       return found_part ? found_part.QtyOnHand : 0;
     },
     getTotalInventoryOrderQuantity(part) {
-      // return the total quantity needed for this part (in all active estimates)
+      // return the total quantity needed for this part (in all estimates)
       let parts = [];
       for (let estimate of this.estimates) {
         for (let line of estimate.Line) {
