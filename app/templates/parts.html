@@ -80,6 +80,16 @@
             this.isOrdering = false;
           });
         },
+				addToInStock () {
+					// using custom "IN STOCK" order to pre-populate order form
+					this.orderVendor = 'IN STOCK';
+					this.orderId = 'IN STOCK';
+				},
+				addToQuote () {
+					// using custom "QUOTE" order to pre-populate order form
+					this.orderVendor = 'QUOTE';
+					this.orderId = 'QUOTE';
+				},
 				removePartFromOrder () {
 					// reset any previous error message
 					this.partToRemoveError = '';
@@ -237,10 +247,14 @@
 
 			{% include 'includes/app_errors.html' %}
 
-      <div class="table-responsive tab-pane active" role="tabpanel">
+      <div class="table-responsive">
+	      <button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button>
+	      <button data-toggle="modal" data-target="#order-modal" v-on:click="addToInStock()" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-primary' : 'btn-default'">In Stock</button>
+	      <button data-toggle="modal" data-target="#order-modal" v-on:click="addToQuote()" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-warning' : 'btn-default'">Quote</button>
         <table class="table table-hover table-border table-condensed">
           <thead>
-            <th><button data-toggle="modal" data-target="#order-modal" class="btn btn-xs" :disabled="partsToOrder.length === 0" :class="partsToOrder.length ? 'btn-info' : 'btn-default'">Order</button></th>
+            <th>
+            </th>
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
