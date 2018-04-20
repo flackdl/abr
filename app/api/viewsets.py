@@ -4,10 +4,18 @@ from app.models import Order, OrderPart
 from app.api.serializers import OrderSerializer, OrderPartSerializer
 
 
+GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
+GENERIC_VENDOR_QUOTE = 'QUOTE'
+
+
 class OrderViewset(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_fields = ('arrived',)
+
+    @staticmethod
+    def _is_generic(vendor):
+        return vendor in [GENERIC_VENDOR_IN_STOCK, GENERIC_VENDOR_QUOTE]
 
     def create(self, request, *args, **kwargs):
         # if adding parts and a vendor/order_id combination already exists, assign the the parts to it instead
@@ -15,10 +23,12 @@ class OrderViewset(viewsets.ModelViewSet):
         if 'order_parts' in request.data and existing_vendor_order.exists():
             serializer = OrderSerializer(data=request.data, instance=existing_vendor_order[0])
             serializer.is_valid(raise_exception=True)
-            serializer.instance.description = '{}\n\n[PART(S) ADDED TO ORDER]\n\n{}'.format(
-                serializer.instance.description,
-                request.data.get('description'),
-            )
+            # if not a generic order, append to the description that parts were added
+            if not self._is_generic(request.data['vendor']):
+                serializer.instance.description = '{}\n\n[PART(S) ADDED TO ORDER]\n\n{}'.format(
+                    serializer.instance.description,
+                    request.data.get('description'),
+                )
             serializer.instance.save()
             self.assign_parts(serializer)
             headers = self.get_success_headers(serializer.data)
