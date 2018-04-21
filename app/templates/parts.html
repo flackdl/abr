@@ -161,11 +161,11 @@
 						return order_id;
 					});
 					_.each(grouped, (estimateParts, order_id) => {
-            // sort estimates by date
-            estimateParts.sort((a, b) => {
-              return new Date(a.estimate.TxnDate) - new Date(b.estimate.TxnDate);
-            });
 					  if (order_id === this.NOT_ORDERED) {
+              // sort by estimate date AND id so they're guaranteed to be grouped correctly
+              estimateParts = _.sortBy(estimateParts, (ep) => {
+                return `${ep.estimate.ExpirationDate}${ep.estimate.DocNumber}`;
+              });
 					    unordered.push({
                 'order': null,
                 'estimateParts': estimateParts,
@@ -258,7 +258,7 @@
             <th v-for="header in headers" :class="header">{$ header $}</th>
           </thead>
           <tbody>
-            <tr v-for="row in getEstimatesPartsRows()" :key="getUniqueEstimatePartKey(row)" :class="row.class">
+            <tr v-for="(row, index) in getEstimatesPartsRows()" :x-index="index" :key="getUniqueEstimatePartKey(row)" :class="row.class">
 
               <!-- order header row -->
               <template v-if="row.type == 'order-header'">
