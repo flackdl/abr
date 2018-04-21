@@ -225,7 +225,7 @@
 			app.getOrders();
 		}, pollingRateSeconds * 1000);
 
-    // refresh inventory half as fast
+    // refresh inventory much slower
     setInterval(() => {
     	// prevent requests from stacking up
     	if (!this.isRequestingInventoryData) {
@@ -233,7 +233,7 @@
 	    } else {
 		    console.log('already fetching inventory data');
 	    }
-    }, pollingRateSeconds * 2 * 1000);
+    }, pollingRateSeconds * 6 * 1000);
 
 	</script>
 {% endblock %}
