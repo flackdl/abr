@@ -1,9 +1,12 @@
 import json
+import time
 import logging
 import uuid
 from functools import wraps
 import redis
+from datetime import datetime
 from django.conf import settings
+from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -24,6 +27,51 @@ QBO_DEFAULT_ARGS = dict(
 
 def get_key(key, request):
     return '%s:%s' % (request.session['uid'], key)
+
+
+# decorator to handle caching
+def json_cache(f):
+    @wraps(f)
+    def wrapper(request, *args, **kwargs):
+        log('cache_wrapper:: {}'.format(request.get_full_path()))
+        redis_client = get_redis_client()
+        cache_key_results = request.get_full_path()
+        cache_key_lock = 'lock_{}'.format(request.get_full_path())
+        cache_key_date = 'date_{}'.format(request.get_full_path())
+        cached_results = redis_client.get(cache_key_results) or []
+        cached_results = json.loads(cached_results) if cached_results else None
+        cached_stamp = redis_client.get(cache_key_date) or 0
+        is_fresh = cached_results and cached_stamp and (datetime.utcnow() - datetime.fromtimestamp(int(cached_stamp))).seconds < settings.ESTIMATE_QUERY_SECONDS
+
+        # return cached data
+        if is_fresh:
+            log('returning fresh cached data')
+        else:
+            # return stale data if another thread is already fetching fresh data
+            lock_exists = not cache.add(cache_key_lock, True, settings.CACHE_LOCK_SECONDS)
+            if lock_exists:
+                log('returning stale cached data because we are already fetching new data')
+            # return new data
+            else:
+                log('fetching fresh data')
+
+                # capture original response from the decorated function
+                response = f(request, *args, **kwargs)
+
+                # cache results and unset the "fetching" lock
+                redis_client.set(cache_key_results, response.content)
+                redis_client.set(cache_key_date, int(time.time()))
+                cache.delete(cache_key_lock)
+
+                # include cache headers since this is fresh data
+                response['Cache-Control'] = 'max-age={}'.format(settings.ESTIMATE_QUERY_SECONDS)
+
+                # return original response
+                return response
+
+        # returning cached response
+        return JsonResponse(cached_results)
+    return wrapper
 
 
 # decorator to handle auth exceptions
@@ -106,7 +154,6 @@ def get_redis_client():
 
 def log(m):
     logging.info(m)
-    print(m)
 
 
 def multiply_items(items, single_print=False):
