@@ -59,10 +59,6 @@ let estimatesMixin = {
       });
     },
     getEstimates: function() {
-      if (this.isRequestingData) {
-        console.log('already fetching data...');
-        return Promise.resolve();
-      }
 
       this.isRequestingData = true;
 

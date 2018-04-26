@@ -136,44 +136,54 @@ def parts(request):
 
 @quickbooks_auth
 def json_estimates(request):
+    response_kwargs = {}
     redis_client = get_redis_client()
     cache_key_results = request.path
     cache_key_lock = 'lock_{}'.format(request.path)
     cache_key_date = 'date_{}'.format(request.path)
-    cached_data = redis_client.get(cache_key_results)
-    cached_date = redis_client.get(cache_key_date)
-    is_fresh = cached_data and cached_date and (datetime.utcnow() - datetime.fromtimestamp(cached_date)).seconds < settings.ESTIMATE_QUERY_SECONDS
+    cached_results = redis_client.get(cache_key_results) or []
+    cached_results = json.loads(cached_results) if cached_results else None
+    cached_stamp = int(redis_client.get(cache_key_date))
+    is_fresh = cached_results and cached_stamp and (datetime.utcnow() - datetime.fromtimestamp(cached_stamp)).seconds < settings.ESTIMATE_QUERY_SECONDS
 
     # return cached data
     if is_fresh:
-        results = cached_data
-        log('returning cached data')
-    # return new data
+        results = cached_results
+        log('returning fresh cached data')
     else:
-        # if already fetching, remove the fetching lock and return stale data
-        is_fetching = not cache.add(cache_key_lock, True, settings.CACHE_LOCK_SECONDS)
-        if not is_fetching:
-            # TODO - this is wrong
-            redis_client.delete(cache_key_lock)
-            log('returning stale data')
+        # return stale data if another thread is already fetching fresh data
+        lock_exists = not cache.add(cache_key_lock, True, settings.CACHE_LOCK_SECONDS)
+        if lock_exists:
+            results = cached_results
+            log('returning stale cached data because we are already fetching new data')
+        # return new data
+        else:
+            log('fetching fresh data')
+            client = get_qbo_client()
 
-        client = get_qbo_client()
+            # get recent estimates
+            query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
+                (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
 
-        # get recent estimates
-        query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
-            (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
+            # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
+            results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
+            results = [e for e in results if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
 
-        # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
-        results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
-        results = [e for e in results if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+            # cache results and unset the lock
+            redis_client.set(cache_key_results, json.dumps(results))
+            redis_client.set(cache_key_date, int(time.time()))
+            cache.delete(cache_key_lock)
 
-        # TODO - include cache headers
+            # include cache headers
+            response_kwargs['Cache-Control'] = 'max-age={}'.format(settings.ESTIMATE_QUERY_SECONDS)
 
-        # cache results and unset the lock
-        redis_client.set(cache_key_results, results)
-        redis_client.set(cache_key_date, int(time.time()))
+    response = JsonResponse({'success': True, 'estimates': results})
 
-    return JsonResponse({'success': True, 'estimates': results})
+    # include extra headers
+    for key, value in response_kwargs.items():
+        response[key] = value
+
+    return response
 
 
 @quickbooks_auth

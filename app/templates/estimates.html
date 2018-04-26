@@ -18,7 +18,11 @@
 
     // frequently refresh estimate data
     setInterval(() => {
-      app.getEstimates();
+	    if (this.isRequestingData) {
+		    console.log('already fetching data...');
+	    } else {
+				app.getEstimates();
+	    }
     }, pollingRateSeconds * 1000);
 
   </script>
