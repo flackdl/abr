@@ -41,7 +41,7 @@ def quickbooks_auth(f):
         if 'uid' not in request.session:
             request.session['uid'] = str(uuid.uuid4())
 
-        mc = get_mc_client()
+        mc = get_redis_client()
 
         # not authenticated with qbo
         if not mc.get('access_token'):
@@ -87,8 +87,8 @@ def quickbooks_auth(f):
     return wrapper
 
 
-def get_client():
-    mc = get_mc_client()
+def get_qbo_client():
+    mc = get_redis_client()
     # qbo client
     return QuickBooks(
         consumer_key=settings.QBO_PRODUCTION_KEY,
@@ -100,7 +100,7 @@ def get_client():
     )
 
 
-def get_mc_client():
+def get_redis_client():
     return redis.from_url(settings.REDIS_URL)
 
 
@@ -121,7 +121,7 @@ def multiply_items(items, single_print=False):
 
 def get_html(request, bill_id):
     css = request.GET.get('css')
-    client = get_client()
+    client = get_qbo_client()
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
     attach_prices(bill, client)
@@ -158,7 +158,7 @@ def estimate_has_tag_number(estimate):
 
 
 def get_inventory_items(pos, all_stock=False):
-    client = get_client()
+    client = get_qbo_client()
     results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.QBO_MAX_RESULTS), qb=client)
 
     # conditionally return all items regardless if they're in stock or not

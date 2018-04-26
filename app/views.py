@@ -1,8 +1,8 @@
 import json
+import time
 from cStringIO import StringIO
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.views.decorators.cache import cache_page
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,8 +13,9 @@ from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.core.cache import cache
 from app.utils import (
-    quickbooks_auth, get_mc_client, get_key, log, get_client, attach_prices,
+    quickbooks_auth, get_redis_client, get_key, log, get_qbo_client, attach_prices,
     get_inventory_items, estimate_has_tag_number, get_html, QBO_DEFAULT_ARGS,
 )
 
@@ -30,7 +31,7 @@ def callback(request):
         consumer_secret=settings.QBO_PRODUCTION_SECRET,
         **QBO_DEFAULT_ARGS
     )
-    mc = get_mc_client()
+    mc = get_redis_client()
 
     client.authorize_url = mc.get(get_key('authorize_url', request))
     client.request_token = mc.get(get_key('request_token', request))
@@ -72,7 +73,7 @@ def app_login(request):
 
 @quickbooks_auth
 def to_json(request):
-    client = get_client()
+    client = get_qbo_client()
     bill_id = request.GET.get('bill_id')
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
@@ -124,22 +125,6 @@ def single_print_all_items(request):
 
 
 @quickbooks_auth
-@cache_page(settings.ESTIMATE_QUERY_SECONDS)
-def json_estimates(request):
-    client = get_client()
-
-    # get recent estimates
-    query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
-        (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
-
-    # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
-    results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
-    results = [e for e in results if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
-
-    return JsonResponse({'success': True, 'estimates': results})
-
-
-@quickbooks_auth
 def estimates(request):
     return render(request, 'estimates.html', {'title': 'In-House Repairs', 'tab': 'estimates'})
 
@@ -150,7 +135,48 @@ def parts(request):
 
 
 @quickbooks_auth
-@cache_page(settings.INVENTORY_QUERY_SECONDS)
+def json_estimates(request):
+    redis_client = get_redis_client()
+    cache_key_results = request.path
+    cache_key_lock = 'lock_{}'.format(request.path)
+    cache_key_date = 'date_{}'.format(request.path)
+    cached_data = redis_client.get(cache_key_results)
+    cached_date = redis_client.get(cache_key_date)
+    is_fresh = cached_data and cached_date and (datetime.utcnow() - datetime.fromtimestamp(cached_date)).seconds < settings.ESTIMATE_QUERY_SECONDS
+
+    # return cached data
+    if is_fresh:
+        results = cached_data
+        log('returning cached data')
+    # return new data
+    else:
+        # if already fetching, remove the fetching lock and return stale data
+        is_fetching = not cache.add(cache_key_lock, True, settings.CACHE_LOCK_SECONDS)
+        if not is_fetching:
+            # TODO - this is wrong
+            redis_client.delete(cache_key_lock)
+            log('returning stale data')
+
+        client = get_qbo_client()
+
+        # get recent estimates
+        query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
+            (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
+
+        # remove "Closed" estimates without a "Tag #" which indicates the bike has been serviced and picked up
+        results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
+        results = [e for e in results if not (e['TxnStatus'] == 'Closed' and not estimate_has_tag_number(e))]
+
+        # TODO - include cache headers
+
+        # cache results and unset the lock
+        redis_client.set(cache_key_results, results)
+        redis_client.set(cache_key_date, int(time.time()))
+
+    return JsonResponse({'success': True, 'estimates': results})
+
+
+@quickbooks_auth
 def json_inventory_items(request):
     page = int(request.GET.get('page') or 1)
     all_stock = 'all_stock' in request.GET
