@@ -38,7 +38,7 @@ def json_cache(f):
         cache_key_results = request.get_full_path()
         cache_key_lock = 'lock_{}'.format(request.get_full_path())
         cache_key_date = 'date_{}'.format(request.get_full_path())
-        cached_results = redis_client.get(cache_key_results) or []
+        cached_results = redis_client.get(cache_key_results)
         cached_results = json.loads(cached_results) if cached_results else None
         cached_stamp = redis_client.get(cache_key_date) or 0
         is_fresh = cached_results and cached_stamp and (datetime.utcnow() - datetime.fromtimestamp(int(cached_stamp))).seconds < settings.ESTIMATE_QUERY_SECONDS
@@ -49,7 +49,7 @@ def json_cache(f):
         else:
             # return stale data if another thread is already fetching fresh data
             lock_exists = not cache.add(cache_key_lock, True, settings.CACHE_LOCK_SECONDS)
-            if lock_exists:
+            if lock_exists and cached_results:
                 log('returning stale cached data because we are already fetching new data')
             # return new data
             else:
