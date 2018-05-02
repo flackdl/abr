@@ -27,4 +27,4 @@ WORKDIR /app
 RUN /opt/virtualenv/bin/pip install -r requirements.txt
 
 # run wsgi app
-CMD /opt/virtualenv/bin/gunicorn -w 3 --timeout 15 -b :${PORT:-80} abr.wsgi
+CMD /opt/virtualenv/bin/gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
