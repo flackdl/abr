@@ -26,5 +26,8 @@ WORKDIR /app
 # install python dependencies
 RUN /opt/virtualenv/bin/pip install -r requirements.txt
 
+# collect static files
+RUN /opt/virtualenv/bin/python manage.py collectstatic --noinput
+
 # run wsgi app
 CMD /opt/virtualenv/bin/gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
