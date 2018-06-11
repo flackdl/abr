@@ -21,7 +21,11 @@ Supports the management/tracking of vendor orders.
 
 *Deploy to Heroku*
 
+    # push image
     heroku container:push -a XXX web
+    
+    # trigger a release 
+    heroku container:release -a XXX web
   
 *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
 
