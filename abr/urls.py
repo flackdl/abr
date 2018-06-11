@@ -32,5 +32,6 @@ urlpatterns = [
     url(r'^json/inventory-items$', views.json_inventory_items, name='json-inventory-items'),
     url(r'^estimates$', views.estimates, name='estimates'),
     url(r'^parts$', views.parts, name='parts'),
+    url(r'^purge-orders$', views.purge_orders, name='purge-orders'),
     url(r'^api/', include(app.api.urls)),
 ]

@@ -12,6 +12,8 @@ from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.conf import settings
+
+from app.models import OrderPart
 from app.utils import (
     quickbooks_auth, get_redis_client, get_key, log, get_qbo_client, attach_prices,
     get_inventory_items, estimate_has_tag_number, get_html, QBO_DEFAULT_ARGS,
@@ -162,3 +164,32 @@ def json_inventory_items(request):
     items = [json.loads(item.to_json()) for item in results]
 
     return JsonResponse({"items": items})
+
+
+def purge_orders(request):
+    client = get_qbo_client()
+
+    # get recent estimates
+    query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate DESC MAXRESULTS %s" % (
+        (datetime.now() - timedelta(weeks=settings.ESTIMATE_AGE_WEEKS)).date().isoformat(), settings.QBO_MAX_RESULTS)
+
+    # filter to "Closed" and "Accepted"
+    results = [json.loads(e.to_json()) for e in Estimate.query(query, qb=client)]
+    results = [e for e in results if e['TxnStatus'] in ['Closed', 'Accepted']]
+
+    orders_to_purge = []
+    for result in results:
+        # verify the DocNumber is an integer
+        if not result['DocNumber'] or not result['DocNumber'].isdigit():
+            continue
+
+        # find all parts for this "DocNumber" (.ie estimate_id)
+        order_parts = OrderPart.objects.filter(estimate_id=result['DocNumber'])
+        if order_parts.exists():
+            orders_to_purge.append({
+                "id": result['Id'],
+                "order_id": order_parts[0].order.id,
+                "estimate_id": order_parts[0].estimate_id,
+            })
+
+    return JsonResponse({'order_to_purge': orders_to_purge})
