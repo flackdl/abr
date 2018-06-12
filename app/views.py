@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.conf import settings
 
-from app.models import OrderPart
+from app.models import OrderPart, Order
 from app.utils import (
     quickbooks_auth, get_redis_client, get_key, log, get_qbo_client, attach_prices,
     get_inventory_items, estimate_has_tag_number, get_html, QBO_DEFAULT_ARGS,
@@ -178,18 +178,37 @@ def purge_orders(request):
     results = [e for e in results if e['TxnStatus'] in ['Closed', 'Accepted']]
 
     orders_to_purge = []
+    parts_to_purge = []
     for result in results:
         # verify the DocNumber is an integer
         if not result['DocNumber'] or not result['DocNumber'].isdigit():
             continue
 
-        # find all parts for this "DocNumber" (.ie estimate_id)
+        # find all parts for this "DocNumber" (i.e estimate_id)
         order_parts = OrderPart.objects.filter(estimate_id=result['DocNumber'])
-        if order_parts.exists():
-            orders_to_purge.append({
-                "id": result['Id'],
-                "order_id": order_parts[0].order.id,
-                "estimate_id": order_parts[0].estimate_id,
+        order_ids = set()
+        for part in order_parts:
+            order_ids.add(part.order.id)
+            parts_to_purge.append({
+                "qbo_estimate_id": result['Id'],
+                "part_id": part.id,
+                "order_id": part.order.id,
+                "qbo_DocNumber": part.estimate_id,
             })
+            # TODO
+            #part.delete()
 
-    return JsonResponse({'order_to_purge': orders_to_purge})
+        # remove all orders without any associated parts
+        orders = Order.objects.filter(order_id__in=order_ids)
+        for order in orders:
+            if not order.orderpart_set.exists():
+                orders_to_purge.append({
+                    "order_id": order.id,
+                })
+                # TODO
+                #order.delete()
+
+    return JsonResponse({
+        'parts_to_purge': parts_to_purge,
+        'orders_to_purge': orders_to_purge,
+    })
