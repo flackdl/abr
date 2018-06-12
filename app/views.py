@@ -184,7 +184,7 @@ def purge_orders(request):
         if not result['DocNumber'] or not result['DocNumber'].isdigit():
             continue
 
-        # find all parts for this "DocNumber" (i.e estimate_id)
+        # delete all parts for this "DocNumber" (i.e estimate_id)
         order_parts = OrderPart.objects.filter(estimate_id=result['DocNumber'])
         order_ids = set()
         for part in order_parts:
@@ -195,18 +195,16 @@ def purge_orders(request):
                 "order_id": part.order.id,
                 "qbo_DocNumber": part.estimate_id,
             })
-            # TODO
-            #part.delete()
+            part.delete()
 
-        # remove all orders without any associated parts
+        # delete all orders without any associated parts
         orders = Order.objects.filter(order_id__in=order_ids)
         for order in orders:
             if not order.orderpart_set.exists():
                 orders_to_purge.append({
                     "order_id": order.id,
                 })
-                # TODO
-                #order.delete()
+                order.delete()
 
     return JsonResponse({
         'parts_to_purge': parts_to_purge,
