@@ -36,8 +36,16 @@ def callback(request):
     client.authorize_url = mc.get(get_key('authorize_url', request))
     client.request_token = mc.get(get_key('request_token', request))
     client.request_token_secret = mc.get(get_key('request_token_secret', request))
-    client.set_up_service()
-    client.get_access_tokens(request.GET['oauth_verifier'])
+
+    try:
+        client.set_up_service()
+        client.get_access_tokens(request.GET['oauth_verifier'])
+    # unset the uid in the session during any exception and the auth process over from scratch
+    except Exception as e:
+        log(str(e))
+        log('error during callback; unset uid in session and redirect')
+        request.session.pop('uid')
+        return redirect(reverse('dashboard'))
 
     # store for future use
     mc.set('realm_id', request.GET['realmId'])

@@ -117,7 +117,7 @@ def quickbooks_auth(f):
         try:
             return f(request, *args, **kwargs)
         except AuthorizationException as e:
-            # session appears to have expired to wipe token
+            # session appears to have expired so wipe token
             log('quickbooks exception, clearing token and redirecting (%s)' % e)
             mc.delete('access_token')
             # json requests should return contextual data vs getting redirected
