@@ -44,7 +44,7 @@ def callback(request):
     except Exception as e:
         log(str(e))
         log('error during callback; unset uid in session and redirect')
-        request.session.pop('uid')
+        request.session.pop('uid', None)
         return redirect(reverse('dashboard'))
 
     # store for future use
