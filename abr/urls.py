@@ -21,7 +21,7 @@ import app.api.urls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.dashboard, name='dashboard'),
-    url(r'^callback$', views.callback),
+    url(r'^callback$', views.callback, name='callback'),
     url(r'^input$', views.input, name='input'),
     url(r'^login$', views.app_login, name='login'),
     url(r'^json$', views.to_json),

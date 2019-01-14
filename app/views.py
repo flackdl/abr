@@ -1,12 +1,12 @@
 import json
-from cStringIO import StringIO
+from io import StringIO
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from weasyprint import HTML
-from quickbooks import QuickBooks
+from quickbooks import QuickBooks, Oauth2SessionManager
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
@@ -26,31 +26,50 @@ def dashboard(request):
 
 
 def callback(request):
-    client = QuickBooks(
-        consumer_key=settings.QBO_PRODUCTION_KEY,
-        consumer_secret=settings.QBO_PRODUCTION_SECRET,
-        **QBO_DEFAULT_ARGS
+    callback_url = request.build_absolute_uri(reverse('callback'))
+    session_manager = Oauth2SessionManager(
+        # TODO - these are wrong - waiting on oauth2 client id/secret
+        client_id=settings.QBO_PRODUCTION_KEY,
+        client_secret=settings.QBO_PRODUCTION_SECRET,
+        base_url=callback_url,  # the base_url has to be the same as the one used in authorization
     )
-    mc = get_redis_client()
+    #client = QuickBooks(
+    #    consumer_key=settings.QBO_PRODUCTION_KEY,
+    #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
+    #    **QBO_DEFAULT_ARGS
+    #)
 
-    client.authorize_url = mc.get(get_key('authorize_url', request))
-    client.request_token = mc.get(get_key('request_token', request))
-    client.request_token_secret = mc.get(get_key('request_token_secret', request))
+    # TODO - invalid requests return {"error":"invalid_grant"} quietly
+    session_manager.get_access_tokens(request.GET['code'])
 
-    try:
-        client.set_up_service()
-        client.get_access_tokens(request.GET['oauth_verifier'])
-    # unset the uid in the session during any exception and the auth process over from scratch
-    except Exception as e:
-        log(str(e))
-        log('error during callback; unset uid in session and redirect')
-        request.session.pop('uid', None)
-        return redirect(reverse('dashboard'))
+    redis_client = get_redis_client()
 
-    # store for future use
-    mc.set('realm_id', request.GET['realmId'])
-    mc.set('access_token', client.access_token)
-    mc.set('access_token_secret', client.access_token_secret)
+    access_token = session_manager.access_token
+    refresh_token = session_manager.refresh_token
+
+    redis_client.set('access_token', access_token)
+    redis_client.set('refresh_token', refresh_token)
+    redis_client.set('realm_id', request.GET['realmId'])
+
+    #client.authorize_url = redis_client.get(get_key('authorize_url', request))
+    #client.request_token = redis_client.get(get_key('request_token', request))
+    #client.request_token_secret = redis_client.get(get_key('request_token_secret', request))
+
+    # TODO - handle failures
+    #try:
+    #    client.set_up_service()
+    #    client.get_access_tokens(request.GET['oauth_verifier'])
+    ## unset the uid in the session during any exception and the auth process over from scratch
+    #except Exception as e:
+    #    log(str(e))
+    #    log('error during callback; unset uid in session and redirect')
+    #    request.session.pop('uid', None)
+    #    return redirect(reverse('dashboard'))
+
+    ## store for future use
+    #redis_client.set('realm_id', request.GET['realmId'])
+    #redis_client.set('access_token', client.access_token)
+    #redis_client.set('access_token_secret', client.access_token_secret)
 
     return redirect(reverse('dashboard'))
 

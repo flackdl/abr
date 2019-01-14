@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-from quickbooks import QuickBooks
+from quickbooks import QuickBooks, Oauth2SessionManager
 from quickbooks.exceptions import (
     AuthorizationException, UnsupportedException, GeneralException, ValidationException,
     SevereException,
@@ -89,25 +89,35 @@ def quickbooks_auth(f):
         if 'uid' not in request.session:
             request.session['uid'] = str(uuid.uuid4())
 
-        mc = get_redis_client()
+        redis_client = get_redis_client()
 
         # not authenticated with qbo
-        if not mc.get('access_token'):
+        if not redis_client.get('access_token'):
 
             log('no access token')
 
-            client = QuickBooks(
-                consumer_key=settings.QBO_PRODUCTION_KEY,
-                consumer_secret=settings.QBO_PRODUCTION_SECRET,
-                callback_url='http://%s/callback' % request.get_host(),
-                **QBO_DEFAULT_ARGS
+            callback_url = request.build_absolute_uri(reverse('callback'))
+
+            session_manager = Oauth2SessionManager(
+                # TODO - these are wrong - waiting on oauth2 client id/secret
+                client_id=settings.QBO_PRODUCTION_KEY,
+                client_secret=settings.QBO_PRODUCTION_SECRET,
+                base_url=callback_url,
             )
 
+            #client = QuickBooks(
+            #    consumer_key=settings.QBO_PRODUCTION_KEY,
+            #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
+            #    callback_url='http://%s/callback' % request.get_host(),
+            #    **QBO_DEFAULT_ARGS
+            #)
+
             # store for future use
-            authorize_url = client.get_authorize_url()
-            mc.set(get_key('authorize_url', request), authorize_url)
-            mc.set(get_key('request_token', request), client.request_token)
-            mc.set(get_key('request_token_secret', request), client.request_token_secret)
+            authorize_url = session_manager.get_authorize_url(callback_url)
+            #authorize_url = client.get_authorize_url()
+            redis_client.set(get_key('authorize_url', request), authorize_url)
+            #redis_client.set(get_key('request_token', request), client.request_token)
+            #redis_client.set(get_key('request_token_secret', request), client.request_token_secret)
 
             if request.META.get('content-type') == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
@@ -119,7 +129,7 @@ def quickbooks_auth(f):
         except AuthorizationException as e:
             # session appears to have expired so wipe token
             log('quickbooks exception, clearing token and redirecting (%s)' % e)
-            mc.delete('access_token')
+            redis_client.delete('access_token')
             # json requests should return contextual data vs getting redirected
             if request.META.get('content-type') == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
@@ -136,14 +146,27 @@ def quickbooks_auth(f):
 
 
 def get_qbo_client():
-    mc = get_redis_client()
-    # qbo client
+    redis_client = get_redis_client()
+
+    session_manager = Oauth2SessionManager(
+        client_id=settings.QBO_PRODUCTION_KEY,
+        client_secret=settings.QBO_PRODUCTION_SECRET,
+        access_token=redis_client.get('access_token'),
+    )
+
+    #return QuickBooks(
+    #    consumer_key=settings.QBO_PRODUCTION_KEY,
+    #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
+    #    access_token=redis_client.get('access_token'),
+    #    access_token_secret=redis_client.get('access_token_secret'),
+    #    company_id=redis_client.get('realm_id'),
+    #    **QBO_DEFAULT_ARGS
+    #)
+
     return QuickBooks(
-        consumer_key=settings.QBO_PRODUCTION_KEY,
-        consumer_secret=settings.QBO_PRODUCTION_SECRET,
-        access_token=mc.get('access_token'),
-        access_token_secret=mc.get('access_token_secret'),
-        company_id=mc.get('realm_id'),
+        sandbox=True,  # TODO
+        session_manager=session_manager,
+        company_id=redis_client.get('realm_id'),
         **QBO_DEFAULT_ARGS
     )
 
