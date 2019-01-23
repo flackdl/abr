@@ -6,7 +6,6 @@ from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from weasyprint import HTML
-from quickbooks import QuickBooks, Oauth2SessionManager
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
@@ -15,9 +14,10 @@ from django.conf import settings
 
 from app.models import OrderPart, Order
 from app.utils import (
-    quickbooks_auth, get_redis_client, get_key, log, get_qbo_client, attach_prices,
-    get_inventory_items, estimate_has_tag_number, get_html, QBO_DEFAULT_ARGS,
-    json_cache)
+    quickbooks_auth, get_redis_client, log, get_qbo_client, attach_prices,
+    get_inventory_items, estimate_has_tag_number, get_html,
+    json_cache, get_qbo_session_manager,
+)
 
 
 @quickbooks_auth
@@ -26,12 +26,7 @@ def dashboard(request):
 
 
 def callback(request):
-    callback_url = request.build_absolute_uri(reverse('callback'))
-    session_manager = Oauth2SessionManager(
-        client_id=settings.QBO_CLIENT_ID,
-        client_secret=settings.QBO_CLIENT_SECRET,
-        base_url=callback_url,  # the base_url has to be the same as the one used in authorization
-    )
+    session_manager = get_qbo_session_manager(request)
 
     # TODO - need to handle invalid requests which can return {"error":"invalid_grant"} quietly
     session_manager.get_access_tokens(request.GET['code'])

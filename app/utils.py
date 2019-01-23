@@ -5,6 +5,7 @@ import uuid
 from functools import wraps
 import redis
 from datetime import datetime
+from urlparse import urlparse
 from django.conf import settings
 from django.core.cache import cache
 from django.http import JsonResponse
@@ -100,15 +101,10 @@ def quickbooks_auth(f):
             if request.content_type == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
-            callback_url = request.build_absolute_uri(reverse('callback'))
-
-            session_manager = Oauth2SessionManager(
-                client_id=settings.QBO_CLIENT_ID,
-                client_secret=settings.QBO_CLIENT_SECRET,
-                base_url=callback_url,
-            )
+            session_manager = get_qbo_session_manager(request)
 
             # store for future use
+            callback_url = get_callback_url(request)
             authorize_url = session_manager.get_authorize_url(callback_url)
             redis_client.set(get_key('authorize_url', request), authorize_url)
 
@@ -133,6 +129,24 @@ def quickbooks_auth(f):
             log(e)
             raise e
     return wrapper
+
+
+def get_callback_url(request):
+    callback_url = request.build_absolute_uri(reverse('callback'))
+    # enforce https in production since qbo oauth requires it
+    if not settings.DEBUG:
+        parsed = urlparse(callback_url)
+        callback_url = 'https://{}{}'.format(parsed.hostname, parsed.path)
+    return callback_url
+
+
+def get_qbo_session_manager(request):
+    callback_url = get_callback_url(request)
+    return Oauth2SessionManager(
+        client_id=settings.QBO_CLIENT_ID,
+        client_secret=settings.QBO_CLIENT_SECRET,
+        base_url=callback_url,  # the base_url has to be the same as the one used in authorization
+    )
 
 
 def get_qbo_client():
