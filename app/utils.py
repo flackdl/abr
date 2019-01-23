@@ -81,7 +81,7 @@ def quickbooks_auth(f):
 
         if not request.user.is_authenticated:
 
-            if request.META.get('content-type') == 'application/json':
+            if request.content_type == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
             return redirect(reverse('login'))
@@ -96,31 +96,21 @@ def quickbooks_auth(f):
 
             log('no access token')
 
+            # json requests should return contextual data vs getting redirected
+            if request.content_type == 'application/json':
+                return JsonResponse({'success': False, 'reason': 'authentication'})
+
             callback_url = request.build_absolute_uri(reverse('callback'))
 
             session_manager = Oauth2SessionManager(
-                # TODO - these are wrong - waiting on oauth2 client id/secret
-                client_id=settings.QBO_PRODUCTION_KEY,
-                client_secret=settings.QBO_PRODUCTION_SECRET,
+                client_id=settings.QBO_CLIENT_ID,
+                client_secret=settings.QBO_CLIENT_SECRET,
                 base_url=callback_url,
             )
 
-            #client = QuickBooks(
-            #    consumer_key=settings.QBO_PRODUCTION_KEY,
-            #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
-            #    callback_url='http://%s/callback' % request.get_host(),
-            #    **QBO_DEFAULT_ARGS
-            #)
-
             # store for future use
             authorize_url = session_manager.get_authorize_url(callback_url)
-            #authorize_url = client.get_authorize_url()
             redis_client.set(get_key('authorize_url', request), authorize_url)
-            #redis_client.set(get_key('request_token', request), client.request_token)
-            #redis_client.set(get_key('request_token_secret', request), client.request_token_secret)
-
-            if request.META.get('content-type') == 'application/json':
-                return JsonResponse({'success': False, 'reason': 'authentication'})
 
             return redirect(authorize_url)
 
@@ -131,7 +121,7 @@ def quickbooks_auth(f):
             log('quickbooks exception, clearing token and redirecting (%s)' % e)
             redis_client.delete('access_token')
             # json requests should return contextual data vs getting redirected
-            if request.META.get('content-type') == 'application/json':
+            if request.content_type == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
             return redirect(reverse('dashboard'))
         except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
@@ -149,22 +139,13 @@ def get_qbo_client():
     redis_client = get_redis_client()
 
     session_manager = Oauth2SessionManager(
-        client_id=settings.QBO_PRODUCTION_KEY,
-        client_secret=settings.QBO_PRODUCTION_SECRET,
+        client_id=settings.QBO_CLIENT_ID,
+        client_secret=settings.QBO_CLIENT_SECRET,
         access_token=redis_client.get('access_token'),
     )
 
-    #return QuickBooks(
-    #    consumer_key=settings.QBO_PRODUCTION_KEY,
-    #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
-    #    access_token=redis_client.get('access_token'),
-    #    access_token_secret=redis_client.get('access_token_secret'),
-    #    company_id=redis_client.get('realm_id'),
-    #    **QBO_DEFAULT_ARGS
-    #)
-
     return QuickBooks(
-        sandbox=True,  # TODO
+        sandbox=settings.DEBUG,
         session_manager=session_manager,
         company_id=redis_client.get('realm_id'),
         **QBO_DEFAULT_ARGS

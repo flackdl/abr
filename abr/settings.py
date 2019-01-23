@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'ssshhhh')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True if os.environ.get('DEBUG', False) else False
 
 ALLOWED_HOSTS = ['*']
 
@@ -168,8 +168,8 @@ POS_USER = os.environ.get('POS_USER', 'pos')
 POS_PASSWORD = os.environ.get('POS_PASSWORD', 'cookie123')
 MANAGER_USER = os.environ.get('MANAGER_USER', 'manager')
 MANAGER_PASSWORD = os.environ.get('MANAGER_PASSWORD', 'cookie123')
-QBO_PRODUCTION_KEY = os.environ.get('QBO_PRODUCTION_KEY')
-QBO_PRODUCTION_SECRET = os.environ.get('QBO_PRODUCTION_SECRET')
+QBO_CLIENT_ID = os.environ.get('QBO_CLIENT_ID')
+QBO_CLIENT_SECRET = os.environ.get('QBO_CLIENT_SECRET')
 QBO_MAX_RESULTS = 1000
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 PRINT_LABEL_COLS = 3

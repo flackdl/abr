@@ -28,19 +28,22 @@ def dashboard(request):
 def callback(request):
     callback_url = request.build_absolute_uri(reverse('callback'))
     session_manager = Oauth2SessionManager(
-        # TODO - these are wrong - waiting on oauth2 client id/secret
-        client_id=settings.QBO_PRODUCTION_KEY,
-        client_secret=settings.QBO_PRODUCTION_SECRET,
+        client_id=settings.QBO_CLIENT_ID,
+        client_secret=settings.QBO_CLIENT_SECRET,
         base_url=callback_url,  # the base_url has to be the same as the one used in authorization
     )
-    #client = QuickBooks(
-    #    consumer_key=settings.QBO_PRODUCTION_KEY,
-    #    consumer_secret=settings.QBO_PRODUCTION_SECRET,
-    #    **QBO_DEFAULT_ARGS
-    #)
 
-    # TODO - invalid requests return {"error":"invalid_grant"} quietly
+    # TODO - need to handle invalid requests which can return {"error":"invalid_grant"} quietly
     session_manager.get_access_tokens(request.GET['code'])
+
+    # TODO - handle exceptions
+    #try:
+    ## unset the uid in the session during any exception and start the auth process over from scratch
+    #except Exception as e:
+    #    log(str(e))
+    #    log('error during callback; unset uid in session and redirect')
+    #    request.session.pop('uid', None)
+    #    return redirect(reverse('dashboard'))
 
     redis_client = get_redis_client()
 
@@ -50,26 +53,6 @@ def callback(request):
     redis_client.set('access_token', access_token)
     redis_client.set('refresh_token', refresh_token)
     redis_client.set('realm_id', request.GET['realmId'])
-
-    #client.authorize_url = redis_client.get(get_key('authorize_url', request))
-    #client.request_token = redis_client.get(get_key('request_token', request))
-    #client.request_token_secret = redis_client.get(get_key('request_token_secret', request))
-
-    # TODO - handle failures
-    #try:
-    #    client.set_up_service()
-    #    client.get_access_tokens(request.GET['oauth_verifier'])
-    ## unset the uid in the session during any exception and the auth process over from scratch
-    #except Exception as e:
-    #    log(str(e))
-    #    log('error during callback; unset uid in session and redirect')
-    #    request.session.pop('uid', None)
-    #    return redirect(reverse('dashboard'))
-
-    ## store for future use
-    #redis_client.set('realm_id', request.GET['realmId'])
-    #redis_client.set('access_token', client.access_token)
-    #redis_client.set('access_token_secret', client.access_token_secret)
 
     return redirect(reverse('dashboard'))
 
