@@ -28,17 +28,9 @@ def dashboard(request):
 def callback(request):
     session_manager = get_qbo_session_manager(request)
 
+    # TODO - handle auth exceptions
     # TODO - need to handle invalid requests which can return {"error":"invalid_grant"} quietly
     session_manager.get_access_tokens(request.GET['code'])
-
-    # TODO - handle exceptions
-    #try:
-    ## unset the uid in the session during any exception and start the auth process over from scratch
-    #except Exception as e:
-    #    log(str(e))
-    #    log('error during callback; unset uid in session and redirect')
-    #    request.session.pop('uid', None)
-    #    return redirect(reverse('dashboard'))
 
     redis_client = get_redis_client()
 

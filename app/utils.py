@@ -1,7 +1,6 @@
 import json
 import time
 import logging
-import uuid
 from functools import wraps
 import redis
 from datetime import datetime
@@ -24,10 +23,6 @@ from quickbooks.objects.item import Item
 QBO_DEFAULT_ARGS = dict(
     minorversion=23,
 )
-
-
-def get_key(key, request):
-    return '%s:%s' % (request.session['uid'], key)
 
 
 # decorator to handle caching
@@ -87,9 +82,6 @@ def quickbooks_auth(f):
 
             return redirect(reverse('login'))
 
-        if 'uid' not in request.session:
-            request.session['uid'] = str(uuid.uuid4())
-
         redis_client = get_redis_client()
 
         # not authenticated with qbo
@@ -106,7 +98,6 @@ def quickbooks_auth(f):
             # store for future use
             callback_url = get_callback_url(request)
             authorize_url = session_manager.get_authorize_url(callback_url)
-            redis_client.set(get_key('authorize_url', request), authorize_url)
 
             return redirect(authorize_url)
 
