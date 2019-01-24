@@ -29,7 +29,7 @@ def callback(request):
     session_manager = get_qbo_session_manager(request)
 
     # TODO - handle auth exceptions
-    # TODO - need to handle invalid requests which can return {"error":"invalid_grant"} quietly
+    # TODO - handle invalid requests which can return {"error":"invalid_grant"} quietly
     session_manager.get_access_tokens(request.GET['code'])
 
     redis_client = get_redis_client()
@@ -37,6 +37,7 @@ def callback(request):
     access_token = session_manager.access_token
     refresh_token = session_manager.refresh_token
 
+    redis_client.set('access_token_date', datetime.utcnow().isoformat())
     redis_client.set('access_token', access_token)
     redis_client.set('refresh_token', refresh_token)
     redis_client.set('realm_id', request.GET['realmId'])

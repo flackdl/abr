@@ -4,6 +4,7 @@ import logging
 from functools import wraps
 import redis
 from datetime import datetime
+from django.utils import dateparse
 from urlparse import urlparse
 from django.conf import settings
 from django.core.cache import cache
@@ -83,6 +84,7 @@ def quickbooks_auth(f):
             return redirect(reverse('login'))
 
         redis_client = get_redis_client()
+        session_manager = get_qbo_session_manager(request)
 
         # not authenticated with qbo
         if not redis_client.get('access_token'):
@@ -93,13 +95,23 @@ def quickbooks_auth(f):
             if request.content_type == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
-            session_manager = get_qbo_session_manager(request)
-
-            # store for future use
             callback_url = get_callback_url(request)
             authorize_url = session_manager.get_authorize_url(callback_url)
 
             return redirect(authorize_url)
+
+        # conditionally refresh the qbo access token if it's close to expiring
+        try:
+            # add a temporary lock so no other process attempts a refresh at the same time
+            lock_exists = not cache.add('refresh_access_token_lock', True, 10)
+            if not lock_exists and qbo_access_token_needs_refreshing():
+                refresh_qbo_access_token(request)
+        except Exception as e:
+            # something went wrong (maybe our refresh token expired) so wipe everything and have the user go through the auth/consent flow
+            logging.exception(e)
+            redis_client.delete('access_token')
+            redis_client.delete('access_token_date')
+            redis_client.delete('refresh_token')
 
         try:
             return f(request, *args, **kwargs)
@@ -117,9 +129,44 @@ def quickbooks_auth(f):
             raise e
         except Exception as e:
             log('other exception')
-            log(e)
+            logging.exception(e)
             raise e
     return wrapper
+
+
+def qbo_access_token_needs_refreshing():
+    # tokens expire every hour so we should refresh when it's close
+
+    seconds_expire = 50 * 60
+
+    redis_client = get_redis_client()
+
+    access_token_date = dateparse.parse_datetime(redis_client.get('access_token_date') or '')
+
+    needs_refresh = access_token_date and (datetime.utcnow() - access_token_date).seconds > seconds_expire
+
+    if needs_refresh:
+        log('Need to refresh QBO access token: {}'.format(redis_client.get('access_token')))
+
+    return needs_refresh
+
+
+def refresh_qbo_access_token(request):
+    log('refreshing QBO access token')
+
+    redis_client = get_redis_client()
+
+    # refresh the access token
+    refresh_token = redis_client.get('refresh_token')
+    session_manager = get_qbo_session_manager(request)
+    session_manager.refresh_access_tokens(refresh_token=refresh_token)
+
+    log('New access token: {}'.format(session_manager.access_token))
+
+    # save the new values
+    redis_client.set('access_token_date', datetime.utcnow().isoformat())
+    redis_client.set('access_token', session_manager.access_token)
+    redis_client.set('refresh_token', session_manager.refresh_token)
 
 
 def get_callback_url(request):
