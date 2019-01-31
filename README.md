@@ -30,11 +30,11 @@ Supports the management/tracking of vendor orders.
 *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
 
     heroku redis:cli -a XXX -c XXX
-    mget access_token
+    mget access_token realm_id
  
 *Insert production auth values into dev redis instance*
 
-    docker-compose exec redis redis-cli mset access_token @@@
+    docker-compose exec redis redis-cli mset access_token @@@ realm_id @@@
     
 *Init App*
 
