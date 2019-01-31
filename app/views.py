@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from weasyprint import HTML
 from quickbooks.objects.bill import Bill
 from quickbooks.objects.estimate import Estimate
@@ -101,6 +102,7 @@ def pdf(request):
 
 
 @quickbooks_auth
+@csrf_exempt
 def single_print_all_items(request):
 
     try:
@@ -112,13 +114,13 @@ def single_print_all_items(request):
     context = {
         'rows': (items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)),
     }
-    rendered = render_to_string(request, 'labels.html', context).encode('utf-8')
+    rendered = render_to_string('labels.html', context=context, request=request).encode('utf-8')
 
     # write pdf
     html = StringIO()
     pdf = StringIO()
     html.write(rendered)
-    HTML(html).write_pdf(pdf)
+    HTML(string=html.getvalue()).write_pdf(pdf)
     return HttpResponse(pdf.getvalue(), content_type='application/pdf')
 
 
