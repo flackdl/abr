@@ -1,5 +1,5 @@
 import json
-from io import StringIO
+from StringIO import StringIO
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
@@ -96,7 +96,7 @@ def pdf(request):
         log('get_html exception')
         log(e)
         return render(request, 'input.html', {'error': 'Could not retrieve bill id#%s' % bill_id})
-    HTML(html).write_pdf(pdf)
+    HTML(string=html.getvalue()).write_pdf(pdf)
     return HttpResponse(pdf.getvalue(), content_type='application/pdf')
 
 
