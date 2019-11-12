@@ -5,14 +5,15 @@ from functools import wraps
 import redis
 from datetime import datetime
 from django.utils import dateparse
-from urlparse import urlparse
+from urllib.parse import urlparse
 from django.conf import settings
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-from quickbooks import QuickBooks, Oauth2SessionManager
+from intuitlib.client import AuthClient
+from quickbooks import QuickBooks
 from quickbooks.exceptions import (
     AuthorizationException, UnsupportedException, GeneralException, ValidationException,
     SevereException,
@@ -187,18 +188,29 @@ def get_qbo_session_manager(request):
     )
 
 
-def get_qbo_client():
+def get_qbo_client(request):
     redis_client = get_redis_client()
 
-    session_manager = Oauth2SessionManager(
+    # TODO
+    # https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/oauth-2.0#step-1-prepare-authorization-request
+
+    auth_client = AuthClient(
         client_id=settings.QBO_CLIENT_ID,
         client_secret=settings.QBO_CLIENT_SECRET,
-        access_token=redis_client.get('access_token'),
+        environment='sandbox' if settings.DEBUG else 'production',
+        redirect_uri=request.build_absolute_uri(reverse('callback'))
     )
 
+    # TODO
+    #session_manager = Oauth2SessionManager(
+    #    client_id=settings.QBO_CLIENT_ID,
+    #    client_secret=settings.QBO_CLIENT_SECRET,
+    #    access_token=redis_client.get('access_token'),
+    #)
+
     return QuickBooks(
-        sandbox=settings.DEBUG,
-        session_manager=session_manager,
+        auth_client=auth_client,
+        refresh_token='TODO',  # TODO
         company_id=redis_client.get('realm_id'),
         **QBO_DEFAULT_ARGS
     )
@@ -224,7 +236,7 @@ def multiply_items(items, single_print=False):
 
 def get_html(request, bill_id):
     css = request.GET.get('css')
-    client = get_qbo_client()
+    client = get_qbo_client(request)
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
     attach_prices(bill, client)
@@ -260,8 +272,8 @@ def estimate_has_tag_number(estimate):
     return False
 
 
-def get_inventory_items(pos, all_stock=False):
-    client = get_qbo_client()
+def get_inventory_items(request, pos, all_stock=False):
+    client = get_qbo_client(request)
     results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.QBO_MAX_RESULTS), qb=client)
 
     # conditionally return all items regardless if they're in stock or not

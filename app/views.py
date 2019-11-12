@@ -1,5 +1,5 @@
 import json
-from StringIO import StringIO
+from io import BytesIO
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse, HttpResponse
@@ -88,8 +88,8 @@ def html(request):
 
 @quickbooks_auth
 def pdf(request):
-    html = StringIO()
-    pdf = StringIO()
+    html = BytesIO()
+    pdf = BytesIO()
     bill_id = request.GET.get('bill_id')
     try:
         html.write(get_html(request, bill_id))
@@ -114,11 +114,12 @@ def single_print_all_items(request):
     context = {
         'rows': (items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)),
     }
+    # TODO - py3
     rendered = render_to_string('labels.html', context=context, request=request).encode('utf-8')
 
     # write pdf
-    html = StringIO()
-    pdf = StringIO()
+    html = BytesIO()
+    pdf = BytesIO()
     html.write(rendered)
     HTML(string=html.getvalue()).write_pdf(pdf)
     return HttpResponse(pdf.getvalue(), content_type='application/pdf')
@@ -160,7 +161,7 @@ def json_inventory_items(request):
     position = (page * settings.QBO_MAX_RESULTS) + 1
 
     # get all inventory items (conditionally in stock)
-    results = get_inventory_items(position, all_stock=all_stock)
+    results = get_inventory_items(request, position, all_stock=all_stock)
     items = [json.loads(item.to_json()) for item in results]
 
     return JsonResponse({"items": items})
