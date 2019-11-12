@@ -42,13 +42,13 @@ Supports the management/tracking of vendor orders.
     workon abr
     
     # create initial tables
-    python managey.py migrate
+    python manage.py migrate
     
     # create super user
-    python managey.py createsuperuser
+    python manage.py createsuperuser
     
     # create default user with permissions
-    python managey.py init
+    python manage.py init
 
 
 #### Developing notes
