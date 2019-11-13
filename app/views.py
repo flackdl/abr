@@ -17,8 +17,8 @@ from app.models import OrderPart, Order
 from app.utils import (
     quickbooks_auth, get_redis_client, log, get_qbo_client, attach_prices,
     get_inventory_items, estimate_has_tag_number, get_html,
-    json_cache, get_qbo_session_manager,
-)
+    json_cache,
+    get_qbo_auth_client, get_callback_url)
 
 
 @quickbooks_auth
@@ -27,20 +27,18 @@ def dashboard(request):
 
 
 def callback(request):
-    session_manager = get_qbo_session_manager(request)
-
-    # TODO - handle auth exceptions
-    # TODO - handle invalid requests which can return {"error":"invalid_grant"} quietly
-    session_manager.get_access_tokens(request.GET['code'])
-
     redis_client = get_redis_client()
 
-    access_token = session_manager.access_token
-    refresh_token = session_manager.refresh_token
+    # TODO - handle auth exceptions (i.e without "code" or "realmId")
 
+    # get OAuth2 Bearer token
+    auth_client = get_qbo_auth_client(get_callback_url(request))
+    auth_client.get_bearer_token(request.GET['code'], realm_id=request.GET['realmId'])
+
+    # store access_token, refresh_token and realm_id
     redis_client.set('access_token_date', datetime.utcnow().isoformat())
-    redis_client.set('access_token', access_token)
-    redis_client.set('refresh_token', refresh_token)
+    redis_client.set('access_token', auth_client.access_token)
+    redis_client.set('refresh_token', auth_client.refresh_token)
     redis_client.set('realm_id', request.GET['realmId'])
 
     return redirect(reverse('dashboard'))
@@ -72,7 +70,7 @@ def app_login(request):
 
 @quickbooks_auth
 def to_json(request):
-    client = get_qbo_client()
+    client = get_qbo_client(get_callback_url(request))
     bill_id = request.GET.get('bill_id')
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
@@ -88,17 +86,17 @@ def html(request):
 
 @quickbooks_auth
 def pdf(request):
-    html = BytesIO()
-    pdf = BytesIO()
+    html_o = BytesIO()
+    pdf_o = BytesIO()
     bill_id = request.GET.get('bill_id')
     try:
-        html.write(get_html(request, bill_id))
+        html_o.write(get_html(request, bill_id))
     except (ValueError, TypeError) as e:
         log('get_html exception')
         log(e)
         return render(request, 'input.html', {'error': 'Could not retrieve bill id#%s' % bill_id})
-    HTML(string=html.getvalue()).write_pdf(pdf)
-    return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+    HTML(string=html_o.getvalue().decode()).write_pdf(pdf_o)
+    return HttpResponse(pdf_o.getvalue(), content_type='application/pdf')
 
 
 @quickbooks_auth
@@ -114,15 +112,14 @@ def single_print_all_items(request):
     context = {
         'rows': (items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)),
     }
-    # TODO - py3
     rendered = render_to_string('labels.html', context=context, request=request).encode('utf-8')
 
     # write pdf
-    html = BytesIO()
-    pdf = BytesIO()
-    html.write(rendered)
-    HTML(string=html.getvalue()).write_pdf(pdf)
-    return HttpResponse(pdf.getvalue(), content_type='application/pdf')
+    html_o = BytesIO()
+    pdf_o = BytesIO()
+    html_o.write(rendered)
+    HTML(string=html_o.getvalue().decode()).write_pdf(pdf_o)
+    return HttpResponse(pdf_o.getvalue(), content_type='application/pdf')
 
 
 @quickbooks_auth
@@ -138,7 +135,7 @@ def parts(request):
 @quickbooks_auth
 @json_cache
 def json_estimates(request):
-    client = get_qbo_client()
+    client = get_qbo_client(get_callback_url(request))
 
     # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate ASC MAXRESULTS %s" % (
@@ -168,7 +165,7 @@ def json_inventory_items(request):
 
 
 def purge_orders(request):
-    client = get_qbo_client()
+    client = get_qbo_client(get_callback_url(request))
 
     # get recent estimates
     query = "SELECT * FROM Estimate WHERE TxnDate >= '%s' ORDERBY TxnDate DESC MAXRESULTS %s" % (

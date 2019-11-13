@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from intuitlib.client import AuthClient
+from intuitlib.enums import Scopes
 from quickbooks import QuickBooks
 from quickbooks.exceptions import (
     AuthorizationException, UnsupportedException, GeneralException, ValidationException,
@@ -36,9 +37,9 @@ def json_cache(f):
         cache_key_results = request.get_full_path()
         cache_key_lock = 'lock_{}'.format(request.get_full_path())
         cache_key_date = 'date_{}'.format(request.get_full_path())
-        cached_results = redis_client.get(cache_key_results)
+        cached_results = get_redis_value(redis_client, cache_key_results)
         cached_results = json.loads(cached_results) if cached_results else None
-        cached_stamp = redis_client.get(cache_key_date) or 0
+        cached_stamp = get_redis_value(redis_client, cache_key_date)
         is_fresh = cached_results and cached_stamp and (datetime.utcnow() - datetime.fromtimestamp(int(cached_stamp))).seconds < settings.ESTIMATE_QUERY_SECONDS
 
         # return cached data
@@ -85,10 +86,11 @@ def quickbooks_auth(f):
             return redirect(reverse('login'))
 
         redis_client = get_redis_client()
-        session_manager = get_qbo_session_manager(request)
+
+        access_token = get_redis_value(redis_client, 'access_token')
 
         # not authenticated with qbo
-        if not redis_client.get('access_token'):
+        if not access_token:
 
             log('no access token')
 
@@ -96,10 +98,10 @@ def quickbooks_auth(f):
             if request.content_type == 'application/json':
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
-            callback_url = get_callback_url(request)
-            authorize_url = session_manager.get_authorize_url(callback_url)
-
-            return redirect(authorize_url)
+            # redirect to QBO authorization URL
+            auth_client = get_qbo_auth_client(get_callback_url(request))
+            auth_url = auth_client.get_authorization_url([Scopes.ACCOUNTING])
+            return redirect(auth_url)
 
         # conditionally refresh the qbo access token if it's close to expiring
         try:
@@ -114,6 +116,7 @@ def quickbooks_auth(f):
             redis_client.delete('access_token_date')
             redis_client.delete('refresh_token')
 
+        # perform the actual view
         try:
             return f(request, *args, **kwargs)
         except AuthorizationException as e:
@@ -142,12 +145,17 @@ def qbo_access_token_needs_refreshing():
 
     redis_client = get_redis_client()
 
-    access_token_date = dateparse.parse_datetime(redis_client.get('access_token_date') or '')
+    access_token_date = get_redis_value(redis_client, 'access_token_date')
+
+    log(access_token_date)
+
+    # parse the date
+    access_token_date = dateparse.parse_datetime(access_token_date)
 
     needs_refresh = access_token_date and (datetime.utcnow() - access_token_date).seconds > seconds_expire
 
     if needs_refresh:
-        log('Need to refresh QBO access token: {}'.format(redis_client.get('access_token')))
+        log('Need to refresh QBO access token: {}'.format(get_redis_value(redis_client, 'access_token')))
 
     return needs_refresh
 
@@ -158,16 +166,15 @@ def refresh_qbo_access_token(request):
     redis_client = get_redis_client()
 
     # refresh the access token
-    refresh_token = redis_client.get('refresh_token')
-    session_manager = get_qbo_session_manager(request)
-    session_manager.refresh_access_tokens(refresh_token=refresh_token)
+    auth_client = get_qbo_auth_client(get_callback_url(request))
+    auth_client.refresh(refresh_token=get_redis_value(redis_client, "refresh_token"))
 
-    log('New access token: {}'.format(session_manager.access_token))
+    log('New access token: {}'.format(auth_client.access_token))
 
     # save the new values
     redis_client.set('access_token_date', datetime.utcnow().isoformat())
-    redis_client.set('access_token', session_manager.access_token)
-    redis_client.set('refresh_token', session_manager.refresh_token)
+    redis_client.set('access_token', auth_client.access_token)
+    redis_client.set('refresh_token', auth_client.refresh_token)
 
 
 def get_callback_url(request):
@@ -179,39 +186,27 @@ def get_callback_url(request):
     return callback_url
 
 
-def get_qbo_session_manager(request):
-    callback_url = get_callback_url(request)
-    return Oauth2SessionManager(
-        client_id=settings.QBO_CLIENT_ID,
-        client_secret=settings.QBO_CLIENT_SECRET,
-        base_url=callback_url,  # the base_url has to be the same as the one used in authorization
-    )
+def get_qbo_auth_client(callback_url):
 
-
-def get_qbo_client(request):
-    redis_client = get_redis_client()
-
-    # TODO
-    # https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/oauth-2.0#step-1-prepare-authorization-request
-
-    auth_client = AuthClient(
+    return AuthClient(
         client_id=settings.QBO_CLIENT_ID,
         client_secret=settings.QBO_CLIENT_SECRET,
         environment='sandbox' if settings.DEBUG else 'production',
-        redirect_uri=request.build_absolute_uri(reverse('callback'))
+        redirect_uri=callback_url,
     )
 
-    # TODO
-    #session_manager = Oauth2SessionManager(
-    #    client_id=settings.QBO_CLIENT_ID,
-    #    client_secret=settings.QBO_CLIENT_SECRET,
-    #    access_token=redis_client.get('access_token'),
-    #)
+
+def get_qbo_client(callback_url):
+    # https://developer.intuit.com/app/developer/qbo/docs/develop/authentication-and-authorization/oauth-2.0
+
+    redis_client = get_redis_client()
+
+    auth_client = get_qbo_auth_client(callback_url)
 
     return QuickBooks(
         auth_client=auth_client,
-        refresh_token='TODO',  # TODO
-        company_id=redis_client.get('realm_id'),
+        refresh_token=get_redis_value(redis_client, 'refresh_token'),
+        company_id=get_redis_value(redis_client, 'realm_id'),
         **QBO_DEFAULT_ARGS
     )
 
@@ -236,7 +231,7 @@ def multiply_items(items, single_print=False):
 
 def get_html(request, bill_id):
     css = request.GET.get('css')
-    client = get_qbo_client(request)
+    client = get_qbo_client(get_callback_url(request))
     bill = Bill.get(int(bill_id), qb=client)
     bill = json.loads(bill.to_json())
     attach_prices(bill, client)
@@ -273,7 +268,7 @@ def estimate_has_tag_number(estimate):
 
 
 def get_inventory_items(request, pos, all_stock=False):
-    client = get_qbo_client(request)
+    client = get_qbo_client(get_callback_url(request))
     results = Item.query('SELECT * from Item WHERE Active = true STARTPOSITION %s MAXRESULTS %s' % (pos, settings.QBO_MAX_RESULTS), qb=client)
 
     # conditionally return all items regardless if they're in stock or not
@@ -282,3 +277,11 @@ def get_inventory_items(request, pos, all_stock=False):
 
     # limit items that are in stock
     return [r for r in results if r.QtyOnHand > 0]
+
+
+def get_redis_value(redis_client, value):
+    # this redis client returns python3 values as bytes so decode as str
+    result = redis_client.get(value)
+    if isinstance(result, bytes):
+        return result.decode()
+    return result

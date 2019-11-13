@@ -1,33 +1,32 @@
-FROM ubuntu:14.04
+FROM ubuntu:18.04
 
 # update and install dependencies
 RUN apt-get update && \
     apt-get install -y \
         wget \
-        python-pip \
-        python-dev \
-        python-setuptools \
+        python3-pip \
+        python3-dev \
+        python3-setuptools \
+        python3-cairo \
         build-essential \
-        python-cairo \
+        libpq-dev \
         libffi-dev \
         libxml2-dev \
         libxslt1-dev \
         libz-dev \
-        libpango1.0-0
-
-RUN easy_install pip
-RUN pip install virtualenv
-RUN virtualenv /opt/virtualenv
+        libpango1.0-0 \
+        && true
 
 # add app
 ADD . /app/
 WORKDIR /app
 
 # install python dependencies
-RUN /opt/virtualenv/bin/pip install -r requirements.txt
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
 # collect static files
-RUN /opt/virtualenv/bin/python manage.py collectstatic --noinput
+RUN python3 manage.py collectstatic --noinput
 
 # run wsgi app
-CMD /opt/virtualenv/bin/gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
+CMD gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
