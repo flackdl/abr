@@ -53,8 +53,16 @@ Supports the management/tracking of vendor orders.
 
 #### Developing notes
 
-To test production settings locally, you need to add *abr-dev.com* to `/etc/hosts` since QBO doesn't allow "localhost" callbacks for the oauth process.
+To test production settings locally:
+- add *abr-dev.com* to `/etc/hosts` since QBO doesn't allow "localhost" callbacks for the oauth process
+- supply production environment variables for redis url, qbo client & secret
 
-Run a local ssl server:
+Define production env vars:
+
+    export QBO_CLIENT_ID=XXX
+    export QBO_CLIENT_SECRET=XXX
+    export REDIS_URL=redis://XXX
+
+Run local ssl server:
 
     python manage.py runsslserver abr-dev.com:8080
