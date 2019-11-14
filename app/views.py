@@ -208,3 +208,7 @@ def purge_orders(request):
         'parts_to_purge': parts_to_purge,
         'orders_to_purge': orders_to_purge,
     })
+
+
+def ng(request):
+    return redirect('/static/ng/index.html')
