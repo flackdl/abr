@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --output-path ../staticassets/ng/ --base-href /static/ng/index.html --output-hashing all",
-    "watch": "ng build --watch --output-path ../staticassets/ng/ --base-href /static/ng/index.html --output-hashing all",
+    "build": "ng build --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing all",
+    "watch": "ng build --watch --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing all",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -22,6 +22,7 @@
     "@angular/router": "~8.2.14",
     "bootstrap": "^4.3.1",
     "rxjs": "~6.4.0",
+    "signature_pad": "^3.0.0-beta.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },

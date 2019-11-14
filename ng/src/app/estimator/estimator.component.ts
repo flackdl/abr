@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import SignaturePad from "signature_pad";
 
 @Component({
   selector: 'app-estimator',
@@ -6,10 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./estimator.component.scss']
 })
 export class EstimatorComponent implements OnInit {
+  public signature: any;
 
-  constructor() { }
+  @ViewChild("signature", {static: true}) signatureEl: ElementRef;
+
+  constructor() {
+  }
 
   ngOnInit() {
+    this.signature = new SignaturePad(this.signatureEl.nativeElement);
   }
 
 }

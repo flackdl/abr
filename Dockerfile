@@ -26,7 +26,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
 # collect static files
-RUN mkdir staticassets
+RUN mkdir ng-assets
 RUN python3 manage.py collectstatic --noinput
 
 # run wsgi app

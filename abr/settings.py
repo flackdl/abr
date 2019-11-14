@@ -110,7 +110,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # additional locations the staticfiles app will traverse
 STATICFILES_DIRS = [
-    'staticassets',
+    'ng-assets',
 ]
 
 CACHES = {
