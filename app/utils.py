@@ -88,9 +88,10 @@ def quickbooks_auth(f):
         redis_client = get_redis_client()
 
         access_token = redis_client.get('access_token')
+        refresh_token = redis_client.get('refresh_token')
 
         # not authenticated with qbo
-        if not access_token:
+        if not refresh_token or not access_token:
 
             log('no access token')
 
