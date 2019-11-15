@@ -7,9 +7,18 @@
           <!-- customer name -->
           <div class="form-group">
             <label for="customer">Customer</label>
-            <select id="customer" class="form-control">
-              <option>-- Choose a customer --</option>
-            </select>
+            <!-- [(ngModel)]="customer" -->
+            <ng-select
+              id="customer"
+              [items]="customers$ | async"
+              [typeahead]="customerInput$"
+              [loading]="customerLoading"
+              [minTermLength]="2"
+              bindLabel="DisplayName"
+              autofocus
+              bindValue="Id"
+            >
+            </ng-select>
           </div>
           <!-- estimate status -->
           <div class="form-group">
@@ -121,7 +130,7 @@
       <thead>
       <tr>
         <th>#</th>
-        <th>Product/Service></th>
+        <th>Product/Service</th>
         <th>Sku</th>
         <th>Description</th>
         <th>Quantity</th>
@@ -145,8 +154,8 @@
       </tr>
       </tbody>
     </table>
+    <!-- signature -->
     <div class="d-flex justify-content-center">
-      <!-- signature -->
       <div>
         <h5>Customer Signature</h5>
         <canvas #signature class="border border-dark"></canvas>

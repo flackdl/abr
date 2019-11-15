@@ -20,6 +20,7 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "@ng-select/ng-select": "^3.6.1",
     "bootstrap": "^4.3.1",
     "rxjs": "~6.4.0",
     "signature_pad": "^3.0.0-beta.3",

@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from intuitlib.client import AuthClient
 from intuitlib.enums import Scopes
+from intuitlib.exceptions import AuthClientError
 from quickbooks import QuickBooks
 from quickbooks.exceptions import (
     AuthorizationException, UnsupportedException, GeneralException, ValidationException,
@@ -120,7 +121,7 @@ def quickbooks_auth(f):
         # perform the actual view
         try:
             return f(request, *args, **kwargs)
-        except AuthorizationException as e:
+        except (AuthClientError, AuthorizationException) as e:
             # session appears to have expired so wipe token
             log('quickbooks exception, clearing token and redirecting (%s)' % e)
             redis_client.delete('access_token')
