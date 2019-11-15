@@ -4,8 +4,8 @@ import {EstimatorComponent} from "./estimator/estimator.component";
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/create', pathMatch: 'full' },
-  { path: 'create', component: EstimatorComponent },
+  { path: '', redirectTo: '/estimate', pathMatch: 'full' },
+  { path: 'estimate', component: EstimatorComponent },
 ];
 
 @NgModule({

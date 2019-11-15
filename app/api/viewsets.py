@@ -2,7 +2,7 @@ import json
 
 from django.utils.decorators import method_decorator
 from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer
+from quickbooks.objects import Customer, Estimate
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -73,24 +73,40 @@ class QBOBaseViewSet(viewsets.ViewSet):
     """
     permission_classes = (IsAuthenticated,)
     qbo_client = None
+    model_class = None
 
     def dispatch(self, request, *args, **kwargs):
         self.qbo_client = get_qbo_client(get_callback_url(request))
         return super().dispatch(request, *args, **kwargs)
 
+    def retrieve(self, request, pk):
+        if self.model_class is None:
+            raise exceptions.APIException('model_class needs to be defined')
+        try:
+            obj = self.model_class.get(pk, qb=self.qbo_client)
+        except ObjectNotFoundException:
+            raise exceptions.NotFound
+        return Response(json.loads(obj.to_json()))
+
 
 class CustomerQBOViewSet(QBOBaseViewSet):
-
-    def retrieve(self, request, pk):
-        try:
-            customer = Customer.get(pk, qb=self.qbo_client)
-        except ObjectNotFoundException as e:
-            raise exceptions.NotFound
-        return Response(json.loads(customer.to_json()))
+    model_class = Customer
 
     def list(self, request):
-        # filters = {}
         last_name = request.query_params.get('last_name')
-        customers = Customer.where("Active = True AND FamilyName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
-        # customers = Customer.filter(**filters, qb=self.qbo_client)
-        return Response([json.loads(c.to_json()) for c in customers])
+        if last_name:
+            objects = Customer.where("Active = True AND FamilyName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
+        else:
+            objects = Customer.where("Active = True", qb=self.qbo_client)
+        return Response([json.loads(o.to_json()) for o in objects])
+
+
+class EstimateQBOViewSet(QBOBaseViewSet):
+    model_class = Estimate
+
+    def list(self, request):
+        customer_id = request.query_params.get('customer_id')
+        if not customer_id:
+            raise exceptions.APIException('customer_id is required')
+        objects = Estimate.filter(CustomerRef=customer_id, qb=self.qbo_client)
+        return Response([json.loads(o.to_json()) for o in objects])

@@ -1,83 +1,84 @@
 <div class="container-fluid">
-  <form>
+  <form [formGroup]="form">
     <!-- top -->
     <div class="row border-bottom border-dark">
       <div class="col-8">
         <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-          <!-- customer name -->
+          <!-- customer -->
           <div class="form-group">
             <label for="customer">Customer</label>
-            <!-- [(ngModel)]="customer" -->
             <ng-select
               id="customer"
+              (change)="customerSelected()"
+              [ngModelOptions]="{standalone: true}"
+              [(ngModel)]="customer"
               [items]="customers$ | async"
               [typeahead]="customerInput$"
-              [loading]="customerLoading"
+              [loading]="customersLoading"
               [minTermLength]="2"
               bindLabel="FamilyName"
               autofocus
-              bindValue="Id"
             >
             </ng-select>
           </div>
           <!-- estimate status -->
           <div class="form-group">
             <label>Status</label>
-            <select class="form-control">
+            <select class="form-control" [class.is-invalid]="form.controls.status.dirty && !form.controls.status.valid" formControlName="status">
               <option>Pending</option>
             </select>
           </div>
           <!-- customer email -->
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" class="form-control" id="email">
+            <input type="text" class="form-control" [class.is-invalid]="!form.controls.email.valid" id="email" formControlName="email">
           </div>
           <!-- customer phone -->
           <div class="form-group">
             <label for="phone">Phone</label>
-            <input type="number" class="form-control" id="phone">
+            <input minlength="10" class="form-control" [class.is-invalid]="!form.controls.phone.valid" id="phone" formControlName="phone">
           </div>
           <!-- crm -->
           <div class="form-group">
             <label for="crm">CRM</label>
-            <input type="text" class="form-control" id="crm">
+            <input type="text" class="form-control" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" id="crm" formControlName="crm">
           </div>
           <!-- billing address -->
           <div class="form-group">
             <label for="billing_address">Billing Address</label>
-            <textarea rows="3" class="form-control" id="billing_address"></textarea>
+            <textarea rows="3" class="form-control" id="billing_address" [class.is-invalid]="form.controls.billing_address.dirty && !form.controls.billing_address.valid" formControlName="billing_address"></textarea>
           </div>
         </div>
         <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
           <!-- estimate date -->
           <div class="form-group">
             <label for="estimate_date">Estimate Date</label>
-            <input type="text" class="form-control" id="estimate_date">
+            <input type="date" class="form-control" id="estimate_date" [class.is-invalid]="form.controls.estimate_date.dirty && !form.controls.estimate_date.valid" formControlName="estimate_date">
           </div>
           <!-- expiration date -->
           <div class="form-group">
             <label for="expiration_date">Expiration Date</label>
-            <input type="text" class="form-control" id="expiration_date">
+            <input type="date" class="form-control" id="expiration_date" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
           </div>
           <!-- estimate number -->
           <div class="form-group">
             <label for="estimate_number">Estimate Number</label>
-            <input type="text" class="form-control" id="estimate_number">
+            <input type="number" class="form-control" id="estimate_number" [class.is-invalid]="form.controls.estimate_number.dirty && !form.controls.estimate_number.valid" formControlName="estimate_number">
           </div>
           <!-- expiration time -->
           <div class="form-group">
             <label for="expiration_time">Expiration Time</label>
-            <input type="text" class="form-control" id="expiration_time">
+            <input type="time" class="form-control" id="expiration_time" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
           </div>
           <!-- bike model -->
           <div class="form-group">
             <label for="bike_model">Bike/Model</label>
-            <input type="text" class="form-control" id="bike_model">
+            <input type="text" class="form-control" id="bike_model" [class.is-invalid]="form.controls.bike_model.dirty && !form.controls.bike_model.valid" formControlName="bike_model">
           </div>
           <!-- tag # -->
           <div class="form-group">
             <label for="tag_number">Tag #</label>
-            <input type="text" class="form-control" id="tag_number">
+            <input type="text" class="form-control" id="tag_number" [class.is-invalid]="form.controls.tag_number.dirty && !form.controls.tag_number.valid" formControlName="tag_number">
           </div>
         </div>
       </div>

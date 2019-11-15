@@ -7,7 +7,8 @@ import {map} from "rxjs/operators";
 })
 export class ApiService {
 
-  public API_CUSTOMER = '/api/customer/';
+  public API_QBO_CUSTOMER = '/api/customer/';
+  public API_QBO_ESTIMATE = '/api/estimate/';
 
   constructor(
     private http: HttpClient,
@@ -15,7 +16,16 @@ export class ApiService {
 
   public fetchCustomers(params?: any) {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_CUSTOMER, {params: httpParams}).pipe(
+    return this.http.get(this.API_QBO_CUSTOMER, {params: httpParams}).pipe(
+      map((data: any) => {
+        return data;
+      }),
+    );
+  }
+
+  public fetchEstimates(params?: any) {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_QBO_ESTIMATE, {params: httpParams}).pipe(
       map((data: any) => {
         return data;
       }),
