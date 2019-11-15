@@ -13,7 +13,7 @@ export class EstimatorComponent implements OnInit {
   public signature: any;
   public customer: any;
   public customerLoading = false;
-  customerInput$ = new Subject<string>();
+  public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
 
   @ViewChild("signature", {static: true}) signatureEl: ElementRef;
@@ -29,13 +29,12 @@ export class EstimatorComponent implements OnInit {
       of([]), // default items
       this.customerInput$.pipe(
         distinctUntilChanged(),
-        tap(() => {console.log('input'); this.customerLoading = true;}),
-        switchMap((term) => term ? this.api.fetchCustomers({'last_name': term}) : of([]).pipe(
+        tap(() => this.customerLoading = true),
+        switchMap((term) => (term ? this.api.fetchCustomers({'last_name': term}) : of([])).pipe(
           catchError(() => of([])), // empty list on error
-          tap(() => {console.log('input done'); this.customerLoading = false;})
+          tap(() => this.customerLoading = false)
         ))
       )
     );
   }
-
 }
