@@ -2,7 +2,7 @@ import json
 
 from django.utils.decorators import method_decorator
 from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer, Estimate
+from quickbooks.objects import Customer, Estimate, Item
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -109,4 +109,24 @@ class EstimateQBOViewSet(QBOBaseViewSet):
         if not customer_id:
             raise exceptions.APIException('customer_id is required')
         objects = Estimate.filter(CustomerRef=customer_id, qb=self.qbo_client)
+        return Response([json.loads(o.to_json()) for o in objects])
+
+
+class InventoryQBOViewSet(QBOBaseViewSet):
+    model_class = Item
+
+    def list(self, request):
+        name = request.query_params.get('name')
+        if name:
+            objects = Item.where("Type='Inventory' and Name LIKE '{}%'".format(name), qb=self.qbo_client)
+        else:
+            objects = Item.filter(Type='Inventory', qb=self.qbo_client)
+        return Response([json.loads(o.to_json()) for o in objects])
+
+
+class ServiceQBOViewSet(QBOBaseViewSet):
+    model_class = Item
+
+    def list(self, request):
+        objects = Item.filter(Type='Service', qb=self.qbo_client)
         return Response([json.loads(o.to_json()) for o in objects])
