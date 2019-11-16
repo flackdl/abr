@@ -2,8 +2,9 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
 import {concat, Observable, of, Subject} from "rxjs";
 import {ApiService} from "../api.service";
-import {catchError, distinctUntilChanged, map, switchMap, tap} from "rxjs/operators";
+import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-estimator',
@@ -17,6 +18,16 @@ export class EstimatorComponent implements OnInit {
   public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
   public form: FormGroup;
+  public crmOptions = [
+    'Current customer walk-in',
+    'New customer from referral',
+    'New customer from internet',
+    'New customer from yelp',
+    'New customer off the street',
+    'New customer from performance',
+    'Craigslist/offer up',
+    'SOCIAL MEDIA',
+  ];
 
   @ViewChild("signature", {static: true}) signatureEl: ElementRef;
 
@@ -33,16 +44,13 @@ export class EstimatorComponent implements OnInit {
       email: ['', Validators.email],
       phone: ['', Validators.pattern(/^\d{10}$/)],
       crm: ['', Validators.required],
-      billing_address: ['', Validators.required],
-      estimate_number: ['', Validators.required],
-      estimate_date: ['', Validators.required],
-      expiration_date: ['', Validators.required],
-      expiration_time: ['', Validators.required],
-      bike_model: ['', Validators.required],
-      tag_number: ['', Validators.required],
+      billingAddress: ['', Validators.required],
+      estimateDate: [moment().format('YYYY-MM-DD'), Validators.required],
+      expirationDate: ['', Validators.required],
+      expirationTime: ['', Validators.required],
+      bikeModel: ['', Validators.required],
+      tagNumber: ['', Validators.required],
     });
-
-    console.log(this.form);
 
     this.signature = new SignaturePad(this.signatureEl.nativeElement);
 
@@ -61,6 +69,18 @@ export class EstimatorComponent implements OnInit {
   }
 
   public customerSelected() {
-    console.log(this.customer);
+    if (this.customer.BillAddr) {
+      const billingAddress = [
+        this.customer.BillAddr.Line1,
+        [this.customer.BillAddr.City, this.customer.BillAddr.CountrySubDivisionCode, this.customer.BillAddr.PostalCode].join(', ')
+      ].join("\n");
+      this.form.get('billingAddress').setValue(billingAddress);
+    }
+    if (this.customer.PrimaryEmailAddr) {
+      this.form.get('email').setValue(this.customer.PrimaryEmailAddr.Address);
+    }
+    if (this.customer.PrimaryPhone) {
+      this.form.get('phone').setValue(this.customer.PrimaryPhone.FreeFormNumber.replace(/[^0-9]/g, ''))
+    }
   }
 }

@@ -86,7 +86,7 @@ class QBOBaseViewSet(viewsets.ViewSet):
             obj = self.model_class.get(pk, qb=self.qbo_client)
         except ObjectNotFoundException:
             raise exceptions.NotFound
-        return Response(json.loads(obj.to_json()))
+        return Response(obj.to_dict())
 
 
 class CustomerQBOViewSet(QBOBaseViewSet):
@@ -98,18 +98,54 @@ class CustomerQBOViewSet(QBOBaseViewSet):
             objects = Customer.where("Active = True AND FamilyName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
         else:
             objects = Customer.where("Active = True", qb=self.qbo_client)
-        return Response([json.loads(o.to_json()) for o in objects])
+        return Response([o.to_dict() for o in objects])
 
 
 class EstimateQBOViewSet(QBOBaseViewSet):
     model_class = Estimate
+
+    def create(self, request):
+        # TODO
+        estimate = Estimate()
+        estimate.CustomerRef = request.query_params.get('customer_id')
+        estimate.CustomField = [{
+            "Type": "StringType",
+            "Name": request.query_params.get('tagNumber'),
+        }]
+        estimate.save()
+        #estimate.DocNumber = None
+        #estimate.TxnDate = None
+        #estimate.TxnStatus = None
+        #estimate.PrivateNote = None
+        #estimate.TotalAmt = 0
+        #estimate.ExchangeRate = 1
+        #estimate.ApplyTaxAfterDiscount = False
+        #estimate.PrintStatus = "NotSet"
+        #estimate.EmailStatus = "NotSet"
+        #estimate.DueDate = None
+        #estimate.ShipDate = None
+        #estimate.ExpirationDate = None
+        #estimate.AcceptedBy = None
+        #estimate.AcceptedDate = None
+        #estimate.GlobalTaxCalculation = "TaxExcluded"
+        #estimate.BillAddr = None
+        #estimate.ShipAddr = None
+        #estimate.BillEmail = None
+        #estimate.TxnTaxDetail = None
+        #estimate.CustomerMemo = None
+        #estimate.ClassRef = None
+        #estimate.SalesTermRef = None
+        #estimate.ShipMethodRef = None
+        #estimate.LinkedTxn = []
+        #estimate.Line = []
+        return Response(estimate.to_dict())
 
     def list(self, request):
         customer_id = request.query_params.get('customer_id')
         if not customer_id:
             raise exceptions.APIException('customer_id is required')
         objects = Estimate.filter(CustomerRef=customer_id, qb=self.qbo_client)
-        return Response([json.loads(o.to_json()) for o in objects])
+        return Response([o.to_dict() for o in objects])
 
 
 class InventoryQBOViewSet(QBOBaseViewSet):
@@ -121,7 +157,7 @@ class InventoryQBOViewSet(QBOBaseViewSet):
             objects = Item.where("Type='Inventory' and Name LIKE '{}%'".format(name), qb=self.qbo_client)
         else:
             objects = Item.filter(Type='Inventory', qb=self.qbo_client)
-        return Response([json.loads(o.to_json()) for o in objects])
+        return Response([o.to_dict() for o in objects])
 
 
 class ServiceQBOViewSet(QBOBaseViewSet):
@@ -129,4 +165,4 @@ class ServiceQBOViewSet(QBOBaseViewSet):
 
     def list(self, request):
         objects = Item.filter(Type='Service', qb=self.qbo_client)
-        return Response([json.loads(o.to_json()) for o in objects])
+        return Response([o.to_dict() for o in objects])

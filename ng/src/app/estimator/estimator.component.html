@@ -41,44 +41,42 @@
           <!-- crm -->
           <div class="form-group">
             <label for="crm">CRM</label>
-            <input type="text" class="form-control" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" id="crm" formControlName="crm">
+            <select class="form-control" id="crm" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" formControlName="crm">
+              <option value="">--</option>
+              <option *ngFor="let crm of crmOptions">{{ crm }}</option>
+            </select>
           </div>
           <!-- billing address -->
           <div class="form-group">
-            <label for="billing_address">Billing Address</label>
-            <textarea rows="3" class="form-control" id="billing_address" [class.is-invalid]="form.controls.billing_address.dirty && !form.controls.billing_address.valid" formControlName="billing_address"></textarea>
+            <label for="billingAddress">Billing Address</label>
+            <textarea rows="3" class="form-control" id="billingAddress" [class.is-invalid]="form.controls.billingAddress.dirty && !form.controls.billingAddress.valid" formControlName="billingAddress"></textarea>
           </div>
         </div>
         <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
           <!-- estimate date -->
           <div class="form-group">
-            <label for="estimate_date">Estimate Date</label>
-            <input type="date" class="form-control" id="estimate_date" [class.is-invalid]="form.controls.estimate_date.dirty && !form.controls.estimate_date.valid" formControlName="estimate_date">
+            <label for="estimateDate">Estimate Date</label>
+            <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimateDate.dirty && !form.controls.estimateDate.valid" formControlName="estimateDate">
           </div>
           <!-- expiration date -->
           <div class="form-group">
-            <label for="expiration_date">Expiration Date</label>
-            <input type="date" class="form-control" id="expiration_date" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
-          </div>
-          <!-- estimate number -->
-          <div class="form-group">
-            <label for="estimate_number">Estimate Number</label>
-            <input type="number" class="form-control" id="estimate_number" [class.is-invalid]="form.controls.estimate_number.dirty && !form.controls.estimate_number.valid" formControlName="estimate_number">
+            <label for="expirationDate">Expiration Date</label>
+            <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expirationDate.dirty && !form.controls.expirationDate.valid" formControlName="expirationDate">
           </div>
           <!-- expiration time -->
           <div class="form-group">
-            <label for="expiration_time">Expiration Time</label>
-            <input type="time" class="form-control" id="expiration_time" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
+            <label for="expirationTime">Expiration Time</label>
+            <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expirationTime.dirty && !form.controls.expirationTime.valid" formControlName="expirationTime">
           </div>
           <!-- bike model -->
           <div class="form-group">
-            <label for="bike_model">Bike/Model</label>
-            <input type="text" class="form-control" id="bike_model" [class.is-invalid]="form.controls.bike_model.dirty && !form.controls.bike_model.valid" formControlName="bike_model">
+            <label for="bikeModel">Bike/Model</label>
+            <input type="text" class="form-control" id="bikeModel" [class.is-invalid]="form.controls.bikeModel.dirty && !form.controls.bikeModel.valid" formControlName="bikeModel">
           </div>
           <!-- tag # -->
           <div class="form-group">
-            <label for="tag_number">Tag #</label>
-            <input type="text" class="form-control" id="tag_number" [class.is-invalid]="form.controls.tag_number.dirty && !form.controls.tag_number.valid" formControlName="tag_number">
+            <label for="tagNumber">Tag #</label>
+            <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tagNumber.dirty && !form.controls.tagNumber.valid" formControlName="tagNumber">
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
-
+import { MomentModule } from 'ngx-moment';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,7 @@ import { EstimatorComponent } from './estimator/estimator.component';
     HttpClientXsrfModule,
     FormsModule,
     ReactiveFormsModule,
+    MomentModule,
     AppRoutingModule,
     NgSelectModule,
   ],
