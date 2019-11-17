@@ -83,4 +83,14 @@ export class EstimatorComponent implements OnInit {
       this.form.get('phone').setValue(this.customer.PrimaryPhone.FreeFormNumber.replace(/[^0-9]/g, ''))
     }
   }
+
+  public createEstimate() {
+    const data = {
+      customer_id: this.customer.Id,
+      tag_number: this.form.get('tagNumber').value,
+    };
+    this.api.createEstimate(data).subscribe((data) => {
+      console.log(data);
+    });
+  }
 }

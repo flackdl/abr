@@ -110,7 +110,7 @@ def quickbooks_auth(f):
             # add a temporary lock so no other process attempts a refresh at the same time
             lock_exists = not cache.add('refresh_access_token_lock', True, 10)
             if not lock_exists and qbo_access_token_needs_refreshing():
-                refresh_qbo_access_token(request)
+                refresh_qbo_access_token(get_callback_url(request))
         except Exception as e:
             # something went wrong (maybe our refresh token expired) so wipe everything and have the user go through the auth/consent flow
             logging.exception(e)
@@ -162,13 +162,13 @@ def qbo_access_token_needs_refreshing():
     return needs_refresh
 
 
-def refresh_qbo_access_token(request):
+def refresh_qbo_access_token(callback_url: str):
     log('refreshing QBO access token')
 
     redis_client = get_redis_client()
 
     # refresh the access token
-    auth_client = get_qbo_auth_client(get_callback_url(request))
+    auth_client = get_qbo_auth_client(callback_url)
     auth_client.refresh(refresh_token=redis_client.get("refresh_token"))
 
     log('New access token: {}'.format(auth_client.access_token))

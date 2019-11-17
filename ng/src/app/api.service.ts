@@ -31,4 +31,12 @@ export class ApiService {
       }),
     );
   }
+
+  public createEstimate(data: any) {
+    return this.http.post(this.API_QBO_ESTIMATE, data).pipe(
+      map((data: any) => {
+        return data;
+      }),
+    );
+  }
 }

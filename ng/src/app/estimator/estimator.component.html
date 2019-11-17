@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="createEstimate()">
     <!-- top -->
     <div class="row border-bottom border-dark">
       <div class="col-8">
@@ -159,6 +159,9 @@
         <h5>Customer Signature</h5>
         <canvas #signature class="border border-dark"></canvas>
       </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Create</button>
     </div>
   </form>
 </div>

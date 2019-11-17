@@ -18,10 +18,14 @@ import { EstimatorComponent } from './estimator/estimator.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    HttpClientXsrfModule,
     FormsModule,
     ReactiveFormsModule,
     MomentModule,
+    HttpClientXsrfModule.withOptions({
+      // specify django's csrf settings
+      cookieName: 'csrftoken',
+      headerName: 'X-CSRFToken',
+    }),
     AppRoutingModule,
     NgSelectModule,
   ],

@@ -1,5 +1,3 @@
-import json
-
 from django.utils.decorators import method_decorator
 from quickbooks.exceptions import ObjectNotFoundException
 from quickbooks.objects import Customer, Estimate, Item
@@ -105,39 +103,39 @@ class EstimateQBOViewSet(QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
-        # TODO
         estimate = Estimate()
-        estimate.CustomerRef = request.query_params.get('customer_id')
-        estimate.CustomField = [{
-            "Type": "StringType",
-            "Name": request.query_params.get('tagNumber'),
-        }]
-        estimate.save()
-        #estimate.DocNumber = None
-        #estimate.TxnDate = None
-        #estimate.TxnStatus = None
-        #estimate.PrivateNote = None
-        #estimate.TotalAmt = 0
-        #estimate.ExchangeRate = 1
-        #estimate.ApplyTaxAfterDiscount = False
-        #estimate.PrintStatus = "NotSet"
-        #estimate.EmailStatus = "NotSet"
-        #estimate.DueDate = None
-        #estimate.ShipDate = None
+        # estimate.CustomerRef = {"name": "Sonnenschein Family Store", "value": "24"}
+        # estimate.Line = [{"DetailType": "SalesItemLineDetail", "SalesItemLineDetail": {"ItemRef": {"name": "Rock Fountain", "value": "5"}, "Qty": 1}, "Amount": 10.0}]
+        estimate.CustomerRef = {
+            "value": request.query_params.get('customer_id'),
+        }
+        estimate.Line = [
+            {
+                "DetailType": "SalesItemLineDetail",
+                "SalesItemLineDetail": {
+                    "Qty": 1,
+                    "ItemRef": {
+                        "name": "Rock Fountain",
+                        "value": "5",
+                    },
+                },
+                "Amount": 10.0,
+            },
+        ]
+        #estimate.CustomField = [{
+        #    "Type": "StringType",
+        #    "Name": request.query_params.get('tag_number'),
+        #}]
+
+        # TODO
         #estimate.ExpirationDate = None
-        #estimate.AcceptedBy = None
-        #estimate.AcceptedDate = None
-        #estimate.GlobalTaxCalculation = "TaxExcluded"
-        #estimate.BillAddr = None
-        #estimate.ShipAddr = None
-        #estimate.BillEmail = None
-        #estimate.TxnTaxDetail = None
-        #estimate.CustomerMemo = None
-        #estimate.ClassRef = None
-        #estimate.SalesTermRef = None
-        #estimate.ShipMethodRef = None
-        #estimate.LinkedTxn = []
+        #estimate.TxnDate = None
+        #estimate.DueDate = None
         #estimate.Line = []
+        #estimate.TxnStatus = None
+
+        estimate.save(qb=self.qbo_client)
+
         return Response(estimate.to_dict())
 
     def list(self, request):
