@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer, Estimate, Item
+from quickbooks.objects import Customer, Estimate, Item, Preferences
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -77,6 +77,11 @@ class QBOBaseViewSet(viewsets.ViewSet):
         self.qbo_client = get_qbo_client(get_callback_url(request))
         return super().dispatch(request, *args, **kwargs)
 
+    def list(self, request):
+        filters = self.get_filters(request)
+        objects = self.model_class.filter(**filters, qb=self.qbo_client)
+        return Response([o.to_dict() for o in objects])
+
     def retrieve(self, request, pk):
         if self.model_class is None:
             raise exceptions.APIException('model_class needs to be defined')
@@ -85,6 +90,9 @@ class QBOBaseViewSet(viewsets.ViewSet):
         except ObjectNotFoundException:
             raise exceptions.NotFound
         return Response(obj.to_dict())
+
+    def get_filters(self, request) -> dict:
+        return dict()
 
 
 class CustomerQBOViewSet(QBOBaseViewSet):
@@ -103,11 +111,12 @@ class EstimateQBOViewSet(QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
+        if 'customer_id' not in request.data:
+            raise exceptions.ValidationError({"customer_id": ['this field is required']})
+
         estimate = Estimate()
-        # estimate.CustomerRef = {"name": "Sonnenschein Family Store", "value": "24"}
-        # estimate.Line = [{"DetailType": "SalesItemLineDetail", "SalesItemLineDetail": {"ItemRef": {"name": "Rock Fountain", "value": "5"}, "Qty": 1}, "Amount": 10.0}]
         estimate.CustomerRef = {
-            "value": request.query_params.get('customer_id'),
+            "value": request.data['customer_id'],
         }
         estimate.Line = [
             {
@@ -122,10 +131,10 @@ class EstimateQBOViewSet(QBOBaseViewSet):
                 "Amount": 10.0,
             },
         ]
-        #estimate.CustomField = [{
-        #    "Type": "StringType",
-        #    "Name": request.query_params.get('tag_number'),
-        #}]
+        estimate.CustomField = [{
+            "Type": "StringType",
+            "Name": request.query_params.get('tag_number'),
+        }]
 
         # TODO
         #estimate.ExpirationDate = None
@@ -138,12 +147,13 @@ class EstimateQBOViewSet(QBOBaseViewSet):
 
         return Response(estimate.to_dict())
 
-    def list(self, request):
+    def get_filters(self, request) -> dict:
         customer_id = request.query_params.get('customer_id')
-        if not customer_id:
-            raise exceptions.APIException('customer_id is required')
-        objects = Estimate.filter(CustomerRef=customer_id, qb=self.qbo_client)
-        return Response([o.to_dict() for o in objects])
+        if customer_id:
+            return {
+                'CustomerRef': customer_id,
+            }
+        return {}
 
 
 class InventoryQBOViewSet(QBOBaseViewSet):
@@ -164,3 +174,7 @@ class ServiceQBOViewSet(QBOBaseViewSet):
     def list(self, request):
         objects = Item.filter(Type='Service', qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
+
+
+class PreferencesQBOViewSet(QBOBaseViewSet):
+    model_class = Preferences

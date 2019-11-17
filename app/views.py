@@ -210,5 +210,6 @@ def purge_orders(request):
     })
 
 
+@quickbooks_auth
 def ng(request):
     return redirect('/static/ng/index.html')

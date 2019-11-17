@@ -6,7 +6,8 @@ djangorestframework==3.10.3
 greenlet==0.4.15
 gunicorn==20.0.0
 python-dateutil==2.8.1
-python-quickbooks==0.8.1
+# python-quickbooks: forked version including "preferences" object
+git+https://github.com/flackdl/python-quickbooks.git
 redis==3.3.11
 requests==2.22.0
 WeasyPrint==50
