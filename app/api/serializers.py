@@ -15,3 +15,26 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+
+class QBOEstimateCreateSerializer(serializers.Serializer):
+    STATUSES = ['Pending', 'Accepted', 'Closed', 'Rejected']
+    CRMS = [
+        'Current customer walk-in',
+        'New customer from referral',
+        'New customer from internet',
+        'New customer from yelp',
+        'New customer off the street',
+        'New customer from performance',
+        'Craigslist/offer up',
+        'SOCIAL MEDIA',
+    ]
+
+    customer_id = serializers.IntegerField()
+    status = serializers.ChoiceField(choices=STATUSES)
+    tag_number = serializers.CharField()
+    bike_model = serializers.CharField()
+    crm = serializers.ChoiceField(choices=CRMS)
+    estimate_date = serializers.DateField()
+    expiration_date = serializers.DateField()
+    expiration_time = serializers.TimeField()

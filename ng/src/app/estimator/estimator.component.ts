@@ -101,12 +101,26 @@ export class EstimatorComponent implements OnInit {
   }
 
   public createEstimate() {
-    const data = {
-      customer_id: this.customer.Id,
-      tag_number: this.form.get('tagNumber').value,
-    };
-    this.api.createEstimate(data).subscribe((data) => {
-      console.log(data);
+
+    // mark all controls as dirty to force validation
+    Object.keys(this.form.controls).forEach(field => {
+      this.form.get(field).markAsDirty();
     });
+
+    if (this.form.valid) {
+      const data = {
+        customer_id: this.customer.Id,
+        status: this.form.get('status').value,
+        tag_number: this.form.get('tagNumber').value,
+        bike_model: this.form.get('bikeModel').value,
+        crm: this.form.get('crm').value,
+        estimate_date: this.form.get('estimateDate').value,
+        expiration_date: this.form.get('expirationDate').value,
+        expiration_time: this.form.get('expirationTime').value,
+      };
+      this.api.createEstimate(data).subscribe((data) => {
+        console.log(data);
+      });
+    }
   }
 }

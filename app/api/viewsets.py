@@ -5,7 +5,7 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.models import Order, OrderPart
-from app.api.serializers import OrderSerializer, OrderPartSerializer
+from app.api.serializers import OrderSerializer, OrderPartSerializer, QBOEstimateCreateSerializer
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -111,12 +111,17 @@ class EstimateQBOViewSet(QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
-        if 'customer_id' not in request.data:
-            raise exceptions.ValidationError({"customer_id": ['this field is required']})
+
+        # validate
+        estimate_create_serializer = QBOEstimateCreateSerializer(data=request.data)
+        estimate_create_serializer.is_valid(raise_exception=True)
+        data = estimate_create_serializer.validated_data
 
         estimate = Estimate()
+        estimate.TxnStatus = data['status']
+        #estimate.TxnDate = data['estimate_date']
         estimate.CustomerRef = {
-            "value": request.data['customer_id'],
+            "value": data['customer_id'],
         }
         estimate.Line = [
             {
@@ -136,14 +141,13 @@ class EstimateQBOViewSet(QBOBaseViewSet):
             "DefinitionId": "2",
             "Type": "StringType",
             "Name": "Tag #",
-            "StringValue": request.data['tag_number'],
+            "StringValue": data['tag_number'],
         }]
 
         # TODO
         #estimate.ExpirationDate = None
         #estimate.TxnDate = None
         #estimate.DueDate = None
-        #estimate.Line = []
         #estimate.TxnStatus = None
 
         estimate.save(qb=self.qbo_client)
