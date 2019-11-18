@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
-import {concat, Observable, of, Subject} from "rxjs";
+import {concat, forkJoin, Observable, of, Subject} from "rxjs";
 import {ApiService} from "../api.service";
 import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -12,8 +12,10 @@ import * as moment from 'moment';
   styleUrls: ['./estimator.component.scss']
 })
 export class EstimatorComponent implements OnInit {
+  public isLoading = true;
   public signature: any;
   public customer: any;
+  public qboPreferences: any;
   public customersLoading = false;
   public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
@@ -38,6 +40,20 @@ export class EstimatorComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    forkJoin(
+      this.api.fetchQBOPreferences().pipe(
+        tap((data) => {
+          this.qboPreferences = data;
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          return of(error);
+        })
+      )
+    ).subscribe((data) => {
+      this.isLoading = false;
+    });
 
     this.form = this.fb.group({
       status: ['', Validators.required],

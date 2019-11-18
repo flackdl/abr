@@ -1,4 +1,5 @@
 <div class="container-fluid">
+  <ngx-loading [show]="isLoading" [config]="{'backdropBackgroundColour': 'rgb(198,198,198)'}"></ngx-loading>
   <form [formGroup]="form" (ngSubmit)="createEstimate()">
     <!-- top -->
     <div class="row border-bottom border-dark">

@@ -9,10 +9,22 @@ export class ApiService {
 
   public API_QBO_CUSTOMER = '/api/customer/';
   public API_QBO_ESTIMATE = '/api/estimate/';
+  public API_QBO_PREFERENCES = '/api/preferences/';
 
   constructor(
     private http: HttpClient,
   ) {}
+
+  public fetchQBOPreferences() {
+    return this.http.get(this.API_QBO_PREFERENCES, ).pipe(
+      map((data: any) => {
+        if (data.length > 0) {
+          return data[0];
+        }
+        return data;
+      }),
+    );
+  }
 
   public fetchCustomers(params?: any) {
     const httpParams = new HttpParams({fromObject: params});

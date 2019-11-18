@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +29,7 @@ import { EstimatorComponent } from './estimator/estimator.component';
     }),
     AppRoutingModule,
     NgSelectModule,
+    NgxLoadingModule.forRoot({})
   ],
   providers: [],
   bootstrap: [AppComponent]

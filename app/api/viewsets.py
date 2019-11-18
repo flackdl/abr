@@ -131,9 +131,12 @@ class EstimateQBOViewSet(QBOBaseViewSet):
                 "Amount": 10.0,
             },
         ]
+
         estimate.CustomField = [{
+            "DefinitionId": "2",
             "Type": "StringType",
-            "Name": request.query_params.get('tag_number'),
+            "Name": "Tag #",
+            "StringValue": request.data['tag_number'],
         }]
 
         # TODO
