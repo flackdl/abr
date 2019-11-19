@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
-import {concat, forkJoin, Observable, of, Subject} from "rxjs";
+import {forkJoin, of} from "rxjs";
 import {ApiService} from "../api.service";
-import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
+import {catchError, tap} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import * as moment from 'moment';
 
@@ -77,7 +77,7 @@ export class EstimatorComponent implements OnInit {
     if (this.form.valid) {
       const data = {
         // TODO
-        // customer_id: this.customer.Id,
+        // customer_id: this.customer-search.Id,
         status: this.form.get('status').value,
         tag_number: this.form.get('tagNumber').value,
         bike_model: this.form.get('bikeModel').value,
@@ -87,6 +87,7 @@ export class EstimatorComponent implements OnInit {
         expiration_time: this.form.get('expirationTime').value,
       };
       this.api.createEstimate(data).subscribe((data) => {
+        // TODO
         console.log(data);
       });
     }

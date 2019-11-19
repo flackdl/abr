@@ -5,15 +5,14 @@ import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.scss']
+  templateUrl: './customer-search.component.html',
+  styleUrls: ['./customer-search.component.scss']
 })
-export class CustomerComponent implements OnInit {
+export class CustomerSearchComponent implements OnInit {
   public customer: any;
   public customersLoading = false;
   public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
-  public needsNewCustomer = false;
   public invoices: any[];
   public isLoading = false;
 
@@ -23,24 +22,19 @@ export class CustomerComponent implements OnInit {
 
   ngOnInit() {
 
-    // customer search
+    // customer-search search
     this.customers$ = concat(
       of([]), // default items
       this.customerInput$.pipe(
         distinctUntilChanged(),
-        tap(() => {
+        tap((data) => {
           this.invoices = null;
           this.customersLoading = true;
-          this.needsNewCustomer = false;
         }),
         switchMap((term) => {
           let observable: Observable<any[]>;
           if (term) {
-            observable = this.api.fetchCustomers({'last_name': term}).pipe(
-              tap((data) => {
-                this.needsNewCustomer = data.length === 0;
-              })
-            );
+            observable = this.api.fetchCustomers({'last_name': term});
           } else {
             observable = of([]);
           }

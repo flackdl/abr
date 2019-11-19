@@ -50,6 +50,7 @@ export class ApiService {
     const httpParams = new HttpParams({fromObject: params});
     return this.http.get(this.API_QBO_INVOICE, {params: httpParams}).pipe(
       map((data: any) => {
+        // sort by most recent transaction date
         return _.sortBy(data, (d) => d.TxnDate).reverse();
       }),
     );

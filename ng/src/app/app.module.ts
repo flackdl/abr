@@ -10,15 +10,19 @@ import { NgxLoadingModule } from 'ngx-loading';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EstimatorComponent } from './estimator/estimator.component';
-import { CustomerComponent } from './customer/customer.component';
+import { CustomerSearchComponent } from './customer-search/customer-search.component';
 import { WizardComponent } from './wizard/wizard.component';
+import { CustomerCreateComponent } from './customer-create/customer-create.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EstimatorComponent,
-    CustomerComponent,
+    CustomerSearchComponent,
     WizardComponent,
+    CustomerCreateComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
