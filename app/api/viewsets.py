@@ -1,9 +1,10 @@
 from django.utils.decorators import method_decorator
 from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer, Estimate, Item, Preferences
+from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from app.api.mixins import CustomerRefFilterMixin
 from app.models import Order, OrderPart
 from app.api.serializers import OrderSerializer, OrderPartSerializer, QBOEstimateCreateSerializer
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
@@ -107,7 +108,7 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         return Response([o.to_dict() for o in objects])
 
 
-class EstimateQBOViewSet(QBOBaseViewSet):
+class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
@@ -154,14 +155,6 @@ class EstimateQBOViewSet(QBOBaseViewSet):
 
         return Response(estimate.to_dict())
 
-    def get_filters(self, request) -> dict:
-        customer_id = request.query_params.get('customer_id')
-        if customer_id:
-            return {
-                'CustomerRef': customer_id,
-            }
-        return {}
-
 
 class InventoryQBOViewSet(QBOBaseViewSet):
     model_class = Item
@@ -181,6 +174,10 @@ class ServiceQBOViewSet(QBOBaseViewSet):
     def list(self, request):
         objects = Item.filter(Type='Service', qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
+
+
+class InvoiceQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
+    model_class = Invoice
 
 
 class PreferencesQBOViewSet(QBOBaseViewSet):

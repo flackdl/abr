@@ -10,11 +10,15 @@ import { NgxLoadingModule } from 'ngx-loading';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EstimatorComponent } from './estimator/estimator.component';
+import { CustomerComponent } from './customer/customer.component';
+import { WizardComponent } from './wizard/wizard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EstimatorComponent
+    EstimatorComponent,
+    CustomerComponent,
+    WizardComponent,
   ],
   imports: [
     BrowserModule,

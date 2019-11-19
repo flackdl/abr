@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {map} from "rxjs/operators";
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ export class ApiService {
 
   public API_QBO_CUSTOMER = '/api/customer/';
   public API_QBO_ESTIMATE = '/api/estimate/';
+  public API_QBO_INVOICE = '/api/invoice/';
   public API_QBO_PREFERENCES = '/api/preferences/';
   public API_QBO_SETTINGS = '/api/settings/';
 
@@ -40,6 +42,15 @@ export class ApiService {
     return this.http.get(this.API_QBO_CUSTOMER, {params: httpParams}).pipe(
       map((data: any) => {
         return data;
+      }),
+    );
+  }
+
+  public fetchInvoices(params?: any) {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_QBO_INVOICE, {params: httpParams}).pipe(
+      map((data: any) => {
+        return _.sortBy(data, (d) => d.TxnDate).reverse();
       }),
     );
   }

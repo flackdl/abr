@@ -14,23 +14,9 @@ import * as moment from 'moment';
 export class EstimatorComponent implements OnInit {
   public isLoading = true;
   public signature: any;
-  public customer: any;
   public settings: any;
   public qboPreferences: any;
-  public customersLoading = false;
-  public customerInput$ = new Subject<string>();
-  public customers$: Observable<any[]>;
   public form: FormGroup;
-  public crmOptions = [
-    'Current customer walk-in',
-    'New customer from referral',
-    'New customer from internet',
-    'New customer from yelp',
-    'New customer off the street',
-    'New customer from performance',
-    'Craigslist/offer up',
-    'SOCIAL MEDIA',
-  ];
 
   @ViewChild("signature", {static: true}) signatureEl: ElementRef;
 
@@ -79,35 +65,6 @@ export class EstimatorComponent implements OnInit {
     });
 
     this.signature = new SignaturePad(this.signatureEl.nativeElement);
-
-    // customer search
-    this.customers$ = concat(
-      of([]), // default items
-      this.customerInput$.pipe(
-        distinctUntilChanged(),
-        tap(() => this.customersLoading = true),
-        switchMap((term) => (term ? this.api.fetchCustomers({'last_name': term}) : of([])).pipe(
-          catchError(() => of([])), // empty list on error
-          tap(() => this.customersLoading = false)
-        ))
-      )
-    );
-  }
-
-  public customerSelected() {
-    if (this.customer.BillAddr) {
-      const billingAddress = [
-        this.customer.BillAddr.Line1,
-        [this.customer.BillAddr.City, this.customer.BillAddr.CountrySubDivisionCode, this.customer.BillAddr.PostalCode].join(', ')
-      ].join("\n");
-      this.form.get('billingAddress').setValue(billingAddress);
-    }
-    if (this.customer.PrimaryEmailAddr) {
-      this.form.get('email').setValue(this.customer.PrimaryEmailAddr.Address);
-    }
-    if (this.customer.PrimaryPhone) {
-      this.form.get('phone').setValue(this.customer.PrimaryPhone.FreeFormNumber.replace(/[^0-9]/g, ''))
-    }
   }
 
   public createEstimate() {
@@ -119,7 +76,8 @@ export class EstimatorComponent implements OnInit {
 
     if (this.form.valid) {
       const data = {
-        customer_id: this.customer.Id,
+        // TODO
+        // customer_id: this.customer.Id,
         status: this.form.get('status').value,
         tag_number: this.form.get('tagNumber').value,
         bike_model: this.form.get('bikeModel').value,

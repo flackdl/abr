@@ -5,23 +5,6 @@
     <div class="row border-bottom border-dark">
       <div class="col-8">
         <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-          <!-- customer -->
-          <div class="form-group">
-            <label for="customer">Customer</label>
-            <ng-select
-              id="customer"
-              (change)="customerSelected()"
-              [ngModelOptions]="{standalone: true}"
-              [(ngModel)]="customer"
-              [items]="customers$ | async"
-              [typeahead]="customerInput$"
-              [loading]="customersLoading"
-              [minTermLength]="2"
-              bindLabel="FamilyName"
-              autofocus
-            >
-            </ng-select>
-          </div>
           <!-- estimate status -->
           <div class="form-group">
             <label>Status</label>
@@ -29,22 +12,12 @@
               <option>Pending</option>
             </select>
           </div>
-          <!-- customer email -->
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" class="form-control" [class.is-invalid]="!form.controls.email.valid" id="email" formControlName="email">
-          </div>
-          <!-- customer phone -->
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input minlength="10" class="form-control" [class.is-invalid]="!form.controls.phone.valid" id="phone" formControlName="phone">
-          </div>
           <!-- crm -->
-          <div class="form-group">
+          <div class="form-group" *ngIf="settings">
             <label for="crm">CRM</label>
             <select class="form-control" id="crm" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" formControlName="crm">
               <option value="">--</option>
-              <option *ngFor="let crm of crmOptions">{{ crm }}</option>
+              <option *ngFor="let crm of settings.crms">{{ crm }}</option>
             </select>
           </div>
           <!-- billing address -->
