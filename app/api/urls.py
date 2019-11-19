@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework import routers
-from app.api import viewsets
+from app.api import viewsets, views
 
 router = routers.DefaultRouter()
 
@@ -17,4 +17,5 @@ router.register(r'preferences', viewsets.PreferencesQBOViewSet, basename='prefer
 
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'settings', views.SettingsView.as_view()),
 ]

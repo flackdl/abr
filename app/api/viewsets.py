@@ -119,7 +119,7 @@ class EstimateQBOViewSet(QBOBaseViewSet):
 
         estimate = Estimate()
         estimate.TxnStatus = data['status']
-        #estimate.TxnDate = data['estimate_date']
+        estimate.TxnDate = data['estimate_date'].isoformat()
         estimate.CustomerRef = {
             "value": data['customer_id'],
         }

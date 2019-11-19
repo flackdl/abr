@@ -15,6 +15,7 @@ export class EstimatorComponent implements OnInit {
   public isLoading = true;
   public signature: any;
   public customer: any;
+  public settings: any;
   public qboPreferences: any;
   public customersLoading = false;
   public customerInput$ = new Subject<string>();
@@ -42,6 +43,15 @@ export class EstimatorComponent implements OnInit {
   ngOnInit() {
 
     forkJoin(
+      this.api.fetchSettings().pipe(
+        tap((data) => {
+          this.settings = data;
+        }),
+        catchError((error) => {
+          this.isLoading = false;
+          return of(error);
+        }),
+      ),
       this.api.fetchQBOPreferences().pipe(
         tap((data) => {
           this.qboPreferences = data;
@@ -50,7 +60,7 @@ export class EstimatorComponent implements OnInit {
           this.isLoading = false;
           return of(error);
         })
-      )
+      ),
     ).subscribe((data) => {
       this.isLoading = false;
     });
