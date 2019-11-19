@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 # update and install dependencies
 RUN apt-get update && \
     apt-get install -y \
+        git \
         wget \
         python3-pip \
         python3-dev \
