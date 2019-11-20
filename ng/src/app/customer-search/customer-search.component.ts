@@ -13,6 +13,7 @@ export class CustomerSearchComponent implements OnInit {
   public customersLoading = false;
   public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
+  public needsNewCustomer = false;
   public invoices: any[];
   public isLoading = false;
 
@@ -34,7 +35,13 @@ export class CustomerSearchComponent implements OnInit {
         switchMap((term) => {
           let observable: Observable<any[]>;
           if (term) {
-            observable = this.api.fetchCustomers({'last_name': term});
+            observable = this.api.fetchCustomers({'last_name': term}).pipe(
+              tap((data) => {
+                if (!data.length) {
+                  this.needsNewCustomer = true;
+                }
+              })
+            );
           } else {
             observable = of([]);
           }
@@ -50,6 +57,7 @@ export class CustomerSearchComponent implements OnInit {
 
   public customerSelected() {
     if (this.customer) {
+      this.needsNewCustomer = false;
       this.isLoading = true;
       this.api.fetchInvoices({customer_id: this.customer.Id}).subscribe(
         (data) => {

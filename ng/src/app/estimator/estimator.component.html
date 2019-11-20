@@ -12,19 +12,6 @@
               <option>Pending</option>
             </select>
           </div>
-          <!-- crm -->
-          <div class="form-group" *ngIf="settings">
-            <label for="crm">CRM</label>
-            <select class="form-control" id="crm" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" formControlName="crm">
-              <option value="">--</option>
-              <option *ngFor="let crm of settings.crms">{{ crm }}</option>
-            </select>
-          </div>
-          <!-- billing address -->
-          <div class="form-group">
-            <label for="billingAddress">Billing Address</label>
-            <textarea rows="3" class="form-control" id="billingAddress" [class.is-invalid]="form.controls.billingAddress.dirty && !form.controls.billingAddress.valid" formControlName="billingAddress"></textarea>
-          </div>
         </div>
         <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
           <!-- estimate date -->

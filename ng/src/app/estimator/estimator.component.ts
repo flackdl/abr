@@ -1,8 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
-import {forkJoin, of} from "rxjs";
 import {ApiService} from "../api.service";
-import {catchError, tap} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import * as moment from 'moment';
 
@@ -14,8 +12,6 @@ import * as moment from 'moment';
 export class EstimatorComponent implements OnInit {
   public isLoading = true;
   public signature: any;
-  public settings: any;
-  public qboPreferences: any;
   public form: FormGroup;
 
   @ViewChild("signature", {static: true}) signatureEl: ElementRef;
@@ -27,29 +23,6 @@ export class EstimatorComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    forkJoin(
-      this.api.fetchSettings().pipe(
-        tap((data) => {
-          this.settings = data;
-        }),
-        catchError((error) => {
-          this.isLoading = false;
-          return of(error);
-        }),
-      ),
-      this.api.fetchQBOPreferences().pipe(
-        tap((data) => {
-          this.qboPreferences = data;
-        }),
-        catchError((error) => {
-          this.isLoading = false;
-          return of(error);
-        })
-      ),
-    ).subscribe((data) => {
-      this.isLoading = false;
-    });
 
     this.form = this.fb.group({
       status: ['', Validators.required],

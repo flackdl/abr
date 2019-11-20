@@ -26,6 +26,7 @@
     "moment": "^2.24.0",
     "ngx-loading": "^8.0.0",
     "ngx-moment": "^3.5.0",
+    "ngx-toastr": "^11.2.1",
     "rxjs": "~6.4.0",
     "signature_pad": "^3.0.0-beta.3",
     "tslib": "^1.10.0",

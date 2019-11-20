@@ -17,7 +17,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class QBOEstimateCreateSerializer(serializers.Serializer):
+class EstimateCreateQBOSerializer(serializers.Serializer):
     STATUSES = ['Pending', 'Accepted', 'Closed', 'Rejected']
     CRMS = [
         'Current customer walk-in',
@@ -38,3 +38,10 @@ class QBOEstimateCreateSerializer(serializers.Serializer):
     estimate_date = serializers.DateField()
     expiration_date = serializers.DateField()
     expiration_time = serializers.TimeField()
+
+
+class CustomerCreateQBOSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.CharField()
+    phone = serializers.IntegerField()

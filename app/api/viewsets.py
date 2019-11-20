@@ -1,12 +1,14 @@
+import logging
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice
+from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.api.mixins import CustomerRefFilterMixin
 from app.models import Order, OrderPart
-from app.api.serializers import OrderSerializer, OrderPartSerializer, QBOEstimateCreateSerializer
+from app.api.serializers import OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -99,6 +101,31 @@ class QBOBaseViewSet(viewsets.ViewSet):
 class CustomerQBOViewSet(QBOBaseViewSet):
     model_class = Customer
 
+    def create(self, request):
+
+        # validate
+        serializer_customer = CustomerCreateQBOSerializer(data=request.data)
+        serializer_customer.is_valid(raise_exception=True)
+        data = serializer_customer.validated_data
+
+        #
+        # save
+        #
+
+        email = EmailAddress()
+        email.Address = data['email']
+        phone = PhoneNumber()
+        phone.FreeFormNumber = data['phone']
+
+        customer = Customer()
+        customer.PrimaryEmailAddr = email
+        customer.PrimaryPhone = phone
+        customer.GivenName = data['first_name']
+        customer.FamilyName = data['last_name']
+        customer.save(qb=self.qbo_client)
+
+        return Response(customer.to_dict())
+
     def list(self, request):
         last_name = request.query_params.get('last_name')
         if last_name:
@@ -114,7 +141,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
     def create(self, request):
 
         # validate
-        estimate_create_serializer = QBOEstimateCreateSerializer(data=request.data)
+        estimate_create_serializer = EstimateCreateQBOSerializer(data=request.data)
         estimate_create_serializer.is_valid(raise_exception=True)
         data = estimate_create_serializer.validated_data
 
@@ -180,5 +207,6 @@ class InvoiceQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
     model_class = Invoice
 
 
+@method_decorator(cache_page(timeout=3600), name='dispatch')
 class PreferencesQBOViewSet(QBOBaseViewSet):
     model_class = Preferences

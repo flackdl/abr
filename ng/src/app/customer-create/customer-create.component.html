@@ -1,1 +1,39 @@
-<p>customer-create works!</p>
+<form [formGroup]="form" (ngSubmit)="create()">
+  <ngx-loading [show]="isLoading"></ngx-loading>
+  <!-- first name -->
+  <div class="form-group">
+    <label for="first_name">First Name</label>
+    <input class="form-control" type="text" id="first_name" [class.is-invalid]="form.controls.first_name.dirty && !form.controls.first_name.valid" formControlName="first_name" autofocus autocomplete="false">
+  </div>
+  <!-- last name -->
+  <div class="form-group">
+    <label for="last_name">Last Name</label>
+    <input class="form-control" type="text" id="last_name" [class.is-invalid]="form.controls.last_name.dirty && !form.controls.last_name.valid" formControlName="last_name" autocomplete="false">
+  </div>
+  <!-- email -->
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input class="form-control" type="text" id="email" [class.is-invalid]="form.controls.email.dirty && !form.controls.email.valid" formControlName="email" autocomplete="false">
+  </div>
+  <!-- phone -->
+  <div class="form-group">
+    <label for="phone">Phone</label>
+    <input minlength="10" maxlength="10" class="form-control" [class.is-invalid]="form.controls.phone.dirty && !form.controls.phone.valid" id="phone" formControlName="phone" autocomplete="false">
+  </div>
+  <!-- address -->
+  <div class="form-group">
+    <label for="billingAddress">Billing Address</label>
+    <textarea rows="3" class="form-control" id="billingAddress" [class.is-invalid]="form.controls.billing_address.dirty && !form.controls.billing_address.valid" formControlName="billing_address"></textarea>
+  </div>
+  <!-- crm -->
+  <div class="form-group" *ngIf="api.settings">
+    <label for="crm">CRM</label>
+    <select class="form-control" id="crm" [class.is-invalid]="form.controls.crm.dirty && !form.controls.crm.valid" formControlName="crm">
+      <option value="">--</option>
+      <option *ngFor="let crm of api.settings.crms">{{ crm }}</option>
+    </select>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-primary">Create</button>
+  </div>
+</form>
