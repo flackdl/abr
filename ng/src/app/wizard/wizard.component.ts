@@ -1,3 +1,5 @@
+import {ApiService} from "../api.service";
+import {Router} from "@angular/router";
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,8 +8,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./wizard.component.scss']
 })
 export class WizardComponent implements OnInit {
+  public steps = [
+    {name: "Customer", url: "/wizard/customer/search", complete: () => { return this.stepCustomerComplete() }},
+    {name: "Main Concern", url: "/wizard/main-concern", complete: () => false},
+    {name: "Questionnaire", url: "TODO",  complete: () => false},
+    {name: "Estimate", url: "/wizard/estimate",  complete: () => false},
+    {name: "Parts", url: "TODO",  complete: () => false},
+    {name: "Review", url: "TODO",  complete: () => false},
+    {name: "Notes", url: "TODO",  complete: () => false},
+  ];
 
-  constructor() { }
+  constructor(
+    public api: ApiService,
+    private router: Router,
+  ) { }
+
+  public reset() {
+    this.api.clearEstimateData();
+    this.router.navigate(['/wizard/customer/search']);
+  }
+
+  public stepCustomerComplete(): boolean {
+    return this.api.hasCurrentCustomer();
+  }
 
   ngOnInit() {
   }

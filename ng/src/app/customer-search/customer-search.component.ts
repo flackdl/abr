@@ -68,6 +68,11 @@ export class CustomerSearchComponent implements OnInit {
         (data) => {
           this.invoices = data;
           this.isLoading = false;
+          this.api.updateEstimateData({
+            customer_id: this.customer.Id,
+            first_name: this.customer.GivenName,
+            last_name: this.customer.FamilyName,
+          });
         },
         (error) => {
           this.toastr.error('An unknown error occurred');

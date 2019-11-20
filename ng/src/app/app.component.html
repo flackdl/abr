@@ -20,7 +20,6 @@
           <a class="nav-link" [routerLink]="['wizard']" routerLinkActive="active">Estimator <span class="sr-only">(current)</span></a>
         </li>
       </ul>
-      <div *ngIf="api.hasCurrentCustomer()"><span class="text-muted">Customer: </span><span class="text-success">{{ api.currentCustomer() }}</span></div>
     </div>
   </div>
 </nav>

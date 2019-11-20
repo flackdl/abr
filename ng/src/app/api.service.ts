@@ -50,13 +50,18 @@ export class ApiService {
   }
 
   public hasCurrentCustomer(): boolean {
-    return Boolean(this.estimateData.first_name && this.estimateData.last_name);
+    return Boolean(this.estimateData && this.estimateData.first_name && this.estimateData.last_name);
   }
 
   public currentCustomer() {
     if (this.hasCurrentCustomer()) {
       return `${this.estimateData.first_name} ${this.estimateData.last_name}`;
     }
+  }
+
+  public clearEstimateData() {
+    this.storage.clear('estimate');
+    this.estimateData = null;
   }
 
   public loadEstimateData(): Observable<any> {

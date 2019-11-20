@@ -1,1 +1,12 @@
+<div class="d-flex justify-content-end">
+  <div *ngIf="api.hasCurrentCustomer()">
+    <span class="text-muted">Customer: </span><span class="text-dark">{{ api.currentCustomer() }} </span>
+    <button class="btn btn-sm btn-outline-warning" (click)="reset()"><span class="oi oi-x"></span></button>
+  </div>
+</div>
+<div class="row bg-light mt-3">
+  <div *ngFor="let step of steps" class="col border border-1 text-center" [class.border-success]="step.complete()">
+    <a [routerLink]="step.url" routerLinkActive="active" class="text-muted">{{ step.name }} </a>
+  </div>
+</div>
 <router-outlet></router-outlet>
