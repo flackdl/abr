@@ -1,8 +1,8 @@
 import logging
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from quickbooks.exceptions import ObjectNotFoundException
-from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber
+from quickbooks.exceptions import ObjectNotFoundException, ValidationException
+from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -116,13 +116,26 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         email.Address = data['email']
         phone = PhoneNumber()
         phone.FreeFormNumber = data['phone']
+        billing_address = Address()
+        billing_address.Line1 = data['address_line1']
+        billing_address.Line2 = data['address_line2']
+        billing_address.City = data['city']
+        billing_address.CountrySubDivisionCode = data['state']
+        billing_address.PostalCode = data['zip']
 
         customer = Customer()
         customer.PrimaryEmailAddr = email
         customer.PrimaryPhone = phone
+        customer.BillAddr = billing_address
         customer.GivenName = data['first_name']
         customer.FamilyName = data['last_name']
-        customer.save(qb=self.qbo_client)
+        # hijacking this field which has a max character limit so we're storing the id associated to the CRM
+        customer.ResaleNum = data['crm']
+
+        try:
+            customer.save(qb=self.qbo_client)
+        except ValidationException as e:
+            return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(customer.to_dict())
 
@@ -174,7 +187,6 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 
         # TODO
         #estimate.ExpirationDate = None
-        #estimate.TxnDate = None
         #estimate.DueDate = None
         #estimate.TxnStatus = None
 

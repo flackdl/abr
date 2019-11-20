@@ -17,6 +17,7 @@ import { CustomerCreateComponent } from './customer-create/customer-create.compo
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import {ApiService} from "./api.service";
 import {ToastrModule} from "ngx-toastr";
+import { MainConcernComponent } from './main-concern/main-concern.component';
 
 
 export function init(api: ApiService) {
@@ -38,6 +39,7 @@ export function init(api: ApiService) {
     WizardComponent,
     CustomerCreateComponent,
     PageNotFoundComponent,
+    MainConcernComponent,
   ],
   imports: [
     BrowserModule,

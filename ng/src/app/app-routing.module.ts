@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
+import {Component, NgModule} from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {EstimatorComponent} from "./estimator/estimator.component";
 import {CustomerSearchComponent} from "./customer-search/customer-search.component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {WizardComponent} from "./wizard/wizard.component";
 import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
+import {MainConcernComponent} from "./main-concern/main-concern.component";
 
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'customer/search', pathMatch: 'full' },
       { path: 'customer/search', component: CustomerSearchComponent },
       { path: 'customer/create', component: CustomerCreateComponent },
+      { path: 'main-concern', component: MainConcernComponent },
       { path: 'estimate', component: EstimatorComponent },
     ],
   },

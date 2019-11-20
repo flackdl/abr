@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ApiService} from "../api.service";
 import * as _ from 'lodash';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-customer-create',
@@ -14,6 +15,7 @@ export class CustomerCreateComponent implements OnInit {
   public form: FormGroup;
 
   constructor(
+    private router: Router,
     public api: ApiService,
     private fb: FormBuilder,
     private toastr: ToastrService,
@@ -26,7 +28,11 @@ export class CustomerCreateComponent implements OnInit {
       email: new FormControl('', [Validators.email, Validators.required]),
       phone: new FormControl('', [Validators.pattern(/^\d{10}$/), Validators.required]),
       crm: ['', Validators.required],
-      billing_address: ['', Validators.required],
+      address_line1: ['', Validators.required],
+      address_line2: [''],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      zip: ['', Validators.required]
     });
   }
 
@@ -42,11 +48,18 @@ export class CustomerCreateComponent implements OnInit {
           this.toastr.success('Successfully created new customer');
           // update estimate data
           _.assign(this.api.estimateData, this.form.value);
-        }, (error) => {
-          console.error(error);
-          this.toastr.error('An unknown error occurred');
-        }, () => {
+          this.router.navigate(['wizard', 'main-concern']).then(() => {
+            this.isLoading = false;
+          })
+        }, (response) => {
+          console.error(response);
           this.isLoading = false;
+          if (response.error && response.error.message) {
+            this.toastr.error(response.error.message);
+          } else {
+            this.toastr.error('An unknown error occurred');
+          }
+        }, () => {
         }
       );
     } else {

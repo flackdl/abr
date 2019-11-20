@@ -2,6 +2,7 @@ import {ApiService} from "../api.service";
 import { Component, OnInit } from '@angular/core';
 import {concat, Observable, of, Subject} from "rxjs";
 import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-customer',
@@ -19,6 +20,7 @@ export class CustomerSearchComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -29,6 +31,8 @@ export class CustomerSearchComponent implements OnInit {
       this.customerInput$.pipe(
         distinctUntilChanged(),
         tap((data) => {
+          // reset a few things
+          delete this.customer;
           this.invoices = null;
           this.customersLoading = true;
         }),
@@ -37,6 +41,7 @@ export class CustomerSearchComponent implements OnInit {
           if (term) {
             observable = this.api.fetchCustomers({'last_name': term}).pipe(
               tap((data) => {
+                // prompt to add a new customer if there aren't any matching results
                 if (!data.length) {
                   this.needsNewCustomer = true;
                 }
@@ -65,7 +70,7 @@ export class CustomerSearchComponent implements OnInit {
           this.isLoading = false;
         },
         (error) => {
-          // TODO
+          this.toastr.error('An unknown error occurred');
         }
       );
     } else {
