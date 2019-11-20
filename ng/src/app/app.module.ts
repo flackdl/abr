@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { MomentModule } from 'ngx-moment';
 import { NgxLoadingModule } from 'ngx-loading';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -56,7 +57,8 @@ export function init(api: ApiService) {
     ToastrModule.forRoot(),
     AppRoutingModule,
     NgSelectModule,
-    NgxLoadingModule.forRoot({})
+    NgxLoadingModule.forRoot({}),
+    NgxWebstorageModule.forRoot(),
   ],
   providers: [
     { provide: APP_INITIALIZER, useFactory: init, deps: [ApiService], multi: true },

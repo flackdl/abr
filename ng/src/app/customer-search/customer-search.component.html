@@ -1,7 +1,8 @@
+<h3 class="my-4">Search for a customer</h3>
 <ngx-loading [show]="isLoading"></ngx-loading>
 <form>
   <div class="form-group">
-    <label for="customer">Customer</label>
+    <label for="customer">Last name</label>
     <ng-select
       id="customer"
       (change)="customerSelected()"
@@ -11,7 +12,7 @@
       [typeahead]="customerInput$"
       [loading]="customersLoading"
       [minTermLength]="2"
-      bindLabel="FamilyName"
+      bindLabel="DisplayName"
       autofocus
     >
     </ng-select>
@@ -20,7 +21,10 @@
 
 <div *ngIf="invoices" class="mt-5">
   <h5>Customer Invoices</h5>
-  <table class="table table-bordered table-striped table-condensed">
+  <div *ngIf="!invoices.length" class="alert alert-info">
+    This customer has no invoices
+  </div>
+  <table class="table table-bordered table-striped table-condensed" *ngIf="invoices.length">
     <thead>
     <tr>
       <th>Service Date</th>

@@ -2,8 +2,24 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import * as _ from 'lodash';
-import {forkJoin, Observable} from "rxjs";
+import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
+import {LocalStorageService} from 'ngx-webstorage';
+
+
+type EstimateData = {
+  crm?: string,
+  customer_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  phone?: number,
+  address_line1?: string,
+  address_line2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+};
 
 @Injectable({
   providedIn: 'root'
@@ -17,26 +33,45 @@ export class ApiService {
   public API_QBO_SETTINGS = '/api/settings/';
 
   public settings: any;
+  public estimateData: EstimateData;
   public qboPreferences: any;
-  public estimateData: {
-    crm?: string,
-    customer_id?: number,
-    first_name?: string,
-    last_name?: string,
-    email?: string,
-    phone?: number,
-    billing_address?: string,
-  } = {};
 
   constructor(
     private http: HttpClient,
+    private storage: LocalStorageService,
   ) {}
 
   public init(): Observable<any> {
     return forkJoin(
+      this.loadEstimateData(),
       this.fetchSettings(),
       this.fetchQBOPreferences(),
     );
+  }
+
+  public hasCurrentCustomer(): boolean {
+    return Boolean(this.estimateData.first_name && this.estimateData.last_name);
+  }
+
+  public currentCustomer() {
+    if (this.hasCurrentCustomer()) {
+      return `${this.estimateData.first_name} ${this.estimateData.last_name}`;
+    }
+  }
+
+  public loadEstimateData(): Observable<any> {
+    return of([this.storage.retrieve('estimate')]).pipe(
+      map((data) => {
+        if (data.length) {
+          this.estimateData = data[0];
+        }
+      })
+    );
+  }
+
+  public updateEstimateData(estimateData: EstimateData) {
+    this.estimateData = estimateData;
+    this.storage.store('estimate', this.estimateData);
   }
 
   public createCustomer(data: any): Observable<any> {

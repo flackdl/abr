@@ -1,1 +1,29 @@
-<router-outlet></router-outlet>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">ABR</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/input">Print Labels</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/estimates">In-House</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/parts">Parts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['wizard']" routerLinkActive="active">Estimator <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+      <div *ngIf="api.hasCurrentCustomer()"><span class="text-muted">Customer: </span><span class="text-success">{{ api.currentCustomer() }}</span></div>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

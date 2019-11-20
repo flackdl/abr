@@ -2,7 +2,6 @@ import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ApiService} from "../api.service";
-import * as _ from 'lodash';
 import {Router} from "@angular/router";
 
 @Component({
@@ -32,7 +31,7 @@ export class CustomerCreateComponent implements OnInit {
       address_line2: [''],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      zip: ['', Validators.required]
+      zip: ['', Validators.required],
     });
   }
 
@@ -47,7 +46,7 @@ export class CustomerCreateComponent implements OnInit {
         (data) => {
           this.toastr.success('Successfully created new customer');
           // update estimate data
-          _.assign(this.api.estimateData, this.form.value);
+          this.api.updateEstimateData(this.form.value);
           this.router.navigate(['wizard', 'main-concern']).then(() => {
             this.isLoading = false;
           })
