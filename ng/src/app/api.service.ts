@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {map} from "rxjs/operators";
@@ -36,6 +37,8 @@ export class ApiService {
   public estimateData: EstimateData;
   public qboPreferences: any;
 
+  public estimateData$ = new Subject();
+
   constructor(
     private http: HttpClient,
     private storage: LocalStorageService,
@@ -62,6 +65,7 @@ export class ApiService {
   public clearEstimateData() {
     this.storage.clear('estimate');
     this.estimateData = null;
+    this.estimateData$.next(null);
   }
 
   public loadEstimateData(): Observable<any> {

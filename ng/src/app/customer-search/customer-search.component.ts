@@ -25,16 +25,23 @@ export class CustomerSearchComponent implements OnInit {
 
   ngOnInit() {
 
+    this.api.estimateData$.subscribe(
+      (data) => {
+        // data was wiped so reset everything
+        if (!data) {
+          this.reset();
+        }
+      }
+    );
+
     // customer-search search
     this.customers$ = concat(
       of([]), // default items
       this.customerInput$.pipe(
         distinctUntilChanged(),
         tap((data) => {
-          // reset a few things
-          delete this.customer;
-          this.invoices = null;
           this.customersLoading = true;
+          this.reset();
         }),
         switchMap((term) => {
           let observable: Observable<any[]>;
@@ -58,6 +65,12 @@ export class CustomerSearchComponent implements OnInit {
           )}),
       )
     );
+  }
+
+  public reset() {
+    // reset a few things
+    delete this.customer;
+    this.invoices = null;
   }
 
   public customerSelected() {

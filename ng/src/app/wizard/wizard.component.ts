@@ -25,7 +25,7 @@ export class WizardComponent implements OnInit {
 
   public reset() {
     this.api.clearEstimateData();
-    this.router.navigate(['/wizard/customer/search']);
+    this.router.navigate(['/wizard']);
   }
 
   public stepCustomerComplete(): boolean {
