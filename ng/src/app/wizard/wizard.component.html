@@ -5,7 +5,7 @@
   </div>
 </div>
 <div class="row bg-light mt-3">
-  <div *ngFor="let step of steps" class="col border text-center" [class.border-success]="step.complete()" [class.border-warning]="!step.complete()">
+  <div *ngFor="let step of steps" class="col border text-center" [class.border-success]="step.complete()">
     <a [routerLink]="step.url" routerLinkActive="active" class="text-muted">{{ step.name }} </a>
   </div>
 </div>
