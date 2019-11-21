@@ -10,13 +10,13 @@ export class QuestionnaireComponent implements OnInit {
   public form: FormGroup;
   public qualityChoices = ['good', 'ok', 'bad'];
   public qualityChoiceRows = [
-    [{name: 'chain', label: 'Chain Wear'}, {name: 'hanger', label: 'Hanger'}],
-    [{name: 'cassette_freewheel', label: 'Cassette/Freewheel'}, {name: 'chainrings', label: 'Chainrings'}],
-    [{name: 'rear_der_cable', label: 'Rear DER cable'}, {name: 'front_der_cable', label: 'Front DER cable'}],
-    [{name: 'rear_der', label: 'Rear DER'}, {name: 'front_der', label: 'Front DER'}],
-    [{name: 'rr_brake_cable', label: 'RR Brake Cable'}, {name: 'ft_brake_cable', label: 'FT Brake Cable'}],
-    [{name: 'rear_brake', label: 'Rear Brake'}, {name: 'front_brake', label: 'Front Brake'}],
-    [{name: 'rear_tire', label: 'Rear Tire'}, {name: 'front_tire', label: 'Front Tire'}],
+    ['Chain Wear', 'Hanger'],
+    ['Cassette/Freewheel', 'Chainrings'],
+    ['Rear DER cable', 'Front DER cable'],
+    ['Rear DER', 'Front DER'],
+    ['RR Brake Cable', 'FT Brake Cable'],
+    ['Rear Brake', 'Front Brake'],
+    ['Rear Tire', 'Front Tire'],
   ];
 
   constructor(
@@ -26,8 +26,8 @@ export class QuestionnaireComponent implements OnInit {
   ngOnInit() {
     const qualityGroup = {};
     this.qualityChoiceRows.forEach((row) => {
-      row.forEach((option) => {
-        qualityGroup[option.name] = ['', Validators.required];
+      row.forEach((name) => {
+        qualityGroup[this.getQualityKey(name)] = ['', Validators.required];
       });
     });
     const formGroup = {
@@ -39,6 +39,10 @@ export class QuestionnaireComponent implements OnInit {
 
   public create() {
     console.log(this.form);
+  }
+
+  protected getQualityKey(name: string) {
+    return name.toLowerCase().replace(' ', '_');
   }
 
 }

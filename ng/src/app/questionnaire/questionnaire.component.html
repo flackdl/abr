@@ -8,8 +8,8 @@
   </div>
   <div class="row" formGroupName="qualities" *ngFor="let row of qualityChoiceRows">
     <div class="col-4 offset-2 " *ngFor="let quality of row">
-      <div class="text-black-50 font-weight-bold">{{ quality.label }}</div>
-      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="quality.name">
+      <div class="text-black-50 font-weight-bold">{{ quality }}</div>
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="getQualityKey(quality)">
         <ng-container *ngFor="let choice of qualityChoices">
           <label ngbButtonLabel [ngClass]="{'btn-success': choice === 'good', 'btn-danger': choice === 'bad', 'btn-warning': choice === 'ok'}">
             <input ngbButton type="radio" [value]="choice">&nbsp;
