@@ -6,8 +6,8 @@
       <input type="text" class="form-control" id="bike-model" formControlName="bike_model">
     </div>
   </div>
-  <div class="row">
-    <div class="col-3" formGroupName="qualities" *ngFor="let quality of qualities">
+  <div class="row" formGroupName="qualities" *ngFor="let row of qualityChoiceRows">
+    <div class="col-4 offset-2 " *ngFor="let quality of row">
       <div class="text-black-50 font-weight-bold">{{ quality.label }}</div>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="quality.name">
         <ng-container *ngFor="let choice of qualityChoices">

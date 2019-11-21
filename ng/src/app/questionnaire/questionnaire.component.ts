@@ -1,4 +1,4 @@
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -9,21 +9,14 @@ import { Component, OnInit } from '@angular/core';
 export class QuestionnaireComponent implements OnInit {
   public form: FormGroup;
   public qualityChoices = ['good', 'ok', 'bad'];
-  public qualities = [
-    {name: 'chain', label: 'Chain Wear'},
-    {name: 'hanger', label: 'Hanger'},
-    {name: 'cassette_freewheel', label: 'Cassette/Freewheel'},
-    {name: 'chainrings', label: 'Chainrings'},
-    {name: 'rear_der_cable', label: 'Rear DER cable'},
-    {name: 'front_der_cable', label: 'Front DER cable'},
-    {name: 'rear_der', label: 'Rear DER'},
-    {name: 'front_der', label: 'Front DER'},
-    {name: 'rr_brake_cable', label: 'RR Brake Cable'},
-    {name: 'ft_brake_cable', label: 'FT Brake Cable'},
-    {name: 'rear_brake', label: 'Rear Brake'},
-    {name: 'front_brake', label: 'Front Brake'},
-    {name: 'rear_tire', label: 'Rear Tire'},
-    {name: 'front_tire', label: 'Front Tire'},
+  public qualityChoiceRows = [
+    [{name: 'chain', label: 'Chain Wear'}, {name: 'hanger', label: 'Hanger'}],
+    [{name: 'cassette_freewheel', label: 'Cassette/Freewheel'}, {name: 'chainrings', label: 'Chainrings'}],
+    [{name: 'rear_der_cable', label: 'Rear DER cable'}, {name: 'front_der_cable', label: 'Front DER cable'}],
+    [{name: 'rear_der', label: 'Rear DER'}, {name: 'front_der', label: 'Front DER'}],
+    [{name: 'rr_brake_cable', label: 'RR Brake Cable'}, {name: 'ft_brake_cable', label: 'FT Brake Cable'}],
+    [{name: 'rear_brake', label: 'Rear Brake'}, {name: 'front_brake', label: 'Front Brake'}],
+    [{name: 'rear_tire', label: 'Rear Tire'}, {name: 'front_tire', label: 'Front Tire'}],
   ];
 
   constructor(
@@ -32,8 +25,10 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
     const qualityGroup = {};
-    this.qualities.forEach((option) => {
-      qualityGroup[option.name] = ['', Validators.required];
+    this.qualityChoiceRows.forEach((row) => {
+      row.forEach((option) => {
+        qualityGroup[option.name] = ['', Validators.required];
+      });
     });
     const formGroup = {
       bike_model: ['', Validators.required],
