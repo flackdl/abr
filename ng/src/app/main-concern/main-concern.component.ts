@@ -1,4 +1,6 @@
+import {ApiService} from "../api.service";
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-concern',
@@ -7,10 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainConcernComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public api: ApiService,
+    public router: Router,
+  ) { }
 
   public question: string = 'What are the main concerns?';
-  public input: string = 'textarea';
+  public inputType: string = 'textarea';
+
+  public save(answer) {
+    this.api.updateEstimateData({main_concern: answer});
+    this.router.navigate(['/wizard', 'questionnaire'])
+  }
 
   ngOnInit() {
   }

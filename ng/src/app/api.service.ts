@@ -20,6 +20,7 @@ type EstimateData = {
   city?: string,
   state?: string,
   zip?: string,
+  main_concern?: string,
 };
 
 @Injectable({
@@ -78,9 +79,10 @@ export class ApiService {
     );
   }
 
-  public updateEstimateData(estimateData: EstimateData) {
-    this.estimateData = estimateData;
+  public updateEstimateData(updatedEstimateData: EstimateData) {
+    _.assign(this.estimateData, updatedEstimateData);
     this.storage.store('estimate', this.estimateData);
+    this.estimateData$.next(this.estimateData);
   }
 
   public createCustomer(data: any): Observable<any> {

@@ -1,10 +1,10 @@
 a {
   &.active {
     &::before {
-      content: "« ";
+      content: "«";
     }
     &::after {
-      content: " »";
+      content: "»";
     }
     color: black!important;
   }

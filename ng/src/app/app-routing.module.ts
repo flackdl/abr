@@ -6,6 +6,7 @@ import {CustomerCreateComponent} from "./customer-create/customer-create.compone
 import {WizardComponent} from "./wizard/wizard.component";
 import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {MainConcernComponent} from "./main-concern/main-concern.component";
+import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
       { path: 'customer/search', component: CustomerSearchComponent },
       { path: 'customer/create', component: CustomerCreateComponent },
       { path: 'main-concern', component: MainConcernComponent },
+      { path: 'questionnaire', component: QuestionnaireComponent },
       { path: 'estimate', component: EstimatorComponent },
     ],
   },
