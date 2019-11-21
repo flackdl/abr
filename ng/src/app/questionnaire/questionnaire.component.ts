@@ -14,6 +14,16 @@ export class QuestionnaireComponent implements OnInit {
     {name: 'hanger', label: 'Hanger'},
     {name: 'cassette_freewheel', label: 'Cassette/Freewheel'},
     {name: 'chainrings', label: 'Chainrings'},
+    {name: 'rear_der_cable', label: 'Rear DER cable'},
+    {name: 'front_der_cable', label: 'Front DER cable'},
+    {name: 'rear_der', label: 'Rear DER'},
+    {name: 'front_der', label: 'Front DER'},
+    {name: 'rr_brake_cable', label: 'RR Brake Cable'},
+    {name: 'ft_brake_cable', label: 'FT Brake Cable'},
+    {name: 'rear_brake', label: 'Rear Brake'},
+    {name: 'front_brake', label: 'Front Brake'},
+    {name: 'rear_tire', label: 'Rear Tire'},
+    {name: 'front_tire', label: 'Front Tire'},
   ];
 
   constructor(

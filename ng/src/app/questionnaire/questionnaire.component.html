@@ -1,5 +1,11 @@
 <div class="display-4 mb-5">Multipoint Inspection and Assessment</div>
 <form [formGroup]="form" (ngSubmit)="create()">
+  <div class="d-flex justify-content-center">
+    <div class="form-group">
+      <label for="bike-model">Bike/Model</label>
+      <input type="text" class="form-control" id="bike-model" formControlName="bike_model">
+    </div>
+  </div>
   <div class="row">
     <div class="col-3" formGroupName="qualities" *ngFor="let quality of qualities">
       <div class="text-black-50 font-weight-bold">{{ quality.label }}</div>
