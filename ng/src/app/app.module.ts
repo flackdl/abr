@@ -19,6 +19,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import {ApiService} from "./api.service";
 import {ToastrModule} from "ngx-toastr";
 import { MainConcernComponent } from './main-concern/main-concern.component';
+import { QuestionComponent } from './question/question.component';
 
 
 export function init(api: ApiService) {
@@ -41,6 +42,7 @@ export function init(api: ApiService) {
     CustomerCreateComponent,
     PageNotFoundComponent,
     MainConcernComponent,
+    QuestionComponent,
   ],
   imports: [
     BrowserModule,
