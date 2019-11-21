@@ -35,7 +35,7 @@ export class ApiService {
   public API_QBO_SETTINGS = '/api/settings/';
 
   public settings: any;
-  public estimateData: EstimateData;
+  public estimateData: EstimateData = {};
   public qboPreferences: any;
 
   public estimateData$ = new Subject();
@@ -54,7 +54,11 @@ export class ApiService {
   }
 
   public hasCurrentCustomer(): boolean {
-    return Boolean(this.estimateData && this.estimateData.first_name && this.estimateData.last_name);
+    return Boolean(this.estimateData.first_name && this.estimateData.last_name);
+  }
+
+  public hasMainConcern(): boolean {
+    return Boolean(this.estimateData.main_concern);
   }
 
   public currentCustomer() {
@@ -65,15 +69,17 @@ export class ApiService {
 
   public clearEstimateData() {
     this.storage.clear('estimate');
-    this.estimateData = null;
+    this.estimateData = {};
     this.estimateData$.next(null);
   }
 
   public loadEstimateData(): Observable<any> {
     return of([this.storage.retrieve('estimate')]).pipe(
       map((data) => {
-        if (data.length) {
+        if (data.length && data[0]) {
           this.estimateData = data[0];
+        } else {
+          this.estimateData = {};
         }
       })
     );

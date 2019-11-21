@@ -33,7 +33,7 @@ export class WizardComponent implements OnInit {
   }
 
   public stepMainConcernComplete(): boolean {
-    return !!this.api.estimateData.main_concern;
+    return this.api.hasMainConcern();
   }
 
   ngOnInit() {
