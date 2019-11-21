@@ -1,3 +1,5 @@
+import {ToastrService} from "ngx-toastr";
+import {ApiService} from "../api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { Component, OnInit } from '@angular/core';
 
@@ -21,6 +23,8 @@ export class QuestionnaireComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private api: ApiService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -30,19 +34,46 @@ export class QuestionnaireComponent implements OnInit {
         qualityGroup[this.getQualityKey(name)] = ['', Validators.required];
       });
     });
-    const formGroup = {
+    this.form = this.fb.group({
       bike_model: ['', Validators.required],
       qualities: this.fb.group(qualityGroup),
-    };
-    this.form = this.fb.group(formGroup);
+    });
   }
 
   public create() {
-    console.log(this.form);
+    // mark all inputs as dirty then validate
+    this.form.get('bike_model').markAsDirty();
+    Object.keys((this.form.controls['qualities'] as FormGroup).controls).forEach((key) => {
+      const input = this.form.get('qualities').get(key);
+      input.markAsDirty();
+    });
+
+    if (this.form.valid) {
+      this.api.updateEstimateData({
+        questionnaire: {
+          bike_model: this.form.get('bike_model').value,
+          qualities: this.form.get('qualities').value,
+        },
+      });
+    } else {
+      this.toastr.error('Invalid form entries');
+    }
   }
 
-  protected getQualityKey(name: string) {
+  public getQualityKey(name: string) {
     return name.toLowerCase().replace(' ', '_');
+  }
+
+  public isQualityDirty(quality: string): boolean {
+    const key = this.getQualityKey(quality);
+    const input = this.form.get('qualities').get(key);
+    return input.dirty;
+  }
+
+  public isQualityValid(quality: string): boolean {
+    const key = this.getQualityKey(quality);
+    const input = this.form.get('qualities').get(key);
+    return input.valid;
   }
 
 }

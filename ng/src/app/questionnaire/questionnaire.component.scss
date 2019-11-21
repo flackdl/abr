@@ -1,3 +1,7 @@
+.btn-group.is-invalid {
+  border: solid red 3px;
+  padding: 3px;
+}
 label {
   &.active {
     border: solid white 3px!important;

@@ -3,13 +3,13 @@
   <div class="d-flex justify-content-center">
     <div class="form-group">
       <label for="bike-model">Bike/Model</label>
-      <input type="text" class="form-control" id="bike-model" formControlName="bike_model">
+      <input type="text" class="form-control" id="bike-model" formControlName="bike_model" [class.is-invalid]="form.get('bike_model').dirty && form.get('bike_model').invalid">
     </div>
   </div>
   <div class="row" formGroupName="qualities" *ngFor="let row of qualityChoiceRows">
     <div class="col-4 offset-2 " *ngFor="let quality of row">
       <div class="text-black-50 font-weight-bold">{{ quality }}</div>
-      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="getQualityKey(quality)">
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="getQualityKey(quality)" [class.is-invalid]="isQualityDirty(quality) && !isQualityValid(quality)">
         <ng-container *ngFor="let choice of qualityChoices">
           <label ngbButtonLabel [ngClass]="{'btn-success': choice === 'good', 'btn-danger': choice === 'bad', 'btn-warning': choice === 'ok'}">
             <input ngbButton type="radio" [value]="choice">&nbsp;

@@ -21,6 +21,12 @@ type EstimateData = {
   state?: string,
   zip?: string,
   main_concern?: string,
+  questionnaire?: {
+    bike_model: string,
+    qualities: {
+      [name: string]: string,
+    }
+  },
 };
 
 @Injectable({
