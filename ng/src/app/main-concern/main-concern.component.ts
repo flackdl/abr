@@ -10,7 +10,7 @@ export class MainConcernComponent implements OnInit {
   constructor() { }
 
   public question: string = 'What are the main concerns?';
-  public input: string = 'input';
+  public input: string = 'textarea';
 
   ngOnInit() {
   }
