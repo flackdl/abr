@@ -2,6 +2,7 @@ import {ToastrService} from "ngx-toastr";
 import {ApiService} from "../api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-questionnaire',
@@ -35,6 +36,7 @@ export class QuestionnaireComponent implements OnInit {
     private fb: FormBuilder,
     private api: ApiService,
     private toastr: ToastrService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -71,6 +73,7 @@ export class QuestionnaireComponent implements OnInit {
       this.api.updateEstimateData({
         questionnaire: this.form.value,
       });
+      this.router.navigate(['/wizard', 'estimate']);
     } else {
       this.toastr.error('Incomplete form');
     }

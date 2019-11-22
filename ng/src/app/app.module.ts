@@ -12,7 +12,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EstimatorComponent } from './estimator/estimator.component';
+import { EstimateComponent } from './estimate/estimate.component';
 import { CustomerSearchComponent } from './customer-search/customer-search.component';
 import { WizardComponent } from './wizard/wizard.component';
 import { CustomerCreateComponent } from './customer-create/customer-create.component';
@@ -38,7 +38,7 @@ export function init(api: ApiService) {
 @NgModule({
   declarations: [
     AppComponent,
-    EstimatorComponent,
+    EstimateComponent,
     CustomerSearchComponent,
     WizardComponent,
     CustomerCreateComponent,

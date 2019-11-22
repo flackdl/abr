@@ -6,10 +6,10 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'app-estimator',
-  templateUrl: './estimator.component.html',
-  styleUrls: ['./estimator.component.scss']
+  templateUrl: './estimate.component.html',
+  styleUrls: ['./estimate.component.scss']
 })
-export class EstimatorComponent implements OnInit {
+export class EstimateComponent implements OnInit {
   public isLoading = true;
   public signature: any;
   public form: FormGroup;

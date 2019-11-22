@@ -70,6 +70,15 @@ export class ApiService {
     return Boolean(this.estimateData.main_concern);
   }
 
+  public hasQuestionnaire(): boolean {
+    return Boolean(
+      this.estimateData.questionnaire &&
+      this.estimateData.questionnaire.bike_model &&
+      this.estimateData.questionnaire.qualities &&
+      this.estimateData.questionnaire.services
+    );
+  }
+
   public currentCustomer() {
     if (this.hasCurrentCustomer()) {
       return `${this.estimateData.first_name} ${this.estimateData.last_name}`;

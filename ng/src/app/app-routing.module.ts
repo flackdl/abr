@@ -1,6 +1,6 @@
 import {Component, NgModule} from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {EstimatorComponent} from "./estimator/estimator.component";
+import {EstimateComponent} from "./estimate/estimate.component";
 import {CustomerSearchComponent} from "./customer-search/customer-search.component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
 import {WizardComponent} from "./wizard/wizard.component";
@@ -20,7 +20,7 @@ const routes: Routes = [
       { path: 'customer/create', component: CustomerCreateComponent },
       { path: 'main-concern', component: MainConcernComponent },
       { path: 'questionnaire', component: QuestionnaireComponent },
-      { path: 'estimate', component: EstimatorComponent },
+      { path: 'estimate', component: EstimateComponent },
     ],
   },
   { path: '**', component: PageNotFoundComponent }

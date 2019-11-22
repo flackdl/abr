@@ -1,6 +1,6 @@
 <div class="row bg-light mt-3">
   <div *ngFor="let step of steps" class="col border text-center" [class.border-success]="step.complete()">
-    <a [routerLink]="step.url" routerLinkActive="active" class="text-muted">{{ step.name }}</a>
+    <a [routerLink]="step.url" routerLinkActive="active" class="text-muted step">{{ step.name }}</a>
   </div>
 </div>
 <div class="d-flex justify-content-end mt-2">

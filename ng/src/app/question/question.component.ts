@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, OnChanges} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
+import {SimpleChanges} from "@angular/core";
 
 
 @Component({
@@ -7,9 +8,10 @@ import {FormControl, Validators} from "@angular/forms";
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss']
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnChanges {
   @Input('question') question: string;
   @Input('inputType') inputType: string;
+  @Input('defaultAnswer') defaultAnswer: string = '';
   @Output() answer = new EventEmitter<string>();
 
   public input: FormControl;
@@ -19,6 +21,12 @@ export class QuestionComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.defaultAnswer) {
+      this.input.setValue(changes.defaultAnswer.currentValue);
+    }
   }
 
   submit() {
