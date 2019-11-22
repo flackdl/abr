@@ -25,6 +25,9 @@ type EstimateData = {
     bike_model: string,
     qualities: {
       [name: string]: string,
+    },
+    services: {
+      [name: string]: boolean,
     }
   },
 };

@@ -6,13 +6,34 @@
       <input type="text" class="form-control" id="bike-model" formControlName="bike_model" [class.is-invalid]="form.get('bike_model').dirty && form.get('bike_model').invalid">
     </div>
   </div>
-  <div class="row" formGroupName="qualities" *ngFor="let row of qualityChoiceRows">
+
+  <h4 class="text-center">Wear</h4>
+  <div class="row" formGroupName="qualities" *ngFor="let row of qualityRadioChoiceRows">
     <div class="col-4 offset-2 " *ngFor="let quality of row">
       <div class="text-black-50 font-weight-bold">{{ quality }}</div>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="getQualityKey(quality)" [class.is-invalid]="isQualityDirty(quality) && !isQualityValid(quality)">
-        <ng-container *ngFor="let choice of qualityChoices">
-          <label ngbButtonLabel [ngClass]="{'btn-success': choice === 'good', 'btn-danger': choice === 'bad', 'btn-warning': choice === 'ok', 'chosen': form.value.qualities[getQualityKey(quality)] === choice}" >
+        <ng-container *ngFor="let choice of qualityRadioChoices">
+          <label ngbButtonLabel [ngClass]="{'btn-success': choice === QUALITY_GOOD, 'btn-danger': choice === QUALITY_BAD, 'btn-warning': choice === QUALITY_OK, 'chosen': form.value.qualities[getQualityKey(quality)] === choice}">
             <input ngbButton type="radio" [value]="choice">&nbsp;
+          </label>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="text-center">Service</h4>
+  <div class="row" formGroupName="services">
+    <div class="col-6 text-center" *ngFor="let service of serviceBooleanQuestions">
+      <div class="text-black-50 font-weight-bold">
+        {{ service.label }}
+        <small class="d-inline" *ngIf="!service.required" class="form-text text-muted">
+          * optional
+        </small>
+      </div>
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="service.label" [class.is-invalid]="form.get('services').get(service.label).dirty && form.get('services').get(service.label).invalid">
+        <ng-container *ngFor="let value of [true, false]">
+          <label ngbButtonLabel [ngClass]="{'btn-success': value, 'btn-danger': !value, 'chosen': form.value.services[service.label] === value}">
+            <input ngbButton type="radio" [value]="value"> &nbsp;
           </label>
         </ng-container>
       </div>
