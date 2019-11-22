@@ -10,7 +10,7 @@ import * as moment from 'moment';
   styleUrls: ['./estimate.component.scss']
 })
 export class EstimateComponent implements OnInit {
-  public isLoading = true;
+  public isLoading = false;
   public signature: any;
   public form: FormGroup;
 
@@ -26,14 +26,9 @@ export class EstimateComponent implements OnInit {
 
     this.form = this.fb.group({
       status: ['', Validators.required],
-      email: ['', Validators.email],
-      phone: ['', Validators.pattern(/^\d{10}$/)],
-      crm: ['', Validators.required],
-      billingAddress: ['', Validators.required],
       estimateDate: [moment().format('YYYY-MM-DD'), Validators.required],
       expirationDate: ['', Validators.required],
       expirationTime: ['', Validators.required],
-      bikeModel: ['', Validators.required],
       tagNumber: ['', Validators.required],
     });
 
@@ -53,8 +48,6 @@ export class EstimateComponent implements OnInit {
         // customer_id: this.customer-search.Id,
         status: this.form.get('status').value,
         tag_number: this.form.get('tagNumber').value,
-        bike_model: this.form.get('bikeModel').value,
-        crm: this.form.get('crm').value,
         estimate_date: this.form.get('estimateDate').value,
         expiration_date: this.form.get('expirationDate').value,
         expiration_time: this.form.get('expirationTime').value,

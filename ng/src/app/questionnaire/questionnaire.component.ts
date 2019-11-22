@@ -25,11 +25,11 @@ export class QuestionnaireComponent implements OnInit {
     ['Rear Tire', 'Front Tire'],
   ];
   public serviceBooleanQuestions = [
-    {label: "Overhauled bottom bracket in the past year?", required: true},
-    {label: "Overhauled headset in the past year?", required: true},
-    {label: "Bled disc breaks in the last year?", required: false},
-    {label: "Sealant in the past 3 months?", required: false},
-    {label: "Suspension service in the past year?", required: false},
+    {name: "Overhauled bottom bracket in the past year?", required: true},
+    {name: "Overhauled headset in the past year?", required: true},
+    {name: "Bled disc breaks in the last year?", required: false},
+    {name: "Sealant in the past 3 months?", required: false},
+    {name: "Suspension service in the past year?", required: false},
   ];
 
   constructor(
@@ -40,21 +40,46 @@ export class QuestionnaireComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     const qualityGroup = {};
     const serviceGroup = {};
+
+    // build form
     this.qualityRadioChoiceRows.forEach((row) => {
       row.forEach((name) => {
-        qualityGroup[this.getQualityKey(name)] = ['', Validators.required];
+        qualityGroup[name] = [this.getExistingQuality(name), Validators.required];
       });
     });
+
     this.serviceBooleanQuestions.forEach((option) => {
-      serviceGroup[option.label] = ['', option.required ? Validators.required : false];
+      serviceGroup[option.name] = [this.getExistingService(option.name), option.required ? Validators.required : false];
     });
     this.form = this.fb.group({
-      bike_model: ['', Validators.required],
+      bike_model: [this.getExistingBikeModel(), Validators.required],
       qualities: this.fb.group(qualityGroup),
       services: this.fb.group(serviceGroup),
     });
+  }
+
+  public getExistingBikeModel() {
+    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.bike_model) {
+      return this.api.estimateData.questionnaire.bike_model;
+    }
+    return null;
+  }
+
+  public getExistingService(item: string) {
+    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.services) {
+      return this.api.estimateData.questionnaire.services[item];
+    }
+    return null;
+  }
+
+  public getExistingQuality(item: string) {
+    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.qualities) {
+      return this.api.estimateData.questionnaire.qualities[item];
+    }
+    return null;
   }
 
   public create() {
@@ -79,19 +104,13 @@ export class QuestionnaireComponent implements OnInit {
     }
   }
 
-  public getQualityKey(name: string) {
-    return name.toLowerCase().replace(' ', '_');
-  }
-
   public isQualityDirty(quality: string): boolean {
-    const key = this.getQualityKey(quality);
-    const input = this.form.get('qualities').get(key);
+    const input = this.form.get('qualities').get(quality);
     return input.dirty;
   }
 
   public isQualityValid(quality: string): boolean {
-    const key = this.getQualityKey(quality);
-    const input = this.form.get('qualities').get(key);
+    const input = this.form.get('qualities').get(quality);
     return input.valid;
   }
 

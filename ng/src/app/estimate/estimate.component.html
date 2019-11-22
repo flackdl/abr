@@ -1,128 +1,121 @@
-<div class="container-fluid">
-  <ngx-loading [show]="isLoading" [config]="{'backdropBackgroundColour': 'rgb(198,198,198)'}"></ngx-loading>
-  <form [formGroup]="form" (ngSubmit)="createEstimate()">
-    <!-- top -->
-    <div class="row border-bottom border-dark">
-      <div class="col-8">
-        <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-          <!-- estimate status -->
-          <div class="form-group">
-            <label>Status</label>
-            <select class="form-control" [class.is-invalid]="form.controls.status.dirty && !form.controls.status.valid" formControlName="status">
-              <option>Pending</option>
-            </select>
-          </div>
-        </div>
-        <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-          <!-- estimate date -->
-          <div class="form-group">
-            <label for="estimateDate">Estimate Date</label>
-            <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimateDate.dirty && !form.controls.estimateDate.valid" formControlName="estimateDate">
-          </div>
-          <!-- expiration date -->
-          <div class="form-group">
-            <label for="expirationDate">Expiration Date</label>
-            <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expirationDate.dirty && !form.controls.expirationDate.valid" formControlName="expirationDate">
-          </div>
-          <!-- expiration time -->
-          <div class="form-group">
-            <label for="expirationTime">Expiration Time</label>
-            <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expirationTime.dirty && !form.controls.expirationTime.valid" formControlName="expirationTime">
-          </div>
-          <!-- bike model -->
-          <div class="form-group">
-            <label for="bikeModel">Bike/Model</label>
-            <input type="text" class="form-control" id="bikeModel" [class.is-invalid]="form.controls.bikeModel.dirty && !form.controls.bikeModel.valid" formControlName="bikeModel">
-          </div>
-          <!-- tag # -->
-          <div class="form-group">
-            <label for="tagNumber">Tag #</label>
-            <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tagNumber.dirty && !form.controls.tagNumber.valid" formControlName="tagNumber">
-          </div>
-        </div>
-      </div>
-      <!-- messages -->
-      <div class="col-4">
+<ngx-loading [show]="isLoading" [config]="{'backdropBackgroundColour': 'rgb(198,198,198)'}"></ngx-loading>
+<form [formGroup]="form" (ngSubmit)="createEstimate()">
+  <!-- top -->
+  <div class="row border-bottom border-dark">
+    <div class="col-8">
+      <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
+        <!-- estimate status -->
         <div class="form-group">
-          <label for="message_estimate">Message displayed on estimate</label>
-          <textarea rows="3" class="form-control" id="message_estimate"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="message_statement">Message displayed on statement</label>
-          <textarea rows="3" class="form-control" id="message_statement"></textarea>
-        </div>
-      </div>
-    </div>
-    <!-- middle -->
-    <div class="row border-bottom border-dark">
-      <!-- inventory items -->
-      <div class="col-4">
-        <div class="form-group">
-          <label for="inventory_items">Inventory Items</label>
-          <select multiple class="form-control" id="inventory_items">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+          <label>Status</label>
+          <select class="form-control" [class.is-invalid]="form.controls.status.dirty && !form.controls.status.valid" formControlName="status">
+            <option>Pending</option>
           </select>
         </div>
       </div>
-      <!-- inventory chooser -->
-      <div class="col-4">
-      </div>
-      <!-- labor items -->
-      <div class="col-4">
+      <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
+        <!-- estimate date -->
         <div class="form-group">
-          <label for="labor_items">Labor Items</label>
-          <select multiple class="form-control" id="labor_items">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
+          <label for="estimateDate">Estimate Date</label>
+          <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimateDate.dirty && !form.controls.estimateDate.valid" formControlName="estimateDate">
+        </div>
+        <!-- expiration date -->
+        <div class="form-group">
+          <label for="expirationDate">Expiration Date</label>
+          <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expirationDate.dirty && !form.controls.expirationDate.valid" formControlName="expirationDate">
+        </div>
+        <!-- expiration time -->
+        <div class="form-group">
+          <label for="expirationTime">Expiration Time</label>
+          <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expirationTime.dirty && !form.controls.expirationTime.valid" formControlName="expirationTime">
+        </div>
+        <!-- tag # -->
+        <div class="form-group">
+          <label for="tagNumber">Tag #</label>
+          <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tagNumber.dirty && !form.controls.tagNumber.valid" formControlName="tagNumber">
         </div>
       </div>
     </div>
-    <!-- bottom -->
-    <table class="table table-striped table-bordered table-condensed">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Product/Service</th>
-        <th>Sku</th>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Rate</th>
-        <th>Amount</th>
-        <th>Tax</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      </tbody>
-    </table>
-    <!-- signature -->
-    <div class="d-flex justify-content-center">
-      <div>
-        <h5>Customer Signature</h5>
-        <canvas #signature class="border border-dark"></canvas>
+    <!-- messages -->
+    <div class="col-4">
+      <div class="form-group">
+        <label for="message_estimate">Message displayed on estimate</label>
+        <textarea rows="3" class="form-control" id="message_estimate"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="message_statement">Message displayed on statement</label>
+        <textarea rows="3" class="form-control" id="message_statement"></textarea>
       </div>
     </div>
-    <div class="form-group">
-      <button type="submit" class="btn btn-primary">Create</button>
+  </div>
+  <!-- middle -->
+  <div class="row border-bottom border-dark">
+    <!-- inventory items -->
+    <div class="col-4">
+      <div class="form-group">
+        <label for="inventory_items">Inventory Items</label>
+        <select multiple class="form-control" id="inventory_items">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
     </div>
-  </form>
-</div>
+    <!-- inventory chooser -->
+    <div class="col-4">
+    </div>
+    <!-- labor items -->
+    <div class="col-4">
+      <div class="form-group">
+        <label for="labor_items">Labor Items</label>
+        <select multiple class="form-control" id="labor_items">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <!-- bottom -->
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Product/Service</th>
+      <th>Sku</th>
+      <th>Description</th>
+      <th>Quantity</th>
+      <th>Rate</th>
+      <th>Amount</th>
+      <th>Tax</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    </tbody>
+  </table>
+  <!-- signature -->
+  <div class="d-flex justify-content-center">
+    <div>
+      <h5>Customer Signature</h5>
+      <canvas #signature class="border border-dark"></canvas>
+    </div>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Create</button>
+  </div>
+</form>
