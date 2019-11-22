@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
 import {ApiService} from "../api.service";
@@ -19,6 +20,7 @@ export class EstimateComponent implements OnInit {
   constructor(
     private api: ApiService,
     private fb: FormBuilder,
+    private toastr: ToastrService,
   ) {
   }
 
@@ -26,10 +28,10 @@ export class EstimateComponent implements OnInit {
 
     this.form = this.fb.group({
       status: ['', Validators.required],
-      estimateDate: [moment().format('YYYY-MM-DD'), Validators.required],
-      expirationDate: ['', Validators.required],
-      expirationTime: ['', Validators.required],
-      tagNumber: ['', Validators.required],
+      estimate_date: [moment().format('YYYY-MM-DD'), Validators.required],
+      expiration_date: ['', Validators.required],
+      expiration_time: ['', Validators.required],
+      tag_number: ['', Validators.required],
     });
 
     this.signature = new SignaturePad(this.signatureEl.nativeElement);
@@ -43,18 +45,11 @@ export class EstimateComponent implements OnInit {
     });
 
     if (this.form.valid) {
-      const data = {
-        // TODO
-        // customer_id: this.customer-search.Id,
-        status: this.form.get('status').value,
-        tag_number: this.form.get('tagNumber').value,
-        estimate_date: this.form.get('estimateDate').value,
-        expiration_date: this.form.get('expirationDate').value,
-        expiration_time: this.form.get('expirationTime').value,
-      };
-      this.api.createEstimate(data).subscribe((data) => {
+      this.api.createEstimate(this.form.value).subscribe((data) => {
         // TODO
         console.log(data);
+      }, (error) => {
+        this.toastr.error('An unknown error occurred');
       });
     }
   }

@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing all",
-    "watch": "ng build --watch --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing all",
+    "build": "ng build --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing none --extract-css",
+    "watch": "ng build --watch --output-path ../ng-assets/ng/ --base-href /static/ng/index.html --output-hashing none --extract-css",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

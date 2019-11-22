@@ -1,0 +1,31 @@
+<!--
+    NOTE: this is a manual copy of the angular index.html repurposed for a Django setup.
+    All future updates will have to be manually added here
+-->
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ABR</title>
+  <base href="/ng/">  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="{% static 'ng/styles.css' %}">
+
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+  <app-root>
+    <div class="app-loading">
+      <img src="/static/loading.svg">
+    </div>
+  </app-root>
+
+  <script type="text/javascript" src="{% static 'ng/runtime.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ng/polyfills.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ng/vendor.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ng/main.js' %}"></script>
+
+</body>
+</html>
