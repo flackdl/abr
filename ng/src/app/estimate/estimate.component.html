@@ -8,7 +8,7 @@
         <div class="form-group">
           <label>Status</label>
           <select class="form-control" [class.is-invalid]="form.controls.status.dirty && !form.controls.status.valid" formControlName="status">
-            <option>Pending</option>
+            <option *ngFor="let status of api.settings.statuses">{{ status }}</option>
           </select>
         </div>
       </div>
@@ -16,22 +16,22 @@
         <!-- estimate date -->
         <div class="form-group">
           <label for="estimateDate">Estimate Date</label>
-          <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimateDate.dirty && !form.controls.estimateDate.valid" formControlName="estimateDate">
+          <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimate_date.dirty && !form.controls.estimate_date.valid" formControlName="estimate_date">
         </div>
         <!-- expiration date -->
         <div class="form-group">
           <label for="expirationDate">Expiration Date</label>
-          <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expirationDate.dirty && !form.controls.expirationDate.valid" formControlName="expirationDate">
+          <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
         </div>
         <!-- expiration time -->
         <div class="form-group">
           <label for="expirationTime">Expiration Time</label>
-          <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expirationTime.dirty && !form.controls.expirationTime.valid" formControlName="expirationTime">
+          <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
         </div>
         <!-- tag # -->
         <div class="form-group">
           <label for="tagNumber">Tag #</label>
-          <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tagNumber.dirty && !form.controls.tagNumber.valid" formControlName="tagNumber">
+          <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tag_number.dirty && !form.controls.tag_number.valid" formControlName="tag_number">
         </div>
       </div>
     </div>

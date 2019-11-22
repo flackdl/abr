@@ -1,15 +1,14 @@
 a {
   &.step {
     white-space: nowrap;
-  }
-  &.active {
-    &::before {
-      content: "« ";
+    box-shadow: 0 5px gray, 0 -5px gray;
+    &.success {
+      box-shadow: 0 5px seagreen, 0 -5px seagreen;
     }
-    &::after {
-      content: " »";
+    &.active {
+      box-shadow: 0 8px slategray, 0 -8px slategray;
+      color: black!important;
+      font-weight: bold;
     }
-    color: black!important;
-    font-weight: bold;
   }
 }

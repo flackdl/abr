@@ -38,11 +38,8 @@ export class EstimateComponent implements OnInit {
   }
 
   public createEstimate() {
-
     // mark all controls as dirty to force validation
-    Object.keys(this.form.controls).forEach(field => {
-      this.form.get(field).markAsDirty();
-    });
+    this.api.markFormDirty(this.form);
 
     if (this.form.valid) {
       this.api.createEstimate(this.form.value).subscribe((data) => {
@@ -51,6 +48,8 @@ export class EstimateComponent implements OnInit {
       }, (error) => {
         this.toastr.error('An unknown error occurred');
       });
+    } else {
+      this.toastr.error('Incomplete form');
     }
   }
 }
