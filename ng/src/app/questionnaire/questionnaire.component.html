@@ -11,7 +11,7 @@
       <div class="text-black-50 font-weight-bold">{{ quality }}</div>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="getQualityKey(quality)" [class.is-invalid]="isQualityDirty(quality) && !isQualityValid(quality)">
         <ng-container *ngFor="let choice of qualityChoices">
-          <label ngbButtonLabel [ngClass]="{'btn-success': choice === 'good', 'btn-danger': choice === 'bad', 'btn-warning': choice === 'ok'}">
+          <label ngbButtonLabel [ngClass]="{'btn-success': choice === 'good', 'btn-danger': choice === 'bad', 'btn-warning': choice === 'ok', 'chosen': form.value.qualities[getQualityKey(quality)] === choice}" >
             <input ngbButton type="radio" [value]="choice">&nbsp;
           </label>
         </ng-container>

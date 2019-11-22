@@ -3,7 +3,7 @@
   padding: 3px;
 }
 label {
-  &.active {
-    border: solid white 3px!important;
+  &.chosen {
+    box-shadow: 0 0 0 .2em rgba(3, 3, 180, 0.8);
   }
 }
