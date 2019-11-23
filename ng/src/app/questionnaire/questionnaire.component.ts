@@ -100,7 +100,7 @@ export class QuestionnaireComponent implements OnInit {
       });
       this.router.navigate(['/wizard', 'estimate']);
     } else {
-      this.toastr.error('Incomplete form');
+      this.toastr.error('Invalid form');
     }
   }
 

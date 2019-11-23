@@ -62,7 +62,7 @@ export class CustomerCreateComponent implements OnInit {
         }
       );
     } else {
-      this.toastr.error('Invalid inputs');
+      this.toastr.error('Invalid form');
     }
   }
 }

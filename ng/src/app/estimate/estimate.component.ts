@@ -49,7 +49,7 @@ export class EstimateComponent implements OnInit {
         this.toastr.error('An unknown error occurred');
       });
     } else {
-      this.toastr.error('Incomplete form');
+      this.toastr.error('Invalid form');
     }
   }
 }

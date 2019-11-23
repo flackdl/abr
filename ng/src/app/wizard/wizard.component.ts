@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WizardComponent implements OnInit {
   public steps = [
-    {name: "Customer", url: "/wizard/customer/search", complete: () => { return this.stepCustomerComplete() }},
+    {name: "Customer", url: "/wizard/customer", complete: () => { return this.stepCustomerComplete() }},
     {name: "Main Concern", url: "/wizard/main-concern", complete: () => { return this.stepMainConcernComplete() }},
     {name: "Questionnaire", url: "/wizard/questionnaire",  complete: () => { return this.stepQuestionnaireComplete() }},
     {name: "Estimate", url: "/wizard/estimate",  complete: () => false},

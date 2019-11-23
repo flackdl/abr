@@ -22,6 +22,7 @@ import {ToastrModule} from "ngx-toastr";
 import { MainConcernComponent } from './main-concern/main-concern.component';
 import { QuestionComponent } from './question/question.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
+import { CustomerComponent } from './customer/customer.component';
 
 
 export function init(api: ApiService) {
@@ -46,6 +47,7 @@ export function init(api: ApiService) {
     MainConcernComponent,
     QuestionComponent,
     QuestionnaireComponent,
+    CustomerComponent,
   ],
   imports: [
     BrowserModule,
