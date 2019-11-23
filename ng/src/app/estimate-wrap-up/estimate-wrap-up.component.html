@@ -1,0 +1,42 @@
+<!-- top -->
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="">
+    <!-- expiration date -->
+    <div class="form-group">
+      <label for="expirationDate">Expiration Date</label>
+      <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
+    </div>
+    <!-- expiration time -->
+    <div class="form-group">
+      <label for="expirationTime">Expiration Time</label>
+      <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
+    </div>
+    <!-- order parts -->
+    <h4>Do you need to order parts?</h4>
+    <div class="form-check">
+      <input class="form-check-input" name="order-parts" type="checkbox" value="yes" id="defaultCheck1">
+      <label class="form-check-label" for="defaultCheck1">
+        Yes
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" name="order-parts" type="checkbox" value="no" id="defaultCheck2">
+      <label class="form-check-label" for="defaultCheck2">
+        No
+      </label>
+    </div>
+  </div>
+  <!-- signature -->
+  <div class="d-flex justify-content-center">
+    <div>
+      <h5>Employee Signature</h5>
+      <canvas #signature class="border border-dark"></canvas>
+    </div>
+  </div>
+  <!-- create -->
+  <div class="d-flex justify-content-end">
+    <div class="form-group">
+      <button type="submit" class="btn btn-success">Create</button>
+    </div>
+  </div>
+</form>

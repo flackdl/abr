@@ -23,6 +23,7 @@ import { MainConcernComponent } from './main-concern/main-concern.component';
 import { QuestionComponent } from './question/question.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { CustomerComponent } from './customer/customer.component';
+import { EstimateWrapUpComponent } from './estimate-wrap-up/estimate-wrap-up.component';
 
 
 export function init(api: ApiService) {
@@ -48,6 +49,7 @@ export function init(api: ApiService) {
     QuestionComponent,
     QuestionnaireComponent,
     CustomerComponent,
+    EstimateWrapUpComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,52 +1,5 @@
-<ngx-loading [show]="isLoading" [config]="{'backdropBackgroundColour': 'rgb(198,198,198)'}"></ngx-loading>
+<ngx-loading [show]="isLoading"></ngx-loading>
 <form [formGroup]="form" (ngSubmit)="createEstimate()">
-  <!-- top -->
-  <div class="row border-bottom border-dark">
-    <div class="col-8">
-      <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-        <!-- estimate status -->
-        <div class="form-group">
-          <label>Status</label>
-          <select class="form-control" [class.is-invalid]="form.controls.status.dirty && !form.controls.status.valid" formControlName="status">
-            <option *ngFor="let status of api.settings.statuses">{{ status }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="pr-3 d-flex justify-content-between flex-wrap border-right border-dark">
-        <!-- estimate date -->
-        <div class="form-group">
-          <label for="estimateDate">Estimate Date</label>
-          <input type="date" class="form-control" id="estimateDate" [class.is-invalid]="form.controls.estimate_date.dirty && !form.controls.estimate_date.valid" formControlName="estimate_date">
-        </div>
-        <!-- expiration date -->
-        <div class="form-group">
-          <label for="expirationDate">Expiration Date</label>
-          <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
-        </div>
-        <!-- expiration time -->
-        <div class="form-group">
-          <label for="expirationTime">Expiration Time</label>
-          <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
-        </div>
-        <!-- tag # -->
-        <div class="form-group">
-          <label for="tagNumber">Tag #</label>
-          <input type="text" class="form-control" id="tagNumber" [class.is-invalid]="form.controls.tag_number.dirty && !form.controls.tag_number.valid" formControlName="tag_number">
-        </div>
-      </div>
-    </div>
-    <!-- messages -->
-    <div class="col-4">
-      <div class="form-group">
-        <label for="message_estimate">Message displayed on estimate</label>
-        <textarea rows="3" class="form-control" id="message_estimate"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="message_statement">Message displayed on statement</label>
-        <textarea rows="3" class="form-control" id="message_statement"></textarea>
-      </div>
-    </div>
-  </div>
   <!-- middle -->
   <div class="row border-bottom border-dark">
     <!-- inventory items -->
@@ -108,16 +61,4 @@
     </tr>
     </tbody>
   </table>
-  <!-- signature -->
-  <div class="d-flex justify-content-center">
-    <div>
-      <h5>Customer Signature</h5>
-      <canvas #signature class="border border-dark"></canvas>
-    </div>
-  </div>
-  <div class="d-flex justify-content-end">
-    <div class="form-group">
-      <button type="submit" class="btn btn-success">Create</button>
-    </div>
-  </div>
 </form>

@@ -13,7 +13,7 @@ export class WizardComponent implements OnInit {
     {name: "Main Concern", url: "/wizard/main-concern", complete: () => { return this.stepMainConcernComplete() }},
     {name: "Questionnaire", url: "/wizard/questionnaire",  complete: () => { return this.stepQuestionnaireComplete() }},
     {name: "Estimate", url: "/wizard/estimate",  complete: () => false},
-    {name: "Parts", url: "TODO",  complete: () => false},
+    {name: "Wrap Up", url: "/wizard/wrap-up",  complete: () => false},
     {name: "Review", url: "TODO",  complete: () => false},
     {name: "Notes", url: "TODO",  complete: () => false},
   ];

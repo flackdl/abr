@@ -8,6 +8,7 @@ import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {MainConcernComponent} from "./main-concern/main-concern.component";
 import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {CustomerComponent} from "./customer/customer.component";
+import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 
 
 const routes: Routes = [
@@ -28,6 +29,7 @@ const routes: Routes = [
       { path: 'main-concern', component: MainConcernComponent },
       { path: 'questionnaire', component: QuestionnaireComponent },
       { path: 'estimate', component: EstimateComponent },
+      { path: 'wrap-up', component: EstimateWrapUpComponent },
     ],
   },
   { path: '**', component: PageNotFoundComponent }
