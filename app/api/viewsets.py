@@ -7,8 +7,10 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.api.mixins import CustomerRefFilterMixin
-from app.models import Order, OrderPart
-from app.api.serializers import OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer
+from app.models import Order, OrderPart, ServiceCategory, ServiceCategoryPrefix
+from app.api.serializers import (
+    OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, ServiceCategorySerializer,
+    ServiceCategoryPrefixSerializer)
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -222,3 +224,13 @@ class InvoiceQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 @method_decorator(cache_page(timeout=3600), name='dispatch')
 class PreferencesQBOViewSet(QBOBaseViewSet):
     model_class = Preferences
+
+
+class ServiceCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ServiceCategory.objects.all()
+    serializer_class = ServiceCategorySerializer
+
+
+class ServiceCategoryPrefixViewSet(viewsets.ModelViewSet):
+    queryset = ServiceCategoryPrefix.objects.all()
+    serializer_class = ServiceCategoryPrefixSerializer

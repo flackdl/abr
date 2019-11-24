@@ -15,6 +15,8 @@ router.register(r'inventory', viewsets.InventoryQBOViewSet, basename='inventory'
 router.register(r'invoice', viewsets.InvoiceQBOViewSet, basename='invoice')
 router.register(r'service', viewsets.ServiceQBOViewSet, basename='service')
 router.register(r'preferences', viewsets.PreferencesQBOViewSet, basename='preferences')
+router.register(r'service-category', viewsets.ServiceCategoryViewSet, basename='service-category')
+router.register(r'service-category-prefix', viewsets.ServiceCategoryPrefixViewSet, basename='service-category-prefix')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Order, OrderPart
+from app.models import Order, OrderPart, ServiceCategory, ServiceCategoryPrefix
 
 
 class PartsInline(admin.TabularInline):
@@ -26,3 +26,17 @@ class OrderPartAdmin(admin.ModelAdmin):
         :type part: OrderPart
         """
         return part.order.arrived
+
+
+class ServiceCategoryPrefixInline(admin.TabularInline):
+    model = ServiceCategoryPrefix
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(admin.ModelAdmin):
+    inlines = (ServiceCategoryPrefixInline,)
+
+
+@admin.register(ServiceCategoryPrefix)
+class ServiceCategoryPrefixAdmin(admin.ModelAdmin):
+    pass

@@ -24,3 +24,18 @@ class OrderPart(models.Model):
 
     def __str__(self):
         return '{} => {}'.format(self.order, self.part_id)
+
+
+class ServiceCategory(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class ServiceCategoryPrefix(models.Model):
+    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE)
+    prefix = models.CharField(max_length=255)
+
+    def __str__(self):
+        return '{}: {}'.format(self.category, self.prefix)

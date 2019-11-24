@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from app.models import Order, OrderPart
-
+from app.models import Order, OrderPart, ServiceCategory, ServiceCategoryPrefix
 
 CRMS = (
     ('1', 'Current customer walk-in'),
@@ -52,3 +51,17 @@ class CustomerCreateQBOSerializer(serializers.Serializer):
     state = serializers.CharField()
     zip = serializers.CharField()
     crm = serializers.ChoiceField(choices=[crm[0] for crm in CRMS])
+
+
+class ServiceCategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ServiceCategory
+        fields = '__all__'
+
+
+class ServiceCategoryPrefixSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ServiceCategoryPrefix
+        fields = '__all__'
