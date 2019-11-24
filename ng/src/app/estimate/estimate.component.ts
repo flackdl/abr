@@ -2,6 +2,8 @@ import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {forkJoin, Observable} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-estimator',
@@ -11,6 +13,8 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 export class EstimateComponent implements OnInit {
   public isLoading = false;
   public form: FormGroup;
+  public chosenInventory: any[];
+  public inventory$: Observable<any[]>;
 
   constructor(
     private api: ApiService,
@@ -25,16 +29,17 @@ export class EstimateComponent implements OnInit {
   }
 
   public categorySelected(category: any) {
-    const catPrefixes = this.api.serviceCategoryPrefixes.filter((prefix) => {
+    const queries = this.api.serviceCategoryPrefixes.filter((prefix) => {
       return prefix.category === category.id;
+    }).map((catPrefix) => {
+      return this.api.fetchInventory({sku: catPrefix.prefix});
     });
-    catPrefixes.forEach((catPrefix) => {
-      this.api.fetchInventory({sku: catPrefix.prefix}).subscribe(
-        (data) => {
-          console.log(data);
-        }
-      );
-    })
+
+    // TODO - remove duplicates
+
+    this.inventory$ = forkJoin(queries).pipe(
+      map((data: any[]) => [].concat(...data))
+    );
   }
 
   public createEstimate() {

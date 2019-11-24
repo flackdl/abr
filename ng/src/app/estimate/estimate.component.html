@@ -5,14 +5,19 @@
     <!-- inventory items -->
     <div class="col-4">
       <div class="form-group">
-        <label for="inventory_items">Inventory Items</label>
-        <select multiple class="form-control" id="inventory_items">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
+        <label for="inventory">Inventory Items</label>
+        <ng-select
+          [items]="inventory$ | async"
+          [multiple]="true"
+          [closeOnSelect]="false"
+          [searchable]="false"
+          [ngModelOptions]="{standalone: true}"
+          [(ngModel)]="chosenInventory"
+          bindLabel="Name"
+          placeholder="Select items"
+          id="inventory"
+        >
+        </ng-select>
       </div>
     </div>
     <!-- inventory chooser -->
