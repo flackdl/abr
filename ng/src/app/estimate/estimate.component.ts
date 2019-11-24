@@ -28,11 +28,28 @@ export class EstimateComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    // build form
     this.form = this.fb.group({
-      'items': new FormArray([]),
+      'quantities': new FormArray([]),
     });
+
+    // load existing data from storage
     this.buildFormFromExistingEstimate();
-    console.log(this.form);
+
+    // watch for changes
+    this.form.controls['quantities'].valueChanges.subscribe(
+      (values: any[]) => {
+        values.forEach((value, i) => {
+          const item = this.api.estimateData.items[i];
+          if (item) {
+            item.quantity = value;
+            item.amount = item.price * item.quantity;
+          }
+        });
+        this.api.updateEstimateData();
+      }
+    )
   }
 
   public categorySelected(category: any) {
@@ -65,18 +82,16 @@ export class EstimateComponent implements OnInit {
     )
   }
 
-  // TODO - update estimate items when form it submitted to update quantities
-
   public buildFormFromExistingEstimate() {
     if (this.api.estimateData.items) {
       this.api.estimateData.items.forEach((item) => {
-        (this.form.controls['items'] as FormArray).push(new FormControl(1));
+        (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
       });
     }
   }
 
   public inventoryAdded(item: any) {
-    (this.form.controls['items'] as FormArray).push(new FormControl(1));
+    (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
     if (!this.api.estimateData.items) {
       this.api.estimateData.items = [];
     }
@@ -93,9 +108,8 @@ export class EstimateComponent implements OnInit {
   }
 
   public removeItem(i: number, item: any) {
-    console.log(i);
-    console.log(item);
-    //this.api.estimateData.items.shift();
+    (this.form.get('quantities') as FormArray).removeAt(i);
+    this.api.estimateData.items.splice(i, 1);
   }
 
   public createEstimate() {
