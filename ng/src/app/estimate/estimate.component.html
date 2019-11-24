@@ -7,12 +7,15 @@
       <div class="form-group">
         <label for="inventory">Inventory Items</label>
         <ng-select
-          [items]="inventory$ | async"
+          [items]="inventoryResults"
           [multiple]="true"
+          [loading]="isItemsLoading"
           [closeOnSelect]="false"
-          [searchable]="false"
+          [searchable]="true"
           [ngModelOptions]="{standalone: true}"
-          [(ngModel)]="chosenInventory"
+          [(ngModel)]="selectedItems"
+          (add)="inventoryAdded($event)"
+          #inventorySelect
           bindLabel="Name"
           placeholder="Select items"
           id="inventory"
@@ -57,17 +60,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+    <tr *ngFor="let item of api.estimateData.items; let i = index" formArrayName="items">
+      <td>{{ i+1 }}</td>
+      <td>{{ item.full_name }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.description }}</td>
+      <td><input class="form-control" name="quantity" type="number" min="0" [formControlName]="i"></td>
+      <td>${{ item.price }}</td>
+      <td>${{ item.amount }}</td>
+      <td>$?</td>
+      <td><button class="btn btn-outline-danger" type="button" (click)="removeItem(i, item)"><span class="oi oi-x"></span></button></td>
     </tr>
     </tbody>
   </table>
+  <div class="d-flex justify-content-end my-3">
+    <button class="btn btn-primary">Next</button>
+  </div>
 </form>

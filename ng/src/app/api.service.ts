@@ -30,6 +30,17 @@ type EstimateData = {
       [name: string]: boolean,
     }
   },
+  items?: {
+    name: string,
+    full_name: string,
+    id: string
+    quantity: number,
+    price: number,
+    amount: number,
+    description: string,
+  }[],
+  // TODO - isn't this auto populated in qbo?
+  // tag_number: string
 };
 
 @Injectable({
@@ -110,8 +121,10 @@ export class ApiService {
     );
   }
 
-  public updateEstimateData(updatedEstimateData: EstimateData) {
-    _.assign(this.estimateData, updatedEstimateData);
+  public updateEstimateData(updatedEstimateData?: EstimateData) {
+    if (updatedEstimateData) {
+      _.assign(this.estimateData, updatedEstimateData);
+    }
     this.storage.store('estimate', this.estimateData);
     this.estimateData$.next(this.estimateData);
   }
