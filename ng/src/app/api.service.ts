@@ -40,12 +40,17 @@ export class ApiService {
   public API_QBO_CUSTOMER = '/api/customer/';
   public API_QBO_ESTIMATE = '/api/estimate/';
   public API_QBO_INVOICE = '/api/invoice/';
+  public API_QBO_INVENTORY = '/api/inventory/';
   public API_QBO_PREFERENCES = '/api/preferences/';
   public API_QBO_SETTINGS = '/api/settings/';
+  public API_SERVICE_CATEGORY= '/api/service-category/';
+  public API_SERVICE_CATEGORY_PREFIX = '/api/service-category-prefix/';
 
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
+  public serviceCategories: any[];
+  public serviceCategoryPrefixes: any[];
 
   public estimateData$ = new Subject();
 
@@ -59,6 +64,8 @@ export class ApiService {
       this.loadEstimateData(),
       this.fetchSettings(),
       this.fetchQBOPreferences(),
+      this.fetchServiceCategory(),
+      this.fetchServiceCategoryPrefix(),
     );
   }
 
@@ -151,6 +158,31 @@ export class ApiService {
   public fetchEstimates(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
     return this.http.get(this.API_QBO_ESTIMATE, {params: httpParams});
+  }
+
+  public fetchInventory(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_QBO_INVENTORY, {params: httpParams});
+  }
+
+  public fetchServiceCategory(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_SERVICE_CATEGORY, {params: httpParams}).pipe(
+      map((data: any[]) => {
+        this.serviceCategories = data;
+        return this.serviceCategories;
+      })
+    );
+  }
+
+  public fetchServiceCategoryPrefix(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_SERVICE_CATEGORY_PREFIX, {params: httpParams}).pipe(
+      map((data: any[]) => {
+        this.serviceCategoryPrefixes = data;
+        return this.serviceCategoryPrefixes;
+      })
+    );
   }
 
   public createEstimate(data: any): Observable<any> {

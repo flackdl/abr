@@ -17,6 +17,10 @@
     </div>
     <!-- inventory chooser -->
     <div class="col-4">
+      <label>Categories</label>
+      <div class="d-flex flex-wrap justify-content-between">
+        <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
+      </div>
     </div>
     <!-- labor items -->
     <div class="col-4">

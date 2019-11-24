@@ -24,6 +24,19 @@ export class EstimateComponent implements OnInit {
     });
   }
 
+  public categorySelected(category: any) {
+    const catPrefixes = this.api.serviceCategoryPrefixes.filter((prefix) => {
+      return prefix.category === category.id;
+    });
+    catPrefixes.forEach((catPrefix) => {
+      this.api.fetchInventory({sku: catPrefix.prefix}).subscribe(
+        (data) => {
+          console.log(data);
+        }
+      );
+    })
+  }
+
   public createEstimate() {
     // mark all controls as dirty to force validation
     this.api.markFormDirty(this.form);

@@ -201,9 +201,19 @@ class InventoryQBOViewSet(QBOBaseViewSet):
     model_class = Item
 
     def list(self, request):
+        wheres = []
+
+        sku = request.query_params.get('sku')
         name = request.query_params.get('name')
         if name:
-            objects = Item.where("Type='Inventory' and Name LIKE '{}%'".format(name), qb=self.qbo_client)
+            wheres.append("Name LIKE '{}%'".format(name))
+        if sku:
+            wheres.append("Sku LIKE '{}%'".format(sku))
+
+        if wheres:
+            # include the inventory type
+            wheres.append("Type='Inventory'")
+            objects = Item.where(" and ".join(wheres), qb=self.qbo_client)
         else:
             objects = Item.filter(Type='Inventory', qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
