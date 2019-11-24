@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -28,6 +29,12 @@ class OrderPart(models.Model):
 
 class ServiceCategory(models.Model):
     name = models.CharField(max_length=255)
+    front_only = models.BooleanField(default=False)
+    back_only = models.BooleanField(default=False)
+
+    def clean(self):
+        if self.front_only and self.back_only:
+            raise ValidationError('Front and back cannot both be chosen')
 
     def __str__(self):
         return self.name
