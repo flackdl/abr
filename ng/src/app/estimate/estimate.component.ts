@@ -107,9 +107,10 @@ export class EstimateComponent implements OnInit {
     this.api.updateEstimateData();
   }
 
-  public removeItem(i: number, item: any) {
+  public removeItem(i: number) {
     (this.form.get('quantities') as FormArray).removeAt(i);
     this.api.estimateData.items.splice(i, 1);
+    this.api.updateEstimateData();
   }
 
   public createEstimate() {
