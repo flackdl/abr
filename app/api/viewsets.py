@@ -7,10 +7,10 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.api.mixins import CustomerRefFilterMixin
-from app.models import Order, OrderPart, Category, CategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryAssessment
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
-    CategoryPrefixSerializer)
+    CategoryPrefixSerializer, CategoryAssessmentSerializer)
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -242,3 +242,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class CategoryPrefixViewSet(viewsets.ModelViewSet):
     queryset = CategoryPrefix.objects.all()
     serializer_class = CategoryPrefixSerializer
+
+
+class CategoryAssessmentViewSet(viewsets.ModelViewSet):
+    queryset = CategoryAssessment.objects.all()
+    serializer_class = CategoryAssessmentSerializer

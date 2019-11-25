@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Order, OrderPart, Category, CategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryAssessment
 
 
 class PartsInline(admin.TabularInline):
@@ -28,15 +28,24 @@ class OrderPartAdmin(admin.ModelAdmin):
         return part.order.arrived
 
 
-class ServiceCategoryPrefixInline(admin.TabularInline):
+class CategoryPrefixInline(admin.TabularInline):
     model = CategoryPrefix
 
 
+class CategoryAssessmentInline(admin.TabularInline):
+    model = CategoryAssessment
+
+
 @admin.register(Category)
-class ServiceCategoryAdmin(admin.ModelAdmin):
-    inlines = (ServiceCategoryPrefixInline,)
+class CategoryAdmin(admin.ModelAdmin):
+    inlines = (CategoryPrefixInline, CategoryAssessmentInline)
 
 
 @admin.register(CategoryPrefix)
-class ServiceCategoryPrefixAdmin(admin.ModelAdmin):
+class CategoryPrefixAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(CategoryAssessment)
+class CategoryAssessmentAdmin(admin.ModelAdmin):
     pass

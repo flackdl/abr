@@ -6,43 +6,9 @@ import * as _ from 'lodash';
 import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {LocalStorageService} from 'ngx-webstorage';
+import {EstimateData} from "./estimate-data";
 
 
-type EstimateData = {
-  crm?: string,
-  customer_id?: number,
-  first_name?: string,
-  last_name?: string,
-  email?: string,
-  phone?: number,
-  address_line1?: string,
-  address_line2?: string,
-  city?: string,
-  state?: string,
-  zip?: string,
-  main_concern?: string,
-  questionnaire?: {
-    bike_model: string,
-    qualities: {
-      [name: string]: string,
-    },
-    services: {
-      [name: string]: boolean,
-    }
-  },
-  items?: {
-    name: string,
-    full_name: string,
-    id: string
-    type: string, // Inventory|Service
-    quantity: number,
-    price: number,
-    amount: number,
-    description: string,
-  }[],
-  // TODO - isn't this auto populated in qbo?
-  // tag_number: string
-};
 
 @Injectable({
   providedIn: 'root'
@@ -58,12 +24,14 @@ export class ApiService {
   public API_QBO_SETTINGS = '/api/settings/';
   public API_CATEGORY= '/api/category/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
+  public API_CATEGORY_ASSESSMENT = '/api/category-assessment/';
 
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
   public serviceCategories: any[];
   public categoryPrefixes: any[];
+  public categoryAssessments: any[];
 
   public estimateData$ = new Subject();
 
@@ -79,6 +47,7 @@ export class ApiService {
       this.fetchQBOPreferences(),
       this.fetchServiceCategory(),
       this.fetchCategoryPrefix(),
+      this.fetchCategoryAssessment(),
     );
   }
 
@@ -201,6 +170,16 @@ export class ApiService {
       map((data: any[]) => {
         this.categoryPrefixes = data;
         return this.categoryPrefixes;
+      })
+    );
+  }
+
+  public fetchCategoryAssessment(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_CATEGORY_ASSESSMENT, {params: httpParams}).pipe(
+      map((data: any[]) => {
+        this.categoryAssessments = data;
+        return this.categoryAssessments;
       })
     );
   }

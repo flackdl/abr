@@ -14,23 +14,9 @@ export class QuestionnaireComponent implements OnInit {
   public QUALITY_GOOD = 'good';
   public QUALITY_OK = 'ok';
   public QUALITY_BAD = 'bad';
-  public qualityRadioChoices = [this.QUALITY_GOOD, this.QUALITY_OK, this.QUALITY_BAD];
-  public qualityRadioChoiceRows = [
-    ['Chain Wear', 'Hanger'],
-    ['Cassette/Freewheel', 'Chainrings'],
-    ['Rear DER cable', 'Front DER cable'],
-    ['Rear DER', 'Front DER'],
-    ['RR Brake Cable', 'FT Brake Cable'],
-    ['Rear Brake', 'Front Brake'],
-    ['Rear Tire', 'Front Tire'],
-  ];
-  public serviceBooleanQuestions = [
-    {name: "Overhauled bottom bracket in the past year?", required: true},
-    {name: "Overhauled headset in the past year?", required: true},
-    {name: "Bled disc breaks in the last year?", required: false},
-    {name: "Sealant in the past 3 months?", required: false},
-    {name: "Suspension service in the past year?", required: false},
-  ];
+  public qualityAssessments: any[] = [];
+  public servicedAssessments: any[] = [];
+  public qualityChoices = [this.QUALITY_GOOD, this.QUALITY_OK, this.QUALITY_BAD];
 
   constructor(
     private fb: FormBuilder,
@@ -41,19 +27,27 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
 
+    // quality questions
+    this.qualityAssessments = this.api.categoryAssessments.filter((assessment) => {
+      return assessment.type === 'quality';
+    });
+
+    // serviced questions
+    this.servicedAssessments = this.api.categoryAssessments.filter((assessment) => {
+      return assessment.type === 'serviced';
+    });
+
     const qualityGroup = {};
     const serviceGroup = {};
 
-    // build form
-    this.qualityRadioChoiceRows.forEach((row) => {
-      row.forEach((name) => {
-        qualityGroup[name] = [this.getExistingQuality(name), Validators.required];
-      });
+    // build assessment form controls
+    this.qualityAssessments.forEach((assessment) => {
+        qualityGroup[assessment.name] = [this.getExistingQuality(assessment.name), Validators.required];
+    });
+    this.servicedAssessments.forEach((assessment) => {
+      serviceGroup[assessment.name] = [this.getExistingService(assessment.name), assessment.required ? Validators.required : false];
     });
 
-    this.serviceBooleanQuestions.forEach((option) => {
-      serviceGroup[option.name] = [this.getExistingService(option.name), option.required ? Validators.required : false];
-    });
     this.form = this.fb.group({
       bike_model: [this.getExistingBikeModel(), Validators.required],
       qualities: this.fb.group(qualityGroup),
@@ -82,7 +76,8 @@ export class QuestionnaireComponent implements OnInit {
     return null;
   }
 
-  public create() {
+  public submit() {
+
     // mark all inputs as dirty then validate
     this.form.get('bike_model').markAsDirty();
     Object.keys((this.form.controls['qualities'] as FormGroup).controls).forEach((key) => {
@@ -113,5 +108,4 @@ export class QuestionnaireComponent implements OnInit {
     const input = this.form.get('qualities').get(quality);
     return input.valid;
   }
-
 }

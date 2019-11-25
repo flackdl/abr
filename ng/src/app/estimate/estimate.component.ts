@@ -75,31 +75,35 @@ export class EstimateComponent implements OnInit {
       serviceQueries.push(this.api.fetchService({name: catPrefix.prefix}));
     });
 
-    merge(
-      forkJoin(inventoryQueries).pipe(
-        map((data: any[]) => {
-          this.inventoryResults = [].concat(...data);  // flatten
-          return this.inventoryResults;
+    if (inventoryQueries.concat(serviceQueries).length > 1) {
+      merge(
+        forkJoin(inventoryQueries).pipe(
+          map((data: any[]) => {
+            this.inventoryResults = [].concat(...data);  // flatten
+            return this.inventoryResults;
+          }),
+        ),
+        forkJoin(serviceQueries).pipe(
+          map((data: any[]) => {
+            this.serviceResults = [].concat(...data);  // flatten
+            return this.serviceResults;
+          }),
+        )
+      ).pipe(
+        tap(() => {
+          this.isItemsLoading = false;
+          this.inventorySelect.open();
+          this.serviceSelect.open();
         }),
-      ),
-      forkJoin(serviceQueries).pipe(
-        map((data: any[]) => {
-          this.serviceResults = [].concat(...data);  // flatten
-          return this.serviceResults;
-        }),
-      )
-    ).pipe(
-      tap(() => {
-        this.isItemsLoading = false;
-        this.inventorySelect.open();
-        this.serviceSelect.open();
-      }),
-    ).subscribe(
-      (data) => {
-      }, (error) => {
-        this.toastr.error('An unknown error occurred');
-      }
-    );
+      ).subscribe(
+        (data) => {
+        }, (error) => {
+          this.toastr.error('An unknown error occurred');
+        }
+      );
+    } else {
+      this.isItemsLoading = false;
+    }
   }
 
   public buildFormFromExistingEstimate() {
@@ -135,6 +139,18 @@ export class EstimateComponent implements OnInit {
     (this.form.get('quantities') as FormArray).removeAt(i);
     this.api.estimateData.items.splice(i, 1);
     this.api.updateEstimateData();
+  }
+
+  public hasBadAssessmentForCategory(category: any): boolean {
+    const badAssessments = this.api.categoryAssessments.filter((assessment) => {
+      if (assessment.category === category.id) {
+        if (this.api.estimateData.questionnaire.qualities[assessment.name] === 'bad') {
+          return true;
+        }
+      }
+      return false;
+    });
+    return badAssessments.length > 0;
   }
 
   public createEstimate() {

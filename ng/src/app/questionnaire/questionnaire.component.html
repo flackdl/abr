@@ -1,19 +1,21 @@
 <div class="display-4 mb-5 text-center">Multipoint Inspection and Assessment</div>
-<form [formGroup]="form" (ngSubmit)="create()">
+<form [formGroup]="form" (ngSubmit)="submit()">
   <div class="d-flex justify-content-center">
-    <div class="form-group">
-      <label for="bike-model">Bike/Model</label>
-      <input type="text" class="form-control" id="bike-model" formControlName="bike_model" [class.is-invalid]="form.get('bike_model').dirty && form.get('bike_model').invalid">
+    <div>
+      <h4 class="text-center">Bike/Model</h4>
+      <div class="form-group">
+        <input type="text" class="form-control" formControlName="bike_model" [class.is-invalid]="form.get('bike_model').dirty && form.get('bike_model').invalid">
+      </div>
     </div>
   </div>
 
   <h4 class="text-center">Wear</h4>
-  <div class="row" formGroupName="qualities" *ngFor="let row of qualityRadioChoiceRows">
-    <div class="col-4 offset-2 " *ngFor="let quality of row">
-      <div class="text-black-50 font-weight-bold">{{ quality }}</div>
-      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="quality" [class.is-invalid]="isQualityDirty(quality) && !isQualityValid(quality)">
-        <ng-container *ngFor="let choice of qualityRadioChoices">
-          <label ngbButtonLabel [ngClass]="{'btn-success': choice === QUALITY_GOOD, 'btn-danger': choice === QUALITY_BAD, 'btn-warning': choice === QUALITY_OK, 'chosen': form.value.qualities[quality] === choice}">
+  <div class="row" formGroupName="qualities">
+    <div class="col-4 offset-2" *ngFor="let assessment of qualityAssessments">
+      <div class="text-black-50 font-weight-bold">{{ assessment.name }}</div>
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="assessment.name" [class.is-invalid]="isQualityDirty(assessment.name) && !isQualityValid(assessment.name)">
+        <ng-container *ngFor="let choice of qualityChoices">
+          <label ngbButtonLabel [ngClass]="{'btn-success': choice === QUALITY_GOOD, 'btn-danger': choice === QUALITY_BAD, 'btn-warning': choice === QUALITY_OK, 'chosen': form.value.qualities[assessment.name] === choice}">
             <input ngbButton type="radio" [value]="choice">&nbsp;
           </label>
         </ng-container>
@@ -23,16 +25,16 @@
 
   <h4 class="text-center">Service</h4>
   <div class="row" formGroupName="services">
-    <div class="col-6 text-center" *ngFor="let service of serviceBooleanQuestions">
+    <div class="col-6 text-center" *ngFor="let assessment of servicedAssessments">
       <div class="text-black-50 font-weight-bold">
-        {{ service.name }}
-        <small class="d-inline form-text text-muted" *ngIf="!service.required">
+        {{ assessment.name }}
+        <small class="d-inline form-text text-muted" *ngIf="!assessment.required">
           * optional
         </small>
       </div>
-      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="service.name" [class.is-invalid]="form.get('services').get(service.name).dirty && form.get('services').get(service.name).invalid">
+      <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="assessment.name" [class.is-invalid]="form.get('services').get(assessment.name).dirty && form.get('services').get(assessment.name).invalid">
         <ng-container *ngFor="let value of [true, false]">
-          <label ngbButtonLabel [ngClass]="{'btn-success': value, 'btn-danger': !value, 'chosen': form.value.services[service.name] === value}">
+          <label ngbButtonLabel [ngClass]="{'btn-success': value, 'btn-danger': !value, 'chosen': form.value.services[assessment.name] === value}">
             <input ngbButton type="radio" [value]="value"> &nbsp;
           </label>
         </ng-container>

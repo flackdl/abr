@@ -28,9 +28,13 @@ class OrderPart(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     front_only = models.BooleanField(default=False)
     back_only = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = 'categories'
+        ordering = ('name',)
 
     def clean(self):
         if self.front_only and self.back_only:
@@ -44,5 +48,32 @@ class CategoryPrefix(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     prefix = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name_plural = 'category prefixes'
+        unique_together = ('category', 'prefix',)
+
     def __str__(self):
         return '{}: {}'.format(self.category, self.prefix)
+
+
+class CategoryAssessment(models.Model):
+    CHOICE_TYPE_QUALITY = 'quality'
+    CHOICE_TYPE_SERVICED = 'serviced'
+    CHOICES = (
+        CHOICE_TYPE_SERVICED, CHOICE_TYPE_QUALITY,
+    )
+    CHOICE_OPTIONS = (
+        (CHOICE_TYPE_QUALITY, CHOICE_TYPE_QUALITY),
+        (CHOICE_TYPE_SERVICED, CHOICE_TYPE_SERVICED),
+    )
+
+    name = models.CharField(max_length=255, unique=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    type = models.CharField(choices=CHOICE_OPTIONS, max_length=255)
+    required = models.BooleanField(default=False)  # not relevant for "quality" type
+
+    class Meta:
+        ordering = ('name',)
+
+    def __str__(self):
+        return '{}: {}'.format(self.category, self.type)
