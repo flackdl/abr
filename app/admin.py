@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Order, OrderPart, ServiceCategory, ServiceCategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix
 
 
 class PartsInline(admin.TabularInline):
@@ -29,14 +29,14 @@ class OrderPartAdmin(admin.ModelAdmin):
 
 
 class ServiceCategoryPrefixInline(admin.TabularInline):
-    model = ServiceCategoryPrefix
+    model = CategoryPrefix
 
 
-@admin.register(ServiceCategory)
+@admin.register(Category)
 class ServiceCategoryAdmin(admin.ModelAdmin):
     inlines = (ServiceCategoryPrefixInline,)
 
 
-@admin.register(ServiceCategoryPrefix)
+@admin.register(CategoryPrefix)
 class ServiceCategoryPrefixAdmin(admin.ModelAdmin):
     pass

@@ -2,7 +2,7 @@ import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {forkJoin} from "rxjs";
+import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
 
@@ -15,10 +15,13 @@ export class EstimateComponent implements OnInit {
   public isLoading = false;
   public isItemsLoading = false;
   public form: FormGroup;
-  public selectedItems: any[];
+  public selectedInventoryItems: any[];
+  public selectedServiceItems: any[];
   public inventoryResults: any[] = [];
+  public serviceResults: any[] = [];
 
   @ViewChild("inventorySelect", {static: true}) inventorySelect: NgSelectComponent;
+  @ViewChild("serviceSelect", {static: true}) serviceSelect: NgSelectComponent;
 
   constructor(
     private api: ApiService,
@@ -41,10 +44,12 @@ export class EstimateComponent implements OnInit {
     this.form.controls['quantities'].valueChanges.subscribe(
       (values: any[]) => {
         values.forEach((value, i) => {
-          const item = this.api.estimateData.items[i];
-          if (item) {
-            item.quantity = value;
-            item.amount = item.price * item.quantity;
+          if (this.api.estimateData.items && this.api.estimateData.items[i]) {
+            const item = this.api.estimateData.items[i];
+            if (item) {
+              item.quantity = value;
+              item.amount = item.price * item.quantity;
+            }
           }
         });
         this.api.updateEstimateData();
@@ -56,42 +61,59 @@ export class EstimateComponent implements OnInit {
 
     // reset
     this.isItemsLoading = true;
-    this.selectedItems = [];
+    this.selectedInventoryItems = [];
+    this.selectedServiceItems = [];
 
-    // query inventory with matching sku's for this category
-    const queries = this.api.serviceCategoryPrefixes.filter((prefix) => {
+    const inventoryQueries = [];
+    const serviceQueries = [];
+
+    // query inventory and services with matching prefixes for this category
+    this.api.categoryPrefixes.filter((prefix) => {
       return prefix.category === category.id;
-    }).map((catPrefix) => {
-      return this.api.fetchInventory({sku: catPrefix.prefix});
+    }).forEach((catPrefix) => {
+      inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
+      serviceQueries.push(this.api.fetchService({name: catPrefix.prefix}));
     });
 
-    forkJoin(queries).pipe(
-      map((data: any[]) => {
-        this.inventoryResults = [].concat(...data);
-        return this.inventoryResults;
-      }),
+    merge(
+      forkJoin(inventoryQueries).pipe(
+        map((data: any[]) => {
+          this.inventoryResults = [].concat(...data);  // flatten
+          return this.inventoryResults;
+        }),
+      ),
+      forkJoin(serviceQueries).pipe(
+        map((data: any[]) => {
+          this.serviceResults = [].concat(...data);  // flatten
+          return this.serviceResults;
+        }),
+      )
+    ).pipe(
       tap(() => {
         this.isItemsLoading = false;
         this.inventorySelect.open();
+        this.serviceSelect.open();
       }),
     ).subscribe(
       (data) => {
       }, (error) => {
         this.toastr.error('An unknown error occurred');
       }
-    )
+    );
   }
 
   public buildFormFromExistingEstimate() {
     if (this.api.estimateData.items) {
-      this.api.estimateData.items.forEach((item) => {
+      this.api.estimateData.items.forEach(() => {
         (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
       });
     }
   }
 
-  public inventoryAdded(item: any) {
+  public itemAdded(item: any) {
+    // add form control
     (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
+    // define items if it doesn't already exist
     if (!this.api.estimateData.items) {
       this.api.estimateData.items = [];
     }
@@ -101,9 +123,11 @@ export class EstimateComponent implements OnInit {
       full_name: item.FullyQualifiedName,
       quantity: 1,
       price: item.UnitPrice,
+      type: item.Type, // Inventory|Service
       amount: item.UnitPrice * 1,
       description: item.Description,
     });
+    // save estimate to local storage
     this.api.updateEstimateData();
   }
 

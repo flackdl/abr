@@ -34,6 +34,7 @@ type EstimateData = {
     name: string,
     full_name: string,
     id: string
+    type: string, // Inventory|Service
     quantity: number,
     price: number,
     amount: number,
@@ -52,16 +53,17 @@ export class ApiService {
   public API_QBO_ESTIMATE = '/api/estimate/';
   public API_QBO_INVOICE = '/api/invoice/';
   public API_QBO_INVENTORY = '/api/inventory/';
+  public API_QBO_SERVICE = '/api/service/';
   public API_QBO_PREFERENCES = '/api/preferences/';
   public API_QBO_SETTINGS = '/api/settings/';
-  public API_SERVICE_CATEGORY= '/api/service-category/';
-  public API_SERVICE_CATEGORY_PREFIX = '/api/service-category-prefix/';
+  public API_CATEGORY= '/api/category/';
+  public API_CATEGORY_PREFIX = '/api/category-prefix/';
 
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
   public serviceCategories: any[];
-  public serviceCategoryPrefixes: any[];
+  public categoryPrefixes: any[];
 
   public estimateData$ = new Subject();
 
@@ -76,7 +78,7 @@ export class ApiService {
       this.fetchSettings(),
       this.fetchQBOPreferences(),
       this.fetchServiceCategory(),
-      this.fetchServiceCategoryPrefix(),
+      this.fetchCategoryPrefix(),
     );
   }
 
@@ -178,9 +180,14 @@ export class ApiService {
     return this.http.get(this.API_QBO_INVENTORY, {params: httpParams});
   }
 
+  public fetchService(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_QBO_SERVICE, {params: httpParams});
+  }
+
   public fetchServiceCategory(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_SERVICE_CATEGORY, {params: httpParams}).pipe(
+    return this.http.get(this.API_CATEGORY, {params: httpParams}).pipe(
       map((data: any[]) => {
         this.serviceCategories = data;
         return this.serviceCategories;
@@ -188,12 +195,12 @@ export class ApiService {
     );
   }
 
-  public fetchServiceCategoryPrefix(params?: any): Observable<any> {
+  public fetchCategoryPrefix(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_SERVICE_CATEGORY_PREFIX, {params: httpParams}).pipe(
+    return this.http.get(this.API_CATEGORY_PREFIX, {params: httpParams}).pipe(
       map((data: any[]) => {
-        this.serviceCategoryPrefixes = data;
-        return this.serviceCategoryPrefixes;
+        this.categoryPrefixes = data;
+        return this.categoryPrefixes;
       })
     );
   }

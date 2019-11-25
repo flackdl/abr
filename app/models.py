@@ -27,7 +27,7 @@ class OrderPart(models.Model):
         return '{} => {}'.format(self.order, self.part_id)
 
 
-class ServiceCategory(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=255)
     front_only = models.BooleanField(default=False)
     back_only = models.BooleanField(default=False)
@@ -40,8 +40,8 @@ class ServiceCategory(models.Model):
         return self.name
 
 
-class ServiceCategoryPrefix(models.Model):
-    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE)
+class CategoryPrefix(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     prefix = models.CharField(max_length=255)
 
     def __str__(self):

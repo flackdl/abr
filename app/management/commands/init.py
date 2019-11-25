@@ -35,4 +35,4 @@ class Command(BaseCommand):
                 perms += Permission.objects.filter(codename__in=[
                         '{}_{}'.format(action, model._meta.model_name)])
         for user in new_users:
-            user.user_permissions.set([p for p in perms])  # iterate because it doesn't expect a Queryset
+            user.user_permissions.set(list(perms))

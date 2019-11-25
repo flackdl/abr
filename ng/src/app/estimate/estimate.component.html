@@ -1,79 +1,104 @@
 <ngx-loading [show]="isLoading"></ngx-loading>
 <form [formGroup]="form" (ngSubmit)="createEstimate()">
-  <!-- middle -->
-  <div class="row border-bottom border-dark">
-    <!-- inventory items -->
+  <div class="row">
+    <!-- top level categories -->
     <div class="col-4">
-      <div class="form-group">
-        <label for="inventory">Inventory Items</label>
-        <ng-select
-          [items]="inventoryResults"
-          [multiple]="true"
-          [loading]="isItemsLoading"
-          [closeOnSelect]="false"
-          [searchable]="true"
-          [ngModelOptions]="{standalone: true}"
-          [(ngModel)]="selectedItems"
-          (add)="inventoryAdded($event)"
-          #inventorySelect
-          bindLabel="Name"
-          placeholder="Select items"
-          id="inventory"
-        >
-        </ng-select>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            <h5>Categories</h5>
+          </div>
+          <div class="d-flex flex-wrap justify-content-between">
+            <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- inventory chooser -->
+    <!-- inventory items -->
     <div class="col-4">
-      <label>Categories</label>
-      <div class="d-flex flex-wrap justify-content-between">
-        <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            <h5>Inventory</h5>
+          </div>
+          <div class="form-group">
+            <ng-select
+              [items]="inventoryResults"
+              [multiple]="true"
+              [loading]="isItemsLoading"
+              [closeOnSelect]="true"
+              [searchable]="true"
+              [ngModelOptions]="{standalone: true}"
+              [(ngModel)]="selectedInventoryItems"
+              (add)="itemAdded($event)"
+              #inventorySelect
+              bindLabel="Description"
+              placeholder="Select items"
+            >
+            </ng-select>
+          </div>
+        </div>
       </div>
     </div>
     <!-- labor items -->
     <div class="col-4">
-      <div class="form-group">
-        <label for="labor_items">Labor Items</label>
-        <select multiple class="form-control" id="labor_items">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            <h5>Labor</h5>
+          </div>
+          <div class="form-group">
+            <ng-select
+              [items]="serviceResults"
+              [multiple]="true"
+              [loading]="isItemsLoading"
+              [closeOnSelect]="true"
+              [searchable]="true"
+              [ngModelOptions]="{standalone: true}"
+              [(ngModel)]="selectedServiceItems"
+              #serviceSelect
+              (add)="itemAdded($event)"
+              bindLabel="Name"
+              placeholder="Select items"
+            >
+            </ng-select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <!-- bottom -->
-  <table class="table table-striped table-bordered table-condensed">
-    <thead>
-    <tr>
-      <th>#</th>
-      <th>Product/Service</th>
-      <th>Sku</th>
-      <th>Description</th>
-      <th>Quantity</th>
-      <th>Rate</th>
-      <th>Amount</th>
-      <th>Tax</th>
-      <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let item of api.estimateData.items; let i = index" formArrayName="quantities">
-      <td>{{ i+1 }}</td>
-      <td>{{ item.full_name }}</td>
-      <td>{{ item.name }}</td>
-      <td>{{ item.description }}</td>
-      <td><input class="form-control" name="quantity" type="number" min="0" [formControlName]="i"></td>
-      <td>${{ item.price }}</td>
-      <td>${{ item.amount }}</td>
-      <td>$?</td>
-      <td><button class="btn btn-outline-danger" type="button" (click)="removeItem(i)"><span class="oi oi-x"></span></button></td>
-    </tr>
-    </tbody>
-  </table>
+  <!-- line items -->
+  <div class="card mt-3">
+    <div class="card-body">
+      <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Product/Service</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Rate</th>
+          <th>Amount</th>
+          <th>Tax</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of api.estimateData.items; let i = index" formArrayName="quantities">
+          <td>{{ i+1 }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.description }}</td>
+          <td><input class="form-control" name="quantity" type="number" min="0" [formControlName]="i"></td>
+          <td>${{ item.price }}</td>
+          <td>${{ item.amount }}</td>
+          <td>$?</td>
+          <td><button class="btn btn-outline-danger" type="button" (click)="removeItem(i)"><span class="oi oi-x"></span></button></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
   <div class="d-flex justify-content-end my-3">
-    <button class="btn btn-primary">Next</button>
+    <button class="btn btn-primary" [routerLink]="['/wizard', 'wrap-up']">Next</button>
   </div>
 </form>

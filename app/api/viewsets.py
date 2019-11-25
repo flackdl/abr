@@ -7,10 +7,10 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.api.mixins import CustomerRefFilterMixin
-from app.models import Order, OrderPart, ServiceCategory, ServiceCategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix
 from app.api.serializers import (
-    OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, ServiceCategorySerializer,
-    ServiceCategoryPrefixSerializer)
+    OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
+    CategoryPrefixSerializer)
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -197,34 +197,32 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         return Response(estimate.to_dict())
 
 
-class InventoryQBOViewSet(QBOBaseViewSet):
+class ItemBaseQBOViewSet(QBOBaseViewSet):
     model_class = Item
+    item_type = None
 
     def list(self, request):
         wheres = []
 
-        sku = request.query_params.get('sku')
         name = request.query_params.get('name')
         if name:
             wheres.append("Name LIKE '{}%'".format(name))
-        if sku:
-            wheres.append("Sku LIKE '{}%'".format(sku))
 
         if wheres:
-            # include the inventory type
-            wheres.append("Type='Inventory'")
+            # always include the item type
+            wheres.append("Type='{}'".format(self.item_type))
             objects = Item.where(" and ".join(wheres), qb=self.qbo_client)
         else:
-            objects = Item.filter(Type='Inventory', qb=self.qbo_client)
+            objects = Item.filter(Type=self.item_type, qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
 
 
-class ServiceQBOViewSet(QBOBaseViewSet):
-    model_class = Item
+class InventoryQBOViewSet(ItemBaseQBOViewSet):
+    item_type = 'Inventory'
 
-    def list(self, request):
-        objects = Item.filter(Type='Service', qb=self.qbo_client)
-        return Response([o.to_dict() for o in objects])
+
+class ServiceQBOViewSet(ItemBaseQBOViewSet):
+    item_type = 'Service'
 
 
 class InvoiceQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
@@ -236,11 +234,11 @@ class PreferencesQBOViewSet(QBOBaseViewSet):
     model_class = Preferences
 
 
-class ServiceCategoryViewSet(viewsets.ModelViewSet):
-    queryset = ServiceCategory.objects.all()
-    serializer_class = ServiceCategorySerializer
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 
-class ServiceCategoryPrefixViewSet(viewsets.ModelViewSet):
-    queryset = ServiceCategoryPrefix.objects.all()
-    serializer_class = ServiceCategoryPrefixSerializer
+class CategoryPrefixViewSet(viewsets.ModelViewSet):
+    queryset = CategoryPrefix.objects.all()
+    serializer_class = CategoryPrefixSerializer
