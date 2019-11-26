@@ -1,32 +1,34 @@
 <ngx-loading [show]="isLoading"></ngx-loading>
 <form [formGroup]="form" (ngSubmit)="createEstimate()">
   <div class="row">
-    <!-- top level categories -->
-    <div class="col-4">
+    <!-- categories -->
+    <div class="col-6">
       <div class="card">
         <div class="card-header">
           <h5>Categories</h5>
         </div>
         <div class="card-body">
-          <div class="card-title">
-          </div>
-          <div class="d-flex flex-wrap justify-content-between">
-            <div *ngFor="let category of api.categories" class="my-2">
+          <div class="row">
+            <div class="col-6">
               <!-- front and rear categories -->
-              <div *ngIf="category.front_and_rear" class="border rounded p-2" [class.category-selected]="selectedCategory === category.name" [ngClass]="{'border-danger': hasAssessmentResultForCategory('bad', category), 'border-warning': hasAssessmentResultForCategory('ok', category), 'border-success': hasAssessmentResultForCategory('good', category)}">
+              <div class="d-flex flex-wrap justify-content-around border rounded my-2 p-2" *ngFor="let category of categoriesFrontRear()" [class.category-selected]="selectedCategory === category.name" [ngClass]="{'border-danger': hasAssessmentResultForCategory('bad', category), 'border-warning': hasAssessmentResultForCategory('ok', category), 'border-success': hasAssessmentResultForCategory('good', category)}">
                 <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'rear')">Rear</button>
                 {{ category.name }}
                 <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'front')">Front</button>
               </div>
+            </div>
+            <div class="col-6">
               <!-- regular categories -->
-              <button class="btn btn-sm" *ngIf="!category.front_and_rear" [ngClass]="{'category-selected': selectedCategory === category.name,'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
+              <div *ngFor="let category of categoriesRegular()" class="my-2">
+                <button class="btn btn-sm" [ngClass]="{'category-selected': selectedCategory === category.name, 'btn-outline-danger': needsAssessmentServicedForCategory(category) || hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': !needsAssessmentServicedForCategory(category) || hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <!-- inventory items -->
-    <div class="col-4">
+    <div class="col-3">
       <div class="card">
         <div class="card-header">
           <h5>Inventory</h5>
@@ -52,7 +54,7 @@
       </div>
     </div>
     <!-- labor items -->
-    <div class="col-4">
+    <div class="col-3">
       <div class="card">
         <div class="card-header">
           <h5>Labor</h5>

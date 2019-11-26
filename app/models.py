@@ -72,9 +72,10 @@ class CategoryAssessment(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     type = models.CharField(choices=CHOICE_OPTIONS, max_length=255)
     required = models.BooleanField(default=True)
+    position = models.PositiveSmallIntegerField("Position", null=True)
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('position',)
 
     def __str__(self):
         return '{}: {}'.format(self.category, self.type)

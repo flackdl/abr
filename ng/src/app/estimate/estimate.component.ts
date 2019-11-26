@@ -113,6 +113,18 @@ export class EstimateComponent implements OnInit {
     }
   }
 
+  public categoriesRegular() {
+    return this.api.categories.filter((category) => {
+      return !category.front_and_rear;
+    });
+  }
+
+  public categoriesFrontRear() {
+    return this.api.categories.filter((category) => {
+      return category.front_and_rear;
+    });
+  }
+
   public buildFormFromExistingEstimate() {
     if (this.api.estimateData.items) {
       this.api.estimateData.items.forEach((item) => {
@@ -149,8 +161,10 @@ export class EstimateComponent implements OnInit {
   }
 
   public hasAssessmentResultForCategory(result: string, category: any): boolean {
+    // checks if there are any "quality" assessments for category matching "result"
+    // result: "good", "ok", "bad"
     const assessments = this.api.categoryAssessments.filter((assessment) => {
-      if (assessment.category === category.id) {
+      if (assessment.type === 'quality' && assessment.category === category.id) {
         if (this.api.estimateData.questionnaire.qualities[assessment.name] === result) {
           return true;
         }
@@ -158,6 +172,19 @@ export class EstimateComponent implements OnInit {
       return false;
     });
     return assessments.length > 0;
+  }
+
+  public needsAssessmentServicedForCategory(category: any): boolean {
+    // checks if there are any "serviced" assessments for category that need attention
+    let needsService = false;
+    this.api.categoryAssessments.forEach((assessment) => {
+      if (assessment.type === 'serviced' && assessment.category === category.id) {
+        if (!this.api.estimateData.questionnaire.services[assessment.name]) {
+          needsService = true;
+        }
+      }
+    });
+    return needsService;
   }
 
   public createEstimate() {

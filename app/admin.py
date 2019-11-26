@@ -1,4 +1,6 @@
 from django.contrib import admin
+from grappelli.forms import GrappelliSortableHiddenMixin
+
 from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryAssessment
 
 
@@ -30,17 +32,19 @@ class OrderPartAdmin(admin.ModelAdmin):
 
 class CategoryPrefixInline(admin.TabularInline):
     model = CategoryPrefix
+    extra = 0
 
 
-class CategoryAssessmentInline(admin.TabularInline):
+class CategoryAssessmentInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = CategoryAssessment
+    extra = 0
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    inlines = (CategoryPrefixInline, CategoryAssessmentInline)
     list_display = ('name', 'front_and_rear')
     list_filter = ('front_and_rear',)
-    inlines = (CategoryPrefixInline, CategoryAssessmentInline)
 
 
 @admin.register(CategoryPrefix)
