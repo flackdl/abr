@@ -49,6 +49,14 @@ Supports the management/tracking of vendor orders.
     
     # create default user with permissions
     python manage.py init
+    
+Dump initial data:
+
+    python manage.py dumpdata --indent 2 app.category app.categoryprefix app.categoryassessment > initial-data.json
+    
+Load initial data:
+
+    python manage.py loaddata initial-data.json
 
 
 #### Developing notes
@@ -66,11 +74,3 @@ Define production env vars:
 Run local ssl server:
 
     python manage.py runsslserver abr-dev.com:8080
-    
-Dump initial data:
-
-    python manage.py dumpdata app.category app.categoryprefix app.category app.categoryassessment > initial-data.json
-    
-Load initial data:
-
-    python manage.py loaddata initial-data.json
