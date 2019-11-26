@@ -66,3 +66,11 @@ Define production env vars:
 Run local ssl server:
 
     python manage.py runsslserver abr-dev.com:8080
+    
+Dump initial data:
+
+    python manage.py dumpdata app.category app.categoryprefix app.category app.categoryassessment > initial-data.json
+    
+Load initial data:
+
+    python manage.py loaddata initial-data.json
