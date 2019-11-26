@@ -53,6 +53,12 @@ export class QuestionnaireComponent implements OnInit {
       qualities: this.fb.group(qualityGroup),
       services: this.fb.group(serviceGroup),
     });
+
+    this.form.valueChanges.subscribe((data) => {
+      this.api.updateEstimateData({
+        questionnaire: this.form.value,
+      });
+    })
   }
 
   public getExistingBikeModel() {
@@ -90,9 +96,6 @@ export class QuestionnaireComponent implements OnInit {
     });
 
     if (this.form.valid) {
-      this.api.updateEstimateData({
-        questionnaire: this.form.value,
-      });
       this.router.navigate(['/wizard', 'estimate']);
     } else {
       this.toastr.error('Invalid form');
