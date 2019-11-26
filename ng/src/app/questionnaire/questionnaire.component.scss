@@ -1,9 +1,18 @@
-.btn-group.is-invalid {
-  border: solid red 3px;
-  padding: 3px;
-}
-label {
-  &.chosen {
-    box-shadow: 0 0 0 .2em rgba(11, 180, 30, 0.8);
+.btn-group {
+
+  &.is-invalid {
+    border: solid red 3px;
+    padding: 3px;
+  }
+
+  label {
+    &.chosen {
+      box-shadow: 0 0 0 .2em rgba(137, 131, 133, 0.8);
+    }
+    &.btn-warning {
+      /* override default black text */
+      color: white;
+    }
   }
 }
+
