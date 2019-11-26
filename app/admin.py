@@ -38,6 +38,8 @@ class CategoryAssessmentInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'front_and_rear')
+    list_filter = ('front_and_rear',)
     inlines = (CategoryPrefixInline, CategoryAssessmentInline)
 
 

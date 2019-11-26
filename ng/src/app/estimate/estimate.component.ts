@@ -58,7 +58,7 @@ export class EstimateComponent implements OnInit {
     )
   }
 
-  public categorySelected(category: any) {
+  public categorySelected(category: any, front_rear?: string) {
     this.selectedCategory = category.name;
 
     // reset
@@ -71,6 +71,11 @@ export class EstimateComponent implements OnInit {
 
     // query inventory and services with matching prefixes for this category
     this.api.categoryPrefixes.filter((prefix) => {
+      if (front_rear === 'front') {
+        return prefix.category === category.id && prefix.front;
+      } else if (front_rear === 'rear') {
+        return prefix.category === category.id && prefix.rear;
+      }
       return prefix.category === category.id;
     }).forEach((catPrefix) => {
       inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
@@ -110,8 +115,8 @@ export class EstimateComponent implements OnInit {
 
   public buildFormFromExistingEstimate() {
     if (this.api.estimateData.items) {
-      this.api.estimateData.items.forEach(() => {
-        (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
+      this.api.estimateData.items.forEach((item) => {
+        (this.form.controls['quantities'] as FormArray).push(new FormControl(item.quantity));
       });
     }
   }

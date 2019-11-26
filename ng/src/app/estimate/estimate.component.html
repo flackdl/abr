@@ -4,12 +4,23 @@
     <!-- top level categories -->
     <div class="col-4">
       <div class="card">
+        <div class="card-header">
+          <h5>Categories</h5>
+        </div>
         <div class="card-body">
           <div class="card-title">
-            <h5>Categories</h5>
           </div>
           <div class="d-flex flex-wrap justify-content-between">
-            <button class="btn btn-sm my-2" [ngClass]="{'btn-secondary': selectedCategory === category.name,'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
+            <div *ngFor="let category of api.categories" class="my-2">
+              <!-- front and rear categories -->
+              <div *ngIf="category.front_and_rear" class="border rounded p-2" [class.category-selected]="selectedCategory === category.name" [ngClass]="{'border-danger': hasAssessmentResultForCategory('bad', category), 'border-warning': hasAssessmentResultForCategory('ok', category), 'border-success': hasAssessmentResultForCategory('good', category)}">
+                <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'rear')">Rear</button>
+                {{ category.name }}
+                <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'front')">Front</button>
+              </div>
+              <!-- regular categories -->
+              <button class="btn btn-sm" *ngIf="!category.front_and_rear" [ngClass]="{'category-selected': selectedCategory === category.name,'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
+            </div>
           </div>
         </div>
       </div>
@@ -17,10 +28,10 @@
     <!-- inventory items -->
     <div class="col-4">
       <div class="card">
+        <div class="card-header">
+          <h5>Inventory</h5>
+        </div>
         <div class="card-body">
-          <div class="card-title">
-            <h5>Inventory</h5>
-          </div>
           <div class="form-group">
             <ng-select
               [items]="inventoryResults"
@@ -43,10 +54,10 @@
     <!-- labor items -->
     <div class="col-4">
       <div class="card">
+        <div class="card-header">
+          <h5>Labor</h5>
+        </div>
         <div class="card-body">
-          <div class="card-title">
-            <h5>Labor</h5>
-          </div>
           <div class="form-group">
             <ng-select
               [items]="serviceResults"
@@ -69,6 +80,9 @@
   </div>
   <!-- line items -->
   <div class="card mt-3">
+    <div class="card-header">
+      <h5>Items</h5>
+    </div>
     <div class="card-body">
       <table class="table table-striped table-bordered table-condensed">
         <thead>
@@ -88,10 +102,10 @@
           <td>{{ i+1 }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.description }}</td>
-          <td><input class="form-control" name="quantity" type="number" min="0" [formControlName]="i"></td>
+          <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
           <td>${{ item.price }}</td>
           <td>${{ item.amount }}</td>
-          <td>$?</td>
+          <td>{{ item.amount * .0725 | currency }}</td>
           <td><button class="btn btn-outline-danger" type="button" (click)="removeItem(i)"><span class="oi oi-x"></span></button></td>
         </tr>
         </tbody>

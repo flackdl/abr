@@ -1,12 +1,16 @@
-<div class="text-center">
-  <form (ngSubmit)="submit()">
-    <div class="form-group">
-      <label [for]="inputType" class="display-4">{{ question }}</label>
-      <input [id]="inputType" [class.is-invalid]="input.dirty && !input.valid" [formControl]="input" class="form-control form-control-lg" type="text" *ngIf="inputType === 'input'">
-      <textarea [id]="inputType" [class.is-invalid]="input.dirty && !input.valid" [formControl]="input" rows="3" class="form-control form-control-lg" *ngIf="inputType === 'textarea'"></textarea>
-    </div>
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-primary">Next</button>
-    </div>
-  </form>
+<div class="card text-center">
+  <div class="card-header">
+    <h4>{{ question }}</h4>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="submit()">
+      <div class="form-group">
+        <input [class.is-invalid]="input.dirty && !input.valid" [formControl]="input" class="form-control form-control-lg" type="text" *ngIf="inputType === 'input'">
+        <textarea [class.is-invalid]="input.dirty && !input.valid" [formControl]="input" rows="3" class="form-control form-control-lg" *ngIf="inputType === 'textarea'"></textarea>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary">Next</button>
+      </div>
+    </form>
+  </div>
 </div>

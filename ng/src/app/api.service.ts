@@ -29,7 +29,7 @@ export class ApiService {
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
-  public serviceCategories: any[];
+  public categories: any[];
   public categoryPrefixes: any[];
   public categoryAssessments: any[];
 
@@ -45,7 +45,7 @@ export class ApiService {
       this.loadEstimateData(),
       this.fetchSettings(),
       this.fetchQBOPreferences(),
-      this.fetchServiceCategory(),
+      this.fetchCategory(),
       this.fetchCategoryPrefix(),
       this.fetchCategoryAssessment(),
     );
@@ -154,12 +154,12 @@ export class ApiService {
     return this.http.get(this.API_QBO_SERVICE, {params: httpParams});
   }
 
-  public fetchServiceCategory(params?: any): Observable<any> {
+  public fetchCategory(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
     return this.http.get(this.API_CATEGORY, {params: httpParams}).pipe(
       map((data: any[]) => {
-        this.serviceCategories = data;
-        return this.serviceCategories;
+        this.categories = data;
+        return this.categories;
       })
     );
   }
