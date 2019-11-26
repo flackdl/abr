@@ -9,7 +9,7 @@
             <h5>Categories</h5>
           </div>
           <div class="d-flex flex-wrap justify-content-between">
-            <button class="btn btn-sm my-2" [ngClass]="{'btn-outline-danger': hasBadAssessmentForCategory(category), 'btn-outline-dark': !hasBadAssessmentForCategory(category)}" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
+            <button class="btn btn-sm my-2" [ngClass]="{'btn-secondary': selectedCategory === category.name,'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)" *ngFor="let category of api.serviceCategories">{{ category.name }}</button>
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@
 
   <h4 class="text-center">Wear</h4>
   <div class="row" formGroupName="qualities">
-    <div class="col-6 text-center" *ngFor="let assessment of qualityAssessments">
+    <div class="col-6 my-2 text-center" *ngFor="let assessment of qualityAssessments">
       <div class="text-black-50 font-weight-bold">{{ assessment.name }}</div>
       <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="assessment.name" [class.is-invalid]="isQualityDirty(assessment.name) && !isQualityValid(assessment.name)">
         <ng-container *ngFor="let choice of qualityChoices">
@@ -25,7 +25,7 @@
 
   <h4 class="text-center">Service</h4>
   <div class="row" formGroupName="services">
-    <div class="col-6 text-center" *ngFor="let assessment of servicedAssessments">
+    <div class="col-6 my-2 text-center" *ngFor="let assessment of servicedAssessments">
       <div class="text-black-50 font-weight-bold">
         {{ assessment.name }}
         <small class="d-inline form-text text-muted" *ngIf="!assessment.required">

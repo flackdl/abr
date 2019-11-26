@@ -19,6 +19,7 @@ export class EstimateComponent implements OnInit {
   public selectedServiceItems: any[];
   public inventoryResults: any[] = [];
   public serviceResults: any[] = [];
+  public selectedCategory: string;
 
   @ViewChild("inventorySelect", {static: true}) inventorySelect: NgSelectComponent;
   @ViewChild("serviceSelect", {static: true}) serviceSelect: NgSelectComponent;
@@ -58,6 +59,7 @@ export class EstimateComponent implements OnInit {
   }
 
   public categorySelected(category: any) {
+    this.selectedCategory = category.name;
 
     // reset
     this.isItemsLoading = true;
@@ -141,16 +143,16 @@ export class EstimateComponent implements OnInit {
     this.api.updateEstimateData();
   }
 
-  public hasBadAssessmentForCategory(category: any): boolean {
-    const badAssessments = this.api.categoryAssessments.filter((assessment) => {
+  public hasAssessmentResultForCategory(result: string, category: any): boolean {
+    const assessments = this.api.categoryAssessments.filter((assessment) => {
       if (assessment.category === category.id) {
-        if (this.api.estimateData.questionnaire.qualities[assessment.name] === 'bad') {
+        if (this.api.estimateData.questionnaire.qualities[assessment.name] === result) {
           return true;
         }
       }
       return false;
     });
-    return badAssessments.length > 0;
+    return assessments.length > 0;
   }
 
   public createEstimate() {

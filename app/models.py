@@ -70,7 +70,7 @@ class CategoryAssessment(models.Model):
     name = models.CharField(max_length=255, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     type = models.CharField(choices=CHOICE_OPTIONS, max_length=255)
-    required = models.BooleanField(default=False)  # not relevant for "quality" type
+    required = models.BooleanField(default=False, help_text="only relevant for type 'serviced'")
 
     class Meta:
         ordering = ('name',)
