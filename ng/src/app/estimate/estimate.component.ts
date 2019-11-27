@@ -58,7 +58,7 @@ export class EstimateComponent implements OnInit {
     )
   }
 
-  public categorySelected(category: any, front_rear?: string) {
+  public categorySelected(category: any) {
     this.selectedCategory = category.name;
 
     // reset
@@ -71,11 +71,6 @@ export class EstimateComponent implements OnInit {
 
     // query inventory and services with matching prefixes for this category
     this.api.categoryPrefixes.filter((prefix) => {
-      if (front_rear === 'front') {
-        return prefix.category === category.id && prefix.front;
-      } else if (front_rear === 'rear') {
-        return prefix.category === category.id && prefix.rear;
-      }
       return prefix.category === category.id;
     }).forEach((catPrefix) => {
       inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
@@ -111,18 +106,6 @@ export class EstimateComponent implements OnInit {
     } else {
       this.isItemsLoading = false;
     }
-  }
-
-  public categoriesRegular() {
-    return this.api.categories.filter((category) => {
-      return !category.front_and_rear;
-    });
-  }
-
-  public categoriesFrontRear() {
-    return this.api.categories.filter((category) => {
-      return category.front_and_rear;
-    });
   }
 
   public buildFormFromExistingEstimate() {
@@ -161,30 +144,17 @@ export class EstimateComponent implements OnInit {
   }
 
   public hasAssessmentResultForCategory(result: string, category: any): boolean {
-    // checks if there are any "quality" assessments for category matching "result"
+    // checks if there are any assessments for this category matching "result"
     // result: "good", "ok", "bad"
-    const assessments = this.api.categoryAssessments.filter((assessment) => {
-      if (assessment.type === 'quality' && assessment.category === category.id) {
-        if (this.api.estimateData.questionnaire.qualities[assessment.name] === result) {
+    const assessments = this.api.categories.filter((cat) => {
+      if (cat.id === category.id) {
+        if (this.api.estimateData.assessments[category.name] === result) {
           return true;
         }
       }
       return false;
     });
     return assessments.length > 0;
-  }
-
-  public needsAssessmentServicedForCategory(category: any): boolean {
-    // checks if there are any "serviced" assessments for category that need attention
-    let needsService = false;
-    this.api.categoryAssessments.forEach((assessment) => {
-      if (assessment.type === 'serviced' && assessment.category === category.id) {
-        if (!this.api.estimateData.questionnaire.services[assessment.name]) {
-          needsService = true;
-        }
-      }
-    });
-    return needsService;
   }
 
   public createEstimate() {

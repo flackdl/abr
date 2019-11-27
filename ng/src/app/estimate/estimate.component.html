@@ -10,17 +10,9 @@
         <div class="card-body">
           <div class="row">
             <div class="col-6">
-              <!-- front and rear categories -->
-              <div class="d-flex flex-wrap justify-content-around border rounded my-2 p-2" *ngFor="let category of categoriesFrontRear()" [class.category-selected]="selectedCategory === category.name" [ngClass]="{'border-danger': hasAssessmentResultForCategory('bad', category), 'border-warning': hasAssessmentResultForCategory('ok', category), 'border-success': hasAssessmentResultForCategory('good', category)}">
-                <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'rear')">Rear</button>
-                {{ category.name }}
-                <button class="btn btn-sm btn-outline-dark" (click)="categorySelected(category, 'front')">Front</button>
-              </div>
-            </div>
-            <div class="col-6">
-              <!-- regular categories -->
-              <div *ngFor="let category of categoriesRegular()" class="my-2">
-                <button class="btn btn-sm" [ngClass]="{'category-selected': selectedCategory === category.name, 'btn-outline-danger': needsAssessmentServicedForCategory(category) || hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': !needsAssessmentServicedForCategory(category) || hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
+              <!-- categories -->
+              <div *ngFor="let category of api.categories" class="my-2">
+                <button class="btn btn-sm" [ngClass]="{'category-selected': selectedCategory === category.name, 'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
               </div>
             </div>
           </div>
@@ -71,7 +63,7 @@
               [(ngModel)]="selectedServiceItems"
               #serviceSelect
               (add)="itemAdded($event)"
-              bindLabel="Name"
+              bindLabel="Description"
               placeholder="Select items"
             >
             </ng-select>

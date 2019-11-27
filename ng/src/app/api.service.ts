@@ -24,14 +24,12 @@ export class ApiService {
   public API_QBO_SETTINGS = '/api/settings/';
   public API_CATEGORY= '/api/category/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
-  public API_CATEGORY_ASSESSMENT = '/api/category-assessment/';
 
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
   public categories: any[];
   public categoryPrefixes: any[];
-  public categoryAssessments: any[];
 
   public estimateData$ = new Subject();
 
@@ -47,7 +45,6 @@ export class ApiService {
       this.fetchQBOPreferences(),
       this.fetchCategory(),
       this.fetchCategoryPrefix(),
-      this.fetchCategoryAssessment(),
     );
   }
 
@@ -60,12 +57,7 @@ export class ApiService {
   }
 
   public hasQuestionnaire(): boolean {
-    return Boolean(
-      this.estimateData.questionnaire &&
-      this.estimateData.questionnaire.bike_model &&
-      this.estimateData.questionnaire.qualities &&
-      this.estimateData.questionnaire.services
-    );
+    return Boolean(this.estimateData.assessments && this.estimateData.bike_model);
   }
 
   public currentCustomer() {
@@ -170,16 +162,6 @@ export class ApiService {
       map((data: any[]) => {
         this.categoryPrefixes = data;
         return this.categoryPrefixes;
-      })
-    );
-  }
-
-  public fetchCategoryAssessment(params?: any): Observable<any> {
-    const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_CATEGORY_ASSESSMENT, {params: httpParams}).pipe(
-      map((data: any[]) => {
-        this.categoryAssessments = data;
-        return this.categoryAssessments;
       })
     );
   }

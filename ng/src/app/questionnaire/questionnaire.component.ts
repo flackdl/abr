@@ -11,12 +11,10 @@ import { Router } from '@angular/router';
 })
 export class QuestionnaireComponent implements OnInit {
   public form: FormGroup;
-  public QUALITY_GOOD = 'good';
-  public QUALITY_OK = 'ok';
-  public QUALITY_BAD = 'bad';
-  public qualityAssessments: any[] = [];
-  public servicedAssessments: any[] = [];
-  public qualityChoices = [this.QUALITY_GOOD, this.QUALITY_OK, this.QUALITY_BAD];
+  public ASSESSMENT_GOOD = 'good';
+  public ASSESSMENT_OK = 'ok';
+  public ASSESSMENT_BAD = 'bad';
+  public assessmentChoices = [this.ASSESSMENT_GOOD, this.ASSESSMENT_OK, this.ASSESSMENT_BAD];
 
   constructor(
     private fb: FormBuilder,
@@ -27,57 +25,33 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
 
-    // quality questions
-    this.qualityAssessments = this.api.categoryAssessments.filter((assessment) => {
-      return assessment.type === 'quality';
-    });
-
-    // serviced questions
-    this.servicedAssessments = this.api.categoryAssessments.filter((assessment) => {
-      return assessment.type === 'serviced';
-    });
-
-    const qualityGroup = {};
-    const serviceGroup = {};
+    const assessmentGroup = {};
 
     // build assessment form controls
-    this.qualityAssessments.forEach((assessment) => {
-        qualityGroup[assessment.name] = [this.getExistingQuality(assessment.name), Validators.required];
-    });
-    this.servicedAssessments.forEach((assessment) => {
-      serviceGroup[assessment.name] = [this.getExistingService(assessment.name), assessment.required ? Validators.required : false];
+    this.api.categories.forEach((category) => {
+        assessmentGroup[category.name] = [this.getExistingAssessment(category.name), Validators.required];
     });
 
     this.form = this.fb.group({
       bike_model: [this.getExistingBikeModel(), Validators.required],
-      qualities: this.fb.group(qualityGroup),
-      services: this.fb.group(serviceGroup),
+      assessments: this.fb.group(assessmentGroup),
     });
 
     this.form.valueChanges.subscribe((data) => {
-      this.api.updateEstimateData({
-        questionnaire: this.form.value,
-      });
+      this.api.updateEstimateData(this.form.value);
     })
   }
 
   public getExistingBikeModel() {
-    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.bike_model) {
-      return this.api.estimateData.questionnaire.bike_model;
+    if (this.api.estimateData.assessments && this.api.estimateData.bike_model) {
+      return this.api.estimateData.bike_model;
     }
     return null;
   }
 
-  public getExistingService(item: string) {
-    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.services) {
-      return this.api.estimateData.questionnaire.services[item];
-    }
-    return null;
-  }
-
-  public getExistingQuality(item: string) {
-    if (this.api.estimateData.questionnaire && this.api.estimateData.questionnaire.qualities) {
-      return this.api.estimateData.questionnaire.qualities[item];
+  public getExistingAssessment(category: string) {
+    if (this.api.estimateData.assessments && this.api.estimateData.assessments[category]) {
+      return this.api.estimateData.assessments[category];
     }
     return null;
   }
@@ -86,12 +60,8 @@ export class QuestionnaireComponent implements OnInit {
 
     // mark all inputs as dirty then validate
     this.form.get('bike_model').markAsDirty();
-    Object.keys((this.form.controls['qualities'] as FormGroup).controls).forEach((key) => {
-      const input = this.form.get('qualities').get(key);
-      input.markAsDirty();
-    });
-    Object.keys((this.form.controls['services'] as FormGroup).controls).forEach((key) => {
-      const input = this.form.get('services').get(key);
+    Object.keys((this.form.controls['assessments'] as FormGroup).controls).forEach((key) => {
+      const input = this.form.get('assessments').get(key);
       input.markAsDirty();
     });
 
@@ -102,13 +72,13 @@ export class QuestionnaireComponent implements OnInit {
     }
   }
 
-  public isQualityDirty(quality: string): boolean {
-    const input = this.form.get('qualities').get(quality);
+  public isAssessmentInputDirty(assessment: string): boolean {
+    const input = this.form.get('assessments').get(assessment);
     return input.dirty;
   }
 
-  public isQualityValid(quality: string): boolean {
-    const input = this.form.get('qualities').get(quality);
+  public isAssessmentInputValid(assessment: string): boolean {
+    const input = this.form.get('assessments').get(assessment);
     return input.valid;
   }
 }

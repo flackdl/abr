@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryAssessment
+from app.models import Order, OrderPart, Category, CategoryPrefix
 
 CRMS = (
     ('1', 'Current customer walk-in'),
@@ -64,11 +64,4 @@ class CategoryPrefixSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CategoryPrefix
-        fields = '__all__'
-
-
-class CategoryAssessmentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = CategoryAssessment
         fields = '__all__'

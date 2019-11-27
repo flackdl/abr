@@ -11,14 +11,9 @@ export type EstimateData = {
   state?: string,
   zip?: string,
   main_concern?: string,
-  questionnaire?: {
-    bike_model: string,
-    qualities: {
-      [name: string]: string,
-    },
-    services: {
-      [name: string]: boolean,
-    }
+  bike_model?: string,
+  assessments?: {
+    [name: string]: string,
   },
   items?: {
     name: string,

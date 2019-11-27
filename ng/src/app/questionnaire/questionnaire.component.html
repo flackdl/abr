@@ -22,38 +22,13 @@
           <div class="card-title">
             <h6>Wear</h6>
           </div>
-          <div class="row" formGroupName="qualities">
-            <div class="col-6 my-2 text-center" *ngFor="let assessment of qualityAssessments">
-              <div class="text-black-50 font-weight-bold">{{ assessment.name }}</div>
-              <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="assessment.name" [class.is-invalid]="isQualityDirty(assessment.name) && !isQualityValid(assessment.name)">
-                <ng-container *ngFor="let choice of qualityChoices">
-                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === QUALITY_GOOD, 'btn-danger': choice === QUALITY_BAD, 'btn-warning': choice === QUALITY_OK, 'chosen oi-check': form.value.qualities[assessment.name] === choice, 'oi-media-record': form.value.qualities[assessment.name] !== choice}">
+          <div class="row" formGroupName="assessments">
+            <div class="col-12 my-1 text-center" *ngFor="let category of api.categories">
+              <div class="text-black-50 font-weight-bold">{{ category.name }}</div>
+              <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="category.name" [class.is-invalid]="isAssessmentInputDirty(category.name) && !isAssessmentInputValid(category.name)">
+                <ng-container *ngFor="let choice of assessmentChoices">
+                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === ASSESSMENT_GOOD, 'btn-danger': choice === ASSESSMENT_BAD, 'btn-warning': choice === ASSESSMENT_OK, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
                     <input ngbButton type="radio" [value]="choice">
-                  </label>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card my-3">
-        <div class="card-body">
-          <div class="card-title">
-            <h6>Service</h6>
-          </div>
-          <div class="row" formGroupName="services">
-            <div class="col-6 my-2 text-center" *ngFor="let assessment of servicedAssessments">
-              <div class="text-black-50 font-weight-bold">
-                {{ assessment.name }}
-                <small class="d-inline form-text text-muted" *ngIf="!assessment.required">
-                  * optional
-                </small>
-              </div>
-              <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="assessment.name" [class.is-invalid]="form.get('services').get(assessment.name).dirty && form.get('services').get(assessment.name).invalid">
-                <ng-container *ngFor="let value of [true, false]">
-                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': value, 'btn-danger': !value, 'chosen oi-check': form.value.services[assessment.name] === value,  'oi-media-record': form.value.services[assessment.name] !== value}">
-                    <input ngbButton type="radio" [value]="value">
                   </label>
                 </ng-container>
               </div>
