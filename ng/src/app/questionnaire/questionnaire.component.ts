@@ -14,7 +14,8 @@ export class QuestionnaireComponent implements OnInit {
   public ASSESSMENT_GOOD = 'good';
   public ASSESSMENT_OK = 'ok';
   public ASSESSMENT_BAD = 'bad';
-  public assessmentChoices = [this.ASSESSMENT_GOOD, this.ASSESSMENT_OK, this.ASSESSMENT_BAD];
+  public ASSESSMENT_NA = 'na';
+  public assessmentChoices = [this.ASSESSMENT_GOOD, this.ASSESSMENT_OK, this.ASSESSMENT_BAD, this.ASSESSMENT_NA];
 
   constructor(
     private fb: FormBuilder,

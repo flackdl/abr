@@ -1,6 +1,6 @@
 <div class="card my-3">
   <div class="card-header">
-    <h5>Multipoint Inspection and Assessment</h5>
+    <h4>Multipoint Inspection and Assessment</h4>
   </div>
   <div class="card-body">
     <form [formGroup]="form" (ngSubmit)="submit()">
@@ -19,8 +19,14 @@
 
       <div class="card my-3">
         <div class="card-body">
-          <div class="card-title">
-            <h6>Wear</h6>
+          <div class="card-title d-flex justify-content-between">
+            <h5>Wear</h5>
+            <div class="d-flex w-25">
+              <div class="bg-success legend">Great</div>
+              <div class="bg-warning legend">Advise</div>
+              <div class="bg-danger legend">Poor</div>
+              <div class="bg-dark legend">N/A</div>
+            </div>
           </div>
           <div class="row" formGroupName="assessments" *ngFor="let category of api.categories">
             <div class="col-6 my-1 text-right">
@@ -29,7 +35,7 @@
             <div class="col-6 my-1 text-left">
               <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="category.name" [class.is-invalid]="isAssessmentInputDirty(category.name) && !isAssessmentInputValid(category.name)">
                 <ng-container *ngFor="let choice of assessmentChoices">
-                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === ASSESSMENT_GOOD, 'btn-danger': choice === ASSESSMENT_BAD, 'btn-warning': choice === ASSESSMENT_OK, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
+                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === ASSESSMENT_GOOD, 'btn-danger': choice === ASSESSMENT_BAD, 'btn-warning': choice === ASSESSMENT_OK, 'btn-dark': choice === ASSESSMENT_NA, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
                     <input ngbButton type="radio" [value]="choice">
                   </label>
                 </ng-container>
