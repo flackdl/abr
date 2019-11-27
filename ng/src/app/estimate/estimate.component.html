@@ -12,7 +12,13 @@
             <div class="col-6">
               <!-- categories -->
               <div *ngFor="let category of api.categories" class="my-2">
-                <button class="btn btn-sm" [ngClass]="{'category-selected': selectedCategory === category.name, 'btn-outline-danger': hasAssessmentResultForCategory('bad', category), 'btn-outline-warning': hasAssessmentResultForCategory('ok', category), 'btn-outline-success': hasAssessmentResultForCategory('good', category)}" (click)="categorySelected(category)">{{ category.name }}</button>
+                <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
+                  <button class="btn btn-outline-primary" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
+                  <div ngbDropdownMenu>
+                    <button ngbDropdownItem *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
+                  </div>
+                </div>
+                <button class="btn btn-sm" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
               </div>
             </div>
           </div>

@@ -30,6 +30,7 @@ class OrderPart(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     position = models.PositiveSmallIntegerField()
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -37,6 +38,15 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CategoryChild(Category):
+    """
+    Necessary to register the Category model again in the admin for children categories
+    """
+    class Meta:
+        verbose_name_plural = 'category children'
+        proxy = True
 
 
 class CategoryPrefix(models.Model):

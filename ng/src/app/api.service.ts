@@ -23,12 +23,14 @@ export class ApiService {
   public API_QBO_PREFERENCES = '/api/preferences/';
   public API_QBO_SETTINGS = '/api/settings/';
   public API_CATEGORY= '/api/category/';
+  public API_CATEGORY_CHILDREN = '/api/category-children/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
 
   public settings: any;
   public estimateData: EstimateData = {};
   public qboPreferences: any;
   public categories: any[];
+  public categoriesChildren: any[];
   public categoryPrefixes: any[];
 
   public estimateData$ = new Subject();
@@ -44,6 +46,7 @@ export class ApiService {
       this.fetchSettings(),
       this.fetchQBOPreferences(),
       this.fetchCategory(),
+      this.fetchCategoryChildren(),
       this.fetchCategoryPrefix(),
     );
   }
@@ -152,6 +155,16 @@ export class ApiService {
       map((data: any[]) => {
         this.categories = data;
         return this.categories;
+      })
+    );
+  }
+
+  public fetchCategoryChildren(params?: any): Observable<any> {
+    const httpParams = new HttpParams({fromObject: params});
+    return this.http.get(this.API_CATEGORY_CHILDREN, {params: httpParams}).pipe(
+      map((data: any[]) => {
+        this.categoriesChildren = data;
+        return this.categoriesChildren;
       })
     );
   }

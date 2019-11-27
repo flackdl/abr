@@ -238,6 +238,17 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def get_queryset(self):
+        return super().get_queryset().filter(parent__isnull=True)
+
+
+class CategoryChildViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(parent__isnull=False)
+
 
 class CategoryPrefixViewSet(viewsets.ModelViewSet):
     queryset = CategoryPrefix.objects.all()

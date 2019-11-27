@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Order, OrderPart, Category, CategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 
 
 class PartsInline(admin.TabularInline):
@@ -28,6 +28,12 @@ class OrderPartAdmin(admin.ModelAdmin):
         return part.order.arrived
 
 
+class CategoryChildInline(admin.TabularInline):
+    model = CategoryChild
+    extra = 0
+    show_change_link = True
+
+
 class CategoryPrefixInline(admin.TabularInline):
     model = CategoryPrefix
     extra = 0
@@ -35,8 +41,20 @@ class CategoryPrefixInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    inlines = (CategoryPrefixInline,)
+    inlines = (CategoryChildInline, CategoryPrefixInline,)
     list_display = ('name', 'position')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(parent__isnull=True)
+
+
+@admin.register(CategoryChild)
+class CategoryChildrenAdmin(admin.ModelAdmin):
+    inlines = (CategoryPrefixInline,)
+    list_display = ('name', 'parent', 'position',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(parent__isnull=False)
 
 
 @admin.register(CategoryPrefix)

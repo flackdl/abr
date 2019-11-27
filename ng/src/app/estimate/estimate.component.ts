@@ -58,6 +58,12 @@ export class EstimateComponent implements OnInit {
     )
   }
 
+  public categoryChildren(category: any) {
+    return this.api.categoriesChildren.filter((child) => {
+      return child.parent === category.id;
+    });
+  }
+
   public categorySelected(category: any) {
     this.selectedCategory = category.name;
 
@@ -69,9 +75,22 @@ export class EstimateComponent implements OnInit {
     const inventoryQueries = [];
     const serviceQueries = [];
 
-    // query inventory and services with matching prefixes for this category
+    // query inventory and services with matching prefixes for this category and, if a child, it's parent category
     this.api.categoryPrefixes.filter((prefix) => {
-      return prefix.category === category.id;
+
+      if (prefix.category === category.id) {
+        return true;
+      }
+
+      if (category.parent) {
+        const parentCategory = this.api.categories.find((cat) => {
+          return cat.id === category.parent;
+        });
+        return prefix.category === parentCategory.id;
+      }
+
+      return false;
+
     }).forEach((catPrefix) => {
       inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
       serviceQueries.push(this.api.fetchService({name: catPrefix.prefix}));
@@ -98,8 +117,9 @@ export class EstimateComponent implements OnInit {
           this.serviceSelect.open();
         }),
       ).subscribe(
-        (data) => {
-        }, (error) => {
+        () => {},
+        (error) => {
+          console.error(error);
           this.toastr.error('An unknown error occurred');
         }
       );
@@ -155,6 +175,28 @@ export class EstimateComponent implements OnInit {
       return false;
     });
     return assessments.length > 0;
+  }
+
+  public isCategorySelected(category: any): boolean {
+
+    // parent category is selected
+    if (this.selectedCategory === category.name) {
+      return true;
+    }
+
+    // child category is selected
+    return this.api.categoriesChildren.find((child) => {
+      return child.parent === category.id && child.name === this.selectedCategory;
+    });
+  }
+
+  public categoryButtonClass(category: any) {
+    return {
+      'category-selected': this.isCategorySelected(category),
+      'btn-outline-danger': this.hasAssessmentResultForCategory('bad', category),
+      'btn-outline-warning': this.hasAssessmentResultForCategory('ok', category),
+      'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
+    };
   }
 
   public createEstimate() {
