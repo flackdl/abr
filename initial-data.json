@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "name": "Chain",
-    "front_and_rear": false
+    "position": 1
   }
 },
 {
@@ -12,15 +12,15 @@
   "pk": 2,
   "fields": {
     "name": "Chainrings",
-    "front_and_rear": false
+    "position": 2
   }
 },
 {
   "model": "app.category",
   "pk": 3,
   "fields": {
-    "name": "Cassette",
-    "front_and_rear": false
+    "name": "Cassette/Freewheel",
+    "position": 3
   }
 },
 {
@@ -28,7 +28,7 @@
   "pk": 4,
   "fields": {
     "name": "Bottom Bracket",
-    "front_and_rear": false
+    "position": 16
   }
 },
 {
@@ -36,23 +36,7 @@
   "pk": 5,
   "fields": {
     "name": "Headset",
-    "front_and_rear": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 6,
-  "fields": {
-    "name": "Brake",
-    "front_and_rear": true
-  }
-},
-{
-  "model": "app.category",
-  "pk": 7,
-  "fields": {
-    "name": "Tire",
-    "front_and_rear": false
+    "position": 17
   }
 },
 {
@@ -60,319 +44,295 @@
   "pk": 8,
   "fields": {
     "name": "Suspension",
-    "front_and_rear": true
+    "position": 19
   }
 },
 {
   "model": "app.category",
-  "pk": 9,
+  "pk": 11,
   "fields": {
-    "name": "Brake Cable",
-    "front_and_rear": true
+    "name": "Hanger",
+    "position": 4
   }
 },
 {
   "model": "app.category",
-  "pk": 10,
-  "fields": {
-    "name": "Derailleur",
-    "front_and_rear": true
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 1,
-  "fields": {
-    "category": 1,
-    "prefix": "ch-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 2,
-  "fields": {
-    "category": 2,
-    "prefix": "chr-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 3,
-  "fields": {
-    "category": 3,
-    "prefix": "cs-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 4,
-  "fields": {
-    "category": 4,
-    "prefix": "bb-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 5,
-  "fields": {
-    "category": 5,
-    "prefix": "headset-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 6,
-  "fields": {
-    "category": 6,
-    "prefix": "brk-ft-",
-    "front": true,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 7,
-  "fields": {
-    "category": 7,
-    "prefix": "tr-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 8,
-  "fields": {
-    "category": 8,
-    "prefix": "fork-",
-    "front": true,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 9,
-  "fields": {
-    "category": 9,
-    "prefix": "brk-cb-",
-    "front": false,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 10,
-  "fields": {
-    "category": 10,
-    "prefix": "der-ft-",
-    "front": true,
-    "rear": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 11,
-  "fields": {
-    "category": 10,
-    "prefix": "der-rr-",
-    "front": false,
-    "rear": true
-  }
-},
-{
-  "model": "app.categoryprefix",
   "pk": 12,
   "fields": {
-    "category": 6,
-    "prefix": "brk-rr-",
-    "front": false,
-    "rear": true
+    "name": "Pulley wheels",
+    "position": 5
   }
 },
 {
-  "model": "app.categoryassessment",
-  "pk": 1,
-  "fields": {
-    "name": "Chain Wear",
-    "category": 1,
-    "type": "quality",
-    "required": true,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 2,
-  "fields": {
-    "name": "Chainrings",
-    "category": 2,
-    "type": "quality",
-    "required": true,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 3,
-  "fields": {
-    "name": "Cassette/Freewheel",
-    "category": 3,
-    "type": "quality",
-    "required": true,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 4,
-  "fields": {
-    "name": "Overhauled bottom bracket in the past year?",
-    "category": 4,
-    "type": "serviced",
-    "required": true,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 5,
-  "fields": {
-    "name": "Overhauled headset in the past year?",
-    "category": 5,
-    "type": "serviced",
-    "required": true,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 6,
-  "fields": {
-    "name": "If disc brakes: Bled brakes last year?",
-    "category": 6,
-    "type": "serviced",
-    "required": false,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 7,
-  "fields": {
-    "name": "If tubeless: Sealant in the past 3 months?",
-    "category": 7,
-    "type": "serviced",
-    "required": false,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 8,
-  "fields": {
-    "name": "If suspension: Service\u00a0 in the past year?",
-    "category": 8,
-    "type": "serviced",
-    "required": false,
-    "position": 0
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 9,
-  "fields": {
-    "name": "Rear Tire",
-    "category": 7,
-    "type": "quality",
-    "required": true,
-    "position": 2
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 10,
-  "fields": {
-    "name": "Front Tire",
-    "category": 7,
-    "type": "quality",
-    "required": true,
-    "position": 1
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 11,
-  "fields": {
-    "name": "Rear Brake",
-    "category": 6,
-    "type": "quality",
-    "required": true,
-    "position": 2
-  }
-},
-{
-  "model": "app.categoryassessment",
-  "pk": 12,
-  "fields": {
-    "name": "Front Brake",
-    "category": 6,
-    "type": "quality",
-    "required": true,
-    "position": 1
-  }
-},
-{
-  "model": "app.categoryassessment",
+  "model": "app.category",
   "pk": 13,
   "fields": {
-    "name": "Rear Brake Cable",
-    "category": 9,
-    "type": "quality",
-    "required": true,
-    "position": 0
+    "name": "Rear DER cable",
+    "position": 7
   }
 },
 {
-  "model": "app.categoryassessment",
+  "model": "app.category",
   "pk": 14,
   "fields": {
-    "name": "Front Brake Cable",
-    "category": 9,
-    "type": "quality",
-    "required": true,
-    "position": 1
+    "name": "Rear DER",
+    "position": 6
   }
 },
 {
-  "model": "app.categoryassessment",
+  "model": "app.category",
   "pk": 15,
   "fields": {
-    "name": "Front derailleur cable",
-    "category": 10,
-    "type": "quality",
-    "required": true,
-    "position": 0
+    "name": "Front DER",
+    "position": 8
   }
 },
 {
-  "model": "app.categoryassessment",
+  "model": "app.category",
   "pk": 16,
   "fields": {
-    "name": "Rear derailleur cable",
-    "category": 10,
-    "type": "quality",
-    "required": true,
-    "position": 1
+    "name": "Front DER Cable",
+    "position": 9
+  }
+},
+{
+  "model": "app.category",
+  "pk": 17,
+  "fields": {
+    "name": "Rear Brake",
+    "position": 10
+  }
+},
+{
+  "model": "app.category",
+  "pk": 18,
+  "fields": {
+    "name": "Rear Brake Cable",
+    "position": 11
+  }
+},
+{
+  "model": "app.category",
+  "pk": 19,
+  "fields": {
+    "name": "Front Brake",
+    "position": 12
+  }
+},
+{
+  "model": "app.category",
+  "pk": 20,
+  "fields": {
+    "name": "Front Brake Cable",
+    "position": 13
+  }
+},
+{
+  "model": "app.category",
+  "pk": 21,
+  "fields": {
+    "name": "Rear Tire",
+    "position": 14
+  }
+},
+{
+  "model": "app.category",
+  "pk": 22,
+  "fields": {
+    "name": "Front Tire",
+    "position": 15
+  }
+},
+{
+  "model": "app.category",
+  "pk": 23,
+  "fields": {
+    "name": "Tubeless Sealant",
+    "position": 18
+  }
+},
+{
+  "model": "app.category",
+  "pk": 24,
+  "fields": {
+    "name": "Electrical",
+    "position": 20
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 1,
+  "fields": {
+    "category": 1,
+    "prefix": "ch-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 2,
+  "fields": {
+    "category": 2,
+    "prefix": "chr-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 3,
+  "fields": {
+    "category": 3,
+    "prefix": "cs-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 4,
+  "fields": {
+    "category": 4,
+    "prefix": "bb-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 5,
+  "fields": {
+    "category": 5,
+    "prefix": "headset-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 8,
+  "fields": {
+    "category": 8,
+    "prefix": "fork-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 13,
+  "fields": {
+    "category": 11,
+    "prefix": "der-hanger-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 14,
+  "fields": {
+    "category": 12,
+    "prefix": "der-pulley"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 15,
+  "fields": {
+    "category": 14,
+    "prefix": "der-rr-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 16,
+  "fields": {
+    "category": 13,
+    "prefix": "DER-CB-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 17,
+  "fields": {
+    "category": 15,
+    "prefix": "der-ft-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 18,
+  "fields": {
+    "category": 16,
+    "prefix": "der-cb-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 19,
+  "fields": {
+    "category": 18,
+    "prefix": "brk-cb-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 20,
+  "fields": {
+    "category": 17,
+    "prefix": "brk-rr-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 21,
+  "fields": {
+    "category": 19,
+    "prefix": "brk-ft-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 22,
+  "fields": {
+    "category": 20,
+    "prefix": "brk-cb-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 23,
+  "fields": {
+    "category": 21,
+    "prefix": "tr-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 24,
+  "fields": {
+    "category": 22,
+    "prefix": "tr-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 25,
+  "fields": {
+    "category": 23,
+    "prefix": "tr-sealant-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 26,
+  "fields": {
+    "category": 23,
+    "prefix": "sealant-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 27,
+  "fields": {
+    "category": 24,
+    "prefix": "ele-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 28,
+  "fields": {
+    "category": 24,
+    "prefix": "ebike-"
   }
 }
 ]

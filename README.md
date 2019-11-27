@@ -52,7 +52,7 @@ Supports the management/tracking of vendor orders.
     
 Dump initial data:
 
-    python manage.py dumpdata --indent 2 app.category app.categoryprefix app.categoryassessment > initial-data.json
+    python manage.py dumpdata --indent 2 app.category app.categoryprefix > initial-data.json
     
 Load initial data:
 
