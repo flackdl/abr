@@ -22,9 +22,11 @@
           <div class="card-title">
             <h6>Wear</h6>
           </div>
-          <div class="row" formGroupName="assessments">
-            <div class="col-12 my-1 text-center" *ngFor="let category of api.categories">
+          <div class="row" formGroupName="assessments" *ngFor="let category of api.categories">
+            <div class="col-6 my-1 text-right">
               <div class="text-black-50 font-weight-bold">{{ category.name }}</div>
+            </div>
+            <div class="col-6 my-1 text-left">
               <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="category.name" [class.is-invalid]="isAssessmentInputDirty(category.name) && !isAssessmentInputValid(category.name)">
                 <ng-container *ngFor="let choice of assessmentChoices">
                   <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === ASSESSMENT_GOOD, 'btn-danger': choice === ASSESSMENT_BAD, 'btn-warning': choice === ASSESSMENT_OK, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
