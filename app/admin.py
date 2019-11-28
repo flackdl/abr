@@ -47,6 +47,7 @@ class CategoryPrefixInline(admin.TabularInline):
 class CategoryAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
     list_display = ('name', 'position', 'service_only', 'prefixes',)
+    exclude = ('parent',)
 
     def prefixes(self, obj: Category):
         # parent category prefixes
@@ -61,9 +62,11 @@ class CategoryChildAdmin(CategoryAdmin):
     """
     Inherit from CategoryAdmin and:
     - only include prefix admin inline
+    - include all fields
     """
     list_display = ('name', 'parent', 'prefixes',)
     inlines = (CategoryPrefixInline,)
+    exclude = ()
 
 
 @admin.register(CategoryPrefix)
