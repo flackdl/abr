@@ -32,6 +32,10 @@ class CategoryChildInline(admin.TabularInline):
     model = CategoryChild
     extra = 0
     show_change_link = True
+    readonly_fields = ('prefixes',)
+
+    def prefixes(self, obj: CategoryChild):
+        return ', '.join([p.prefix for p in obj.categoryprefix_set.all()])
 
 
 class CategoryPrefixInline(admin.TabularInline):
@@ -42,22 +46,24 @@ class CategoryPrefixInline(admin.TabularInline):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
-    list_display = ('name', 'position', 'prefixes',)
+    list_display = ('name', 'position', 'service_only', 'prefixes',)
 
     def prefixes(self, obj: Category):
-        return [p.prefix for p in obj.categoryprefix_set.all()]
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).filter(parent__isnull=True)
+        # parent category prefixes
+        prefixes = [p.prefix for p in obj.categoryprefix_set.all()]
+        # child category prefixes
+        prefixes += [p.prefix for c in Category.objects_all.filter(parent=obj) for p in c.categoryprefix_set.all()]
+        return prefixes
 
 
 @admin.register(CategoryChild)
-class CategoryChildrenAdmin(admin.ModelAdmin):
+class CategoryChildAdmin(CategoryAdmin):
+    """
+    Inherit from CategoryAdmin and:
+    - only include prefix admin inline
+    """
+    list_display = ('name', 'parent', 'prefixes',)
     inlines = (CategoryPrefixInline,)
-    list_display = ('name', 'parent', 'position',)
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).filter(parent__isnull=False)
 
 
 @admin.register(CategoryPrefix)

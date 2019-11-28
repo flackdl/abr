@@ -27,10 +27,25 @@ class OrderPart(models.Model):
         return '{} => {}'.format(self.order, self.part_id)
 
 
+class CategoryParentManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(parent__isnull=True)
+
+
+class CategoryChildManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(parent__isnull=False)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     position = models.PositiveSmallIntegerField()
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    service_only = models.BooleanField(default=False)
+
+    # "default" manager is the first one defined
+    objects = CategoryParentManager()
+    objects_all = models.Manager()
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -42,8 +57,10 @@ class Category(models.Model):
 
 class CategoryChild(Category):
     """
-    Necessary to register the Category model again in the admin for children categories
+    Proxy model defining "child" categories
     """
+    objects = CategoryChildManager()
+
     class Meta:
         verbose_name_plural = 'category children'
         proxy = True
