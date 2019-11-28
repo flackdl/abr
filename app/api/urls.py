@@ -7,7 +7,7 @@ router = routers.DefaultRouter()
 # app endpoints
 router.register(r'orders', viewsets.OrderViewSet)
 router.register(r'orders-parts', viewsets.OrderPartsViewSet)
-router.register(r'category', viewsets.CategoryViewSet)
+router.register(r'category', viewsets.CategoryParentViewSet)
 router.register(r'category-children', viewsets.CategoryChildViewSet)
 router.register(r'category-prefix', viewsets.CategoryPrefixViewSet)
 

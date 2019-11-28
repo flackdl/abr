@@ -43,9 +43,10 @@ class Category(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     service_only = models.BooleanField(default=False)
 
-    # "default" manager is the first one defined
-    objects = CategoryParentManager()
-    objects_all = models.Manager()
+    # managers - the first one declared is the default
+    objects = models.Manager()
+    parents = CategoryParentManager()
+    children = CategoryChildManager()
 
     class Meta:
         verbose_name_plural = 'categories'

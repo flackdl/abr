@@ -44,29 +44,36 @@ class CategoryPrefixInline(admin.TabularInline):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryParentAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
     list_display = ('name', 'position', 'service_only', 'prefixes',)
     exclude = ('parent',)
+
+    def get_queryset(self, request):
+        return Category.parents.all()
 
     def prefixes(self, obj: Category):
         # parent category prefixes
         prefixes = [p.prefix for p in obj.categoryprefix_set.all()]
         # child category prefixes
-        prefixes += [p.prefix for c in Category.objects_all.filter(parent=obj) for p in c.categoryprefix_set.all()]
+        prefixes += [p.prefix for c in Category.children.filter(parent=obj) for p in c.categoryprefix_set.all()]
         return prefixes
 
 
 @admin.register(CategoryChild)
-class CategoryChildAdmin(CategoryAdmin):
+class CategoryChildAdmin(CategoryParentAdmin):
     """
-    Inherit from CategoryAdmin and:
+    Inherit from CategoryParentAdmin and:
+    - only include child categories
     - only include prefix admin inline
     - include all fields
     """
     list_display = ('name', 'parent', 'prefixes',)
     inlines = (CategoryPrefixInline,)
     exclude = ()
+
+    def get_queryset(self, request):
+        return Category.children.all()
 
 
 @admin.register(CategoryPrefix)

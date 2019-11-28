@@ -234,9 +234,13 @@ class PreferencesQBOViewSet(QBOBaseViewSet):
     model_class = Preferences
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryParentViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        # only return parents here
+        return Category.parents.all()
 
 
 class CategoryChildViewSet(viewsets.ModelViewSet):

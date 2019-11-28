@@ -5,7 +5,8 @@
   "fields": {
     "name": "Chain",
     "position": 1,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -14,7 +15,8 @@
   "fields": {
     "name": "Chainrings",
     "position": 2,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -23,7 +25,8 @@
   "fields": {
     "name": "Cassette/Freewheel",
     "position": 3,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -32,7 +35,8 @@
   "fields": {
     "name": "Bottom Bracket",
     "position": 16,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -41,7 +45,8 @@
   "fields": {
     "name": "Headset",
     "position": 17,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -50,7 +55,8 @@
   "fields": {
     "name": "Suspension",
     "position": 19,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -59,7 +65,8 @@
   "fields": {
     "name": "Hanger",
     "position": 4,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -68,7 +75,8 @@
   "fields": {
     "name": "Pulley wheels",
     "position": 5,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -77,7 +85,8 @@
   "fields": {
     "name": "Rear DER cable",
     "position": 7,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -86,7 +95,8 @@
   "fields": {
     "name": "Rear DER",
     "position": 6,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -95,7 +105,8 @@
   "fields": {
     "name": "Front DER",
     "position": 8,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -104,7 +115,8 @@
   "fields": {
     "name": "Front DER Cable",
     "position": 9,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -113,7 +125,8 @@
   "fields": {
     "name": "Rear Brake",
     "position": 10,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -122,7 +135,8 @@
   "fields": {
     "name": "Rear Brake Cable",
     "position": 11,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -131,7 +145,8 @@
   "fields": {
     "name": "Front Brake",
     "position": 12,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -140,7 +155,8 @@
   "fields": {
     "name": "Front Brake Cable",
     "position": 13,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -149,7 +165,8 @@
   "fields": {
     "name": "Rear Tire",
     "position": 14,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -158,7 +175,8 @@
   "fields": {
     "name": "Front Tire",
     "position": 15,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -167,7 +185,8 @@
   "fields": {
     "name": "Tubeless Sealant",
     "position": 18,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
@@ -176,25 +195,88 @@
   "fields": {
     "name": "Electrical",
     "position": 20,
-    "parent": null
+    "parent": null,
+    "service_only": false
   }
 },
 {
   "model": "app.category",
   "pk": 25,
   "fields": {
-    "name": "Chain 1 Speed",
+    "name": "Single Speed",
     "position": 1,
-    "parent": 1
+    "parent": 1,
+    "service_only": false
   }
 },
 {
   "model": "app.category",
   "pk": 26,
   "fields": {
-    "name": "Chain 2 Speed",
+    "name": "Chain 8 Speed",
+    "position": 3,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 27,
+  "fields": {
+    "name": "Chain 9 Speed",
+    "position": 4,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 28,
+  "fields": {
+    "name": "Chain 10 speed",
+    "position": 5,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 31,
+  "fields": {
+    "name": "Chain 3 Speed",
     "position": 2,
-    "parent": 1
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 33,
+  "fields": {
+    "name": "Tune-up",
+    "position": 21,
+    "parent": null,
+    "service_only": true
+  }
+},
+{
+  "model": "app.category",
+  "pk": 34,
+  "fields": {
+    "name": "Labor",
+    "position": 22,
+    "parent": null,
+    "service_only": true
+  }
+},
+{
+  "model": "app.category",
+  "pk": 35,
+  "fields": {
+    "name": "Build",
+    "position": 23,
+    "parent": null,
+    "service_only": true
   }
 },
 {
@@ -274,7 +356,7 @@
   "pk": 16,
   "fields": {
     "category": 13,
-    "prefix": "DER-CB-"
+    "prefix": "der-cb-"
   }
 },
 {
@@ -378,7 +460,7 @@
   "pk": 29,
   "fields": {
     "category": 25,
-    "prefix": "ch-1-"
+    "prefix": "ch-s-"
   }
 },
 {
@@ -386,7 +468,63 @@
   "pk": 30,
   "fields": {
     "category": 26,
-    "prefix": "ch-2-"
+    "prefix": "ch-8-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 31,
+  "fields": {
+    "category": 25,
+    "prefix": "ch-1-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 32,
+  "fields": {
+    "category": 27,
+    "prefix": "ch-9-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 33,
+  "fields": {
+    "category": 28,
+    "prefix": "ch-10-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 34,
+  "fields": {
+    "category": 31,
+    "prefix": "ch-3-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 35,
+  "fields": {
+    "category": 33,
+    "prefix": "tuneup-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 36,
+  "fields": {
+    "category": 34,
+    "prefix": "labor-"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 37,
+  "fields": {
+    "category": 35,
+    "prefix": "build-"
   }
 }
 ]
