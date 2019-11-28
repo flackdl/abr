@@ -81,7 +81,7 @@ def quickbooks_auth(f):
 
         if not request.user.is_authenticated:
 
-            if request.content_type == 'application/json':
+            if is_json_request(request):
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
             return redirect(reverse('login'))
@@ -97,7 +97,7 @@ def quickbooks_auth(f):
             log('no access token')
 
             # json requests should return contextual data vs getting redirected
-            if request.content_type == 'application/json':
+            if is_json_request(request):
                 return JsonResponse({'success': False, 'reason': 'authentication'})
 
             # redirect to QBO authorization URL
@@ -126,7 +126,7 @@ def quickbooks_auth(f):
             log('quickbooks exception, clearing token and redirecting (%s)' % e)
             redis_client.delete('access_token')
             # json requests should return contextual data vs getting redirected
-            if request.content_type == 'application/json':
+            if is_json_request(request):
                 return JsonResponse({'success': False, 'reason': 'authentication'})
             return redirect(reverse('dashboard'))
         except (UnsupportedException, GeneralException, ValidationException, SevereException) as e:
@@ -138,6 +138,10 @@ def quickbooks_auth(f):
             logging.exception(e)
             raise e
     return wrapper
+
+
+def is_json_request(request):
+    return request.content_type == 'application/json' or 'application/json' in request.META['HTTP_ACCEPT']
 
 
 def qbo_access_token_needs_refreshing():

@@ -42,7 +42,10 @@ class CategoryPrefixInline(admin.TabularInline):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
-    list_display = ('name', 'position')
+    list_display = ('name', 'position', 'prefixes',)
+
+    def prefixes(self, obj: Category):
+        return [p.prefix for p in obj.categoryprefix_set.all()]
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(parent__isnull=True)

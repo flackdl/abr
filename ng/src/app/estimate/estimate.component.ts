@@ -196,6 +196,7 @@ export class EstimateComponent implements OnInit {
       'btn-outline-danger': this.hasAssessmentResultForCategory('bad', category),
       'btn-outline-warning': this.hasAssessmentResultForCategory('ok', category),
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
+      'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
     };
   }
 

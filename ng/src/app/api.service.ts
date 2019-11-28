@@ -21,7 +21,7 @@ export class ApiService {
   public API_QBO_INVENTORY = '/api/inventory/';
   public API_QBO_SERVICE = '/api/service/';
   public API_QBO_PREFERENCES = '/api/preferences/';
-  public API_QBO_SETTINGS = '/api/settings/';
+  public API_SETTINGS = '/api/settings/';
   public API_CATEGORY= '/api/category/';
   public API_CATEGORY_CHILDREN = '/api/category-children/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
@@ -34,6 +34,7 @@ export class ApiService {
   public categoryPrefixes: any[];
 
   public estimateData$ = new Subject();
+  public needsAuthentication$ = new Subject();
 
   constructor(
     private http: HttpClient,
@@ -42,8 +43,8 @@ export class ApiService {
 
   public init(): Observable<any> {
     return forkJoin(
-      this.loadEstimateData(),
       this.fetchSettings(),
+      this.loadEstimateData(),
       this.fetchQBOPreferences(),
       this.fetchCategory(),
       this.fetchCategoryChildren(),
@@ -96,91 +97,91 @@ export class ApiService {
   }
 
   public createCustomer(data: any): Observable<any> {
-    return this.http.post(this.API_QBO_CUSTOMER, data);
+    return this._responseProxy(this.http.post(this.API_QBO_CUSTOMER, data));
   }
 
   public fetchSettings(): Observable<any> {
-    return this.http.get(this.API_QBO_SETTINGS, ).pipe(
+    return this._responseProxy(this.http.get(this.API_SETTINGS).pipe(
       map((data: any) => {
         this.settings = data;
         return this.settings;
       }),
-    );
+    ));
   }
 
   public fetchQBOPreferences(): Observable<any> {
-    return this.http.get(this.API_QBO_PREFERENCES, ).pipe(
+    return this._responseProxy(this.http.get(this.API_QBO_PREFERENCES, ).pipe(
       map((data: any) => {
         if (data.length > 0) {
           this.qboPreferences = data[0];
         }
         return this.qboPreferences;
       }),
-    );
+    ));
   }
 
   public fetchCustomers(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_QBO_CUSTOMER, {params: httpParams});
+    return this._responseProxy(this.http.get(this.API_QBO_CUSTOMER, {params: httpParams}));
   }
 
   public fetchInvoices(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_QBO_INVOICE, {params: httpParams}).pipe(
+    return this._responseProxy(this.http.get(this.API_QBO_INVOICE, {params: httpParams}).pipe(
       map((data: any) => {
         // sort by most recent transaction date
         return _.sortBy(data, (d) => d.TxnDate).reverse();
       }),
-    );
+    ));
   }
 
   public fetchEstimates(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_QBO_ESTIMATE, {params: httpParams});
+    return this._responseProxy(this.http.get(this.API_QBO_ESTIMATE, {params: httpParams}));
   }
 
   public fetchInventory(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_QBO_INVENTORY, {params: httpParams});
+    return this._responseProxy(this._responseProxy(this.http.get(this.API_QBO_INVENTORY, {params: httpParams})));
   }
 
   public fetchService(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_QBO_SERVICE, {params: httpParams});
+    return this._responseProxy(this.http.get(this.API_QBO_SERVICE, {params: httpParams}));
   }
 
   public fetchCategory(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_CATEGORY, {params: httpParams}).pipe(
+    return this._responseProxy(this.http.get(this.API_CATEGORY, {params: httpParams}).pipe(
       map((data: any[]) => {
         this.categories = data;
         return this.categories;
       })
-    );
+    ));
   }
 
   public fetchCategoryChildren(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_CATEGORY_CHILDREN, {params: httpParams}).pipe(
+    return this._responseProxy(this.http.get(this.API_CATEGORY_CHILDREN, {params: httpParams}).pipe(
       map((data: any[]) => {
         this.categoriesChildren = data;
         return this.categoriesChildren;
       })
-    );
+    ));
   }
 
   public fetchCategoryPrefix(params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this.http.get(this.API_CATEGORY_PREFIX, {params: httpParams}).pipe(
+    return this._responseProxy(this.http.get(this.API_CATEGORY_PREFIX, {params: httpParams}).pipe(
       map((data: any[]) => {
         this.categoryPrefixes = data;
         return this.categoryPrefixes;
       })
-    );
+    ));
   }
 
   public createEstimate(data: any): Observable<any> {
-    return this.http.post(this.API_QBO_ESTIMATE, data);
+    return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, data));
   }
 
   public markFormDirty(form: FormGroup) {
@@ -188,5 +189,20 @@ export class ApiService {
     Object.keys(form.controls).forEach(field => {
       form.get(field).markAsDirty();
     });
+  }
+
+  protected _responseProxy(response: Observable<any>): Observable<any> {
+    return response.pipe(
+      map((data) => {
+        // handle authentication errors
+        if (data.success === false) {
+          console.error(data);
+          if (data.reason === 'authentication') {
+            this.needsAuthentication$.next(true);
+          }
+        }
+        return data;
+      }),
+    );
   }
 }
