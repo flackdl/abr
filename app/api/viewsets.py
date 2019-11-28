@@ -7,7 +7,7 @@ from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from app.api.mixins import CustomerRefFilterMixin
-from app.models import Order, OrderPart, Category, CategoryPrefix
+from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
     CategoryPrefixSerializer)
@@ -238,16 +238,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-    def get_queryset(self):
-        return super().get_queryset().filter(parent__isnull=True)
-
 
 class CategoryChildViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = CategoryChild.objects.all()
     serializer_class = CategorySerializer
-
-    def get_queryset(self):
-        return super().get_queryset().filter(parent__isnull=False)
 
 
 class CategoryPrefixViewSet(viewsets.ModelViewSet):
