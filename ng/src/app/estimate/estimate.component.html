@@ -1,8 +1,9 @@
 <ngx-loading [show]="isLoading"></ngx-loading>
 <form [formGroup]="form" (ngSubmit)="createEstimate()">
   <div class="row">
+
     <!-- categories -->
-    <div class="col-6">
+    <div class="col-4">
       <div class="card">
         <div class="card-header">
           <h5>Categories</h5>
@@ -25,8 +26,10 @@
         </div>
       </div>
     </div>
-    <!-- inventory items -->
-    <div class="col-3">
+
+    <div class="col-8">
+
+      <!-- inventory items -->
       <div class="card">
         <div class="card-header">
           <h5>Inventory</h5>
@@ -50,10 +53,9 @@
           </div>
         </div>
       </div>
-    </div>
-    <!-- labor items -->
-    <div class="col-3">
-      <div class="card">
+
+      <!-- labor items -->
+      <div class="card mt-3">
         <div class="card-header">
           <h5>Labor</h5>
         </div>
@@ -76,6 +78,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
   <!-- line items -->

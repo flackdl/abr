@@ -114,7 +114,6 @@ export class EstimateComponent implements OnInit {
         tap(() => {
           this.isItemsLoading = false;
           this.inventorySelect.open();
-          this.serviceSelect.open();
         }),
       ).subscribe(
         () => {},
