@@ -58,6 +58,18 @@ export class EstimateComponent implements OnInit {
     )
   }
 
+  public getMainCategories() {
+    return this.api.categories.filter((category) => {
+      return !category.service_only;
+    })
+  }
+
+  public getServiceOnlyCategories() {
+    return this.api.categories.filter((category) => {
+      return category.service_only;
+    })
+  }
+
   public categoryChildren(category: any) {
     return this.api.categoriesChildren.filter((child) => {
       return child.parent === category.id;
@@ -113,7 +125,11 @@ export class EstimateComponent implements OnInit {
       ).pipe(
         tap(() => {
           this.isItemsLoading = false;
-          this.inventorySelect.open();
+          if (category.service_only) {
+            this.serviceSelect.open();
+          } else {
+            this.inventorySelect.open();
+          }
         }),
       ).subscribe(
         () => {},
