@@ -25,8 +25,7 @@ export type EstimateData = {
     amount: number,
     description: string,
   }[],
-  // TODO - isn't this "DocNumber" and is automatically incremented/populated
-  // tag_number: string
+  tag_number?: string,
   expiration_date?: string,
   expiration_time?: string,
   employee_initials?: string,

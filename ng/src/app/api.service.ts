@@ -68,6 +68,15 @@ export class ApiService {
     return Boolean(this.estimateData.items && this.estimateData.items.length > 0);
   }
 
+  public hasEstimateWrapUp(): boolean {
+    return Boolean(
+      this.estimateData.expiration_date &&
+      this.estimateData.expiration_time &&
+      this.estimateData.employee_initials &&
+      this.estimateData.need_parts !== undefined
+    );
+  }
+
   public currentCustomer() {
     if (this.hasCurrentCustomer()) {
       return `${this.estimateData.first_name} ${this.estimateData.last_name}`;

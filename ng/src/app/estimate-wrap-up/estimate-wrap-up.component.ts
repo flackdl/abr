@@ -23,12 +23,12 @@ export class EstimateWrapUpComponent implements OnInit {
   ngOnInit() {
 
     this.form = this.fb.group({
-      expiration_date: ['', Validators.required],
-      expiration_time: ['', Validators.required],
-      tag_number: ['', Validators.required],
-      employee_initials: ['', Validators.required],
-      need_parts: ['', Validators.required],
-      parts_in_inventory: [''],
+      expiration_date: [this.api.estimateData.expiration_date, Validators.required],
+      expiration_time: [this.api.estimateData.expiration_time, Validators.required],
+      tag_number: [this.api.estimateData.tag_number, Validators.required],
+      employee_initials: [this.api.estimateData.employee_initials, Validators.required],
+      need_parts: [this.api.estimateData.need_parts, Validators.required],
+      parts_in_inventory: [this.api.estimateData.parts_in_inventory],  // conditionally required if need_parts is true
     });
 
     // update estimate data in local storage on update
