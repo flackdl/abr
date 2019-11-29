@@ -33,4 +33,5 @@ export type EstimateData = {
   parts_in_inventory?: boolean,
   review_ok?: boolean,
   contact_method?: string,
+  signature?: string,
 };

@@ -9,10 +9,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
   styleUrls: ['./review.component.scss']
 })
 export class ReviewComponent implements OnInit {
-  public signature: any;
+  public signature: SignaturePad;
   public form: FormGroup;
 
-  @ViewChild("signature", {static: true}) signatureEl: ElementRef;
+  @ViewChild("signatureEl", {static: true}) signatureEl: ElementRef;
 
   constructor(
     private api: ApiService,
@@ -25,6 +25,15 @@ export class ReviewComponent implements OnInit {
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
+    });
+  }
+
+  public submit() {
+    console.log(this.signature);
+    console.log(this.form);
+
+    this.api.updateEstimateData({
+      signature: this.signature.toDataURL(),
     });
   }
 }
