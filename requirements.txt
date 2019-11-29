@@ -35,7 +35,7 @@ python-quickbooks==0.7.5
 pytz==2018.3
 rauth==0.7.3
 redis==2.10.5
-requests==2.18.4
+requests==2.20.0
 simplejson==3.13.2
 six==1.10.0
 tinycss==0.3
