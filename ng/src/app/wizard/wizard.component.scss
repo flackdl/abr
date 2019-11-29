@@ -6,6 +6,9 @@ a {
       box-shadow: 0 5px seagreen, 0 -5px seagreen;
     }
     &.active {
+      &.success {
+        box-shadow: 0 8px seagreen, 0 -8px seagreen;
+      }
       box-shadow: 0 8px slategray, 0 -8px slategray;
       color: black!important;
       font-weight: bold;

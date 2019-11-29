@@ -114,11 +114,23 @@
           <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
           <td>${{ item.price }}</td>
           <td>${{ item.amount }}</td>
-          <td>{{ item.amount * .0725 | currency }}</td>
+          <td>
+            <span *ngIf="itemHasTax(item)" class="oi oi-check"></span>
+          </td>
           <td><button class="btn btn-outline-danger" type="button" (click)="removeItem(i)"><span class="oi oi-x"></span></button></td>
         </tr>
         </tbody>
       </table>
+      <div class="text-right">
+        <div class="d-flex justify-content-end">
+          <strong class="mr-3">Subtotal: </strong>
+          <strong>{{ getSubTotal() | currency }}</strong>
+        </div>
+        <div class="d-flex justify-content-end">
+          <strong class="mr-3">Total: </strong>
+          <strong>{{ getTotal() | currency }}</strong>
+        </div>
+      </div>
     </div>
   </div>
   <div class="d-flex justify-content-end my-3">
