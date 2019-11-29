@@ -1,40 +1,70 @@
-<!-- top -->
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <div class="">
-    <!-- expiration date -->
-    <div class="form-group">
-      <label for="expirationDate">Expiration Date</label>
-      <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
-    </div>
-    <!-- expiration time -->
-    <div class="form-group">
-      <label for="expirationTime">Expiration Time</label>
-      <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
-    </div>
-    <!-- order parts -->
-    <h4>Do you need to order parts?</h4>
-    <div class="form-check">
-      <input class="form-check-input" name="order-parts" type="checkbox" value="yes" id="defaultCheck1">
-      <label class="form-check-label" for="defaultCheck1">
-        Yes
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" name="order-parts" type="checkbox" value="no" id="defaultCheck2">
-      <label class="form-check-label" for="defaultCheck2">
-        No
-      </label>
-    </div>
-    <!-- initials -->
-    <div class="form-check">
-      <label for="initials">Employee Initials</label>
-      <input type="text" minlength="2" maxlength="10" class="form-control" id="initials" [class.is-invalid]="form.controls.employee_initials.dirty && !form.controls.employee_initials.valid" formControlName="employee_initials">
-    </div>
+<div class="card">
+  <div class="card-header">Wrap Up</div>
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="d-flex justify-content-center">
+        <div>
+          <!-- expiration date -->
+          <div class="form-group">
+            <label for="expirationDate">Expiration Date</label>
+            <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
+          </div>
+          <!-- expiration time -->
+          <div class="form-group">
+            <label for="expirationTime">Expiration Time</label>
+            <input type="time" class="form-control" id="expirationTime" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
+          </div>
+          <!-- need to order parts? -->
+          <div class="form-group">
+            <label>Do you need to order parts?</label>
+
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.need_parts.dirty && !form.controls.need_parts.valid" id="parts-yes" formControlName="need_parts">
+              <label class="form-check-label" for="parts-yes">
+                Yes
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.need_parts.dirty && !form.controls.need_parts.valid" id="parts-no" formControlName="need_parts">
+              <label class="form-check-label" for="parts-no">
+                No
+              </label>
+            </div>
+          </div>
+          <!-- parts in inventory? -->
+          <div class="form-group" [ngStyle]="{'visibility': form.value.need_parts ? 'visible' : 'hidden'}">
+            <label>Are the parts needed in our list of inventory?</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.parts_in_inventory.dirty && !form.controls.parts_in_inventory.valid" id="inventory-yes" formControlName="parts_in_inventory">
+              <label class="form-check-label" for="inventory-yes">
+                Yes
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.parts_in_inventory.dirty && !form.controls.parts_in_inventory.valid" id="inventory-no" formControlName="parts_in_inventory">
+              <label class="form-check-label" for="inventory-no">
+                No
+              </label>
+            </div>
+          </div>
+          <!-- tag number -->
+          <div class="form-group">
+            <label for="tag-number">Tag #</label>
+            <input type="text" class="form-control" id="tag-number" [class.is-invalid]="form.controls.tag_number.dirty && !form.controls.tag_number.valid" formControlName="tag_number">
+          </div>
+          <!-- initials -->
+          <div class="form-group">
+            <label for="initials">Employee Initials</label>
+            <input type="text" minlength="2" maxlength="10" class="form-control" id="initials" [class.is-invalid]="form.controls.employee_initials.dirty && !form.controls.employee_initials.valid" formControlName="employee_initials">
+          </div>
+        </div>
+      </div>
+      <!-- create -->
+      <div class="d-flex justify-content-end">
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">Create</button>
+        </div>
+      </div>
+    </form>
   </div>
-  <!-- create -->
-  <div class="d-flex justify-content-end">
-    <div class="form-group">
-      <button type="submit" class="btn btn-success">Create</button>
-    </div>
-  </div>
-</form>
+</div>

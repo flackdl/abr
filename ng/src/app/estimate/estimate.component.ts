@@ -235,7 +235,7 @@ export class EstimateComponent implements OnInit {
   }
 
   public getItemTax(item: any) {
-    return item.amount * .0725;
+    return item.amount * .0775;
   }
 
   public createEstimate() {

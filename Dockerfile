@@ -1,10 +1,18 @@
 FROM ubuntu:18.04
 
+# add app
+ADD . /app/
+WORKDIR /app
+
 # update and install dependencies
 RUN apt-get update && \
     apt-get install -y \
+        curl && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+    apt-get install -y \
+        curl \
+        nodejs \
         git \
-        wget \
         python3-pip \
         python3-dev \
         python3-setuptools \
@@ -16,19 +24,16 @@ RUN apt-get update && \
         libxslt1-dev \
         libz-dev \
         libpango1.0-0 \
-        && true
-
-# add app
-ADD . /app/
-WORKDIR /app
-
-# install python dependencies
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements.txt
-
-# collect static files
-RUN mkdir ng-assets
-RUN python3 manage.py collectstatic --noinput
+        && true && \
+        # build angular app
+        mkdir -p ng-assets && \
+        npm --prefix ng run build && \
+        # install python dependencies
+        pip3 install --upgrade pip && \
+        pip3 install -r requirements.txt && \
+        # collect django static files
+        python3 manage.py collectstatic --noinput && \
+        true
 
 # run wsgi app
 CMD gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
