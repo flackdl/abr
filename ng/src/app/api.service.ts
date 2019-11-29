@@ -34,7 +34,7 @@ export class ApiService {
   public categoryPrefixes: any[];
 
   public estimateData$ = new Subject();
-  public needsAuthentication$ = new Subject();
+  public needsAuthentication = false;
 
   constructor(
     private http: HttpClient,
@@ -198,7 +198,7 @@ export class ApiService {
         if (data.success === false) {
           console.error(data);
           if (data.reason === 'authentication') {
-            this.needsAuthentication$.next(true);
+            this.needsAuthentication = true;
           }
         }
         return data;

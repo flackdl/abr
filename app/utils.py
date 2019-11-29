@@ -112,18 +112,15 @@ def quickbooks_auth(f):
             if not lock_exists and qbo_access_token_needs_refreshing():
                 refresh_qbo_access_token(get_callback_url(request))
         except Exception as e:
-            # something went wrong (maybe our refresh token expired) so wipe everything and have the user go through the auth/consent flow
+            # something went wrong refreshing the access token, but since it could be a transient error, let the request continue to work itself out
             logging.exception(e)
-            redis_client.delete('access_token')
-            redis_client.delete('access_token_date')
-            redis_client.delete('refresh_token')
 
         # perform the actual view
         try:
             return f(request, *args, **kwargs)
         except (AuthClientError, AuthorizationException) as e:
             # session appears to have expired so wipe token
-            log('quickbooks exception, clearing token and redirecting (%s)' % e)
+            log('quickbooks auth exception, clearing token and redirecting (%s)' % e)
             redis_client.delete('access_token')
             # json requests should return contextual data vs getting redirected
             if is_json_request(request):

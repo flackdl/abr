@@ -24,6 +24,6 @@
   </div>
 </nav>
 <div class="container">
-  <div class="alert alert-danger my-2" *ngIf="api.needsAuthentication$ | async">You need to <a href="/">log in again</a></div>
+  <div class="alert alert-danger my-2" *ngIf="api.needsAuthentication">You need to <a href="/">log in again.</a></div>
   <router-outlet></router-outlet>
 </div>
