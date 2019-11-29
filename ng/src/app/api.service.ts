@@ -64,6 +64,10 @@ export class ApiService {
     return Boolean(this.estimateData.assessments && this.estimateData.bike_model);
   }
 
+  public hasEstimate(): boolean {
+    return Boolean(this.estimateData.items && this.estimateData.items.length > 0);
+  }
+
   public currentCustomer() {
     if (this.hasCurrentCustomer()) {
       return `${this.estimateData.first_name} ${this.estimateData.last_name}`;
