@@ -25,12 +25,10 @@
         No
       </label>
     </div>
-  </div>
-  <!-- signature -->
-  <div class="d-flex justify-content-center">
-    <div>
-      <h5>Employee Signature</h5>
-      <canvas #signature class="border border-dark"></canvas>
+    <!-- initials -->
+    <div class="form-check">
+      <label for="initials">Employee Initials</label>
+      <input type="text" minlength="2" maxlength="10" class="form-control" id="initials" [class.is-invalid]="form.controls.employee_initials.dirty && !form.controls.employee_initials.valid" formControlName="employee_initials">
     </div>
   </div>
   <!-- create -->
