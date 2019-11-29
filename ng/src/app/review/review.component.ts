@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
 import {ApiService} from "../api.service";
@@ -17,10 +18,14 @@ export class ReviewComponent implements OnInit {
   constructor(
     private api: ApiService,
     private fb: FormBuilder,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
     this.signature = new SignaturePad(this.signatureEl.nativeElement);
+    if (this.api.estimateData.signature) {
+      this.signature.fromDataURL(this.api.estimateData.signature);
+    }
 
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
@@ -28,9 +33,22 @@ export class ReviewComponent implements OnInit {
     });
   }
 
+  public clearSignature() {
+    this.signature.clear();
+    delete this.api.estimateData.signature;
+    this.api.updateEstimateData();
+  }
+
   public submit() {
     console.log(this.signature);
     console.log(this.form);
+
+    this.api.markFormDirty(this.form);
+
+    if (!this.form.valid || this.signature.isEmpty()) {
+      this.toastr.error('Invalid form');
+      return;
+    }
 
     this.api.updateEstimateData({
       signature: this.signature.toDataURL(),
