@@ -29,6 +29,8 @@ export type EstimateData = {
   expiration_date?: string,
   expiration_time?: string,
   employee_initials?: string,
-  need_parts?: string,
-  parts_in_inventory?: string,
+  need_parts?: boolean,
+  parts_in_inventory?: boolean,
+  review_ok?: boolean,
+  contact_method?: string,
 };

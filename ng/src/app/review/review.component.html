@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="card-header">
+    <h4>Review</h4>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="form">
+      <div class="d-flex justify-content-center">
+        <div>
+          <div class="form-group">
+            <label>Review OK?</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.review_ok.dirty && !form.controls.review_ok.valid" id="review_ok-yes" formControlName="review_ok">
+              <label class="form-check-label" for="review_ok-yes">
+                Yes
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.review_ok.dirty && !form.controls.review_ok.valid" id="review_ok-no" formControlName="review_ok">
+              <label class="form-check-label" for="review_ok-no">
+                No
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contact-method">Best Contact Method</label>
+            <select class="form-control" id="contact-method" [class.is-invalid]="form.controls.contact_method.dirty && !form.controls.contact_method.valid" formControlName="contact_method">
+              <option></option>
+              <option>Email</option>
+              <option>Text</option>
+              <option>Call</option>
+            </select>
+          </div>
+          <!-- signature -->
+          <div class="d-flex justify-content-center">
+            <div>
+              <h5>Employee Signature</h5>
+              <canvas #signature class="border border-dark"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- next -->
+      <div class="d-flex justify-content-end">
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">Next</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

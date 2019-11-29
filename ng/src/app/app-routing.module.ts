@@ -9,6 +9,7 @@ import {MainConcernComponent} from "./main-concern/main-concern.component";
 import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {CustomerComponent} from "./customer/customer.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
+import {ReviewComponent} from "./review/review.component";
 
 
 const routes: Routes = [
@@ -30,6 +31,7 @@ const routes: Routes = [
       { path: 'questionnaire', component: QuestionnaireComponent },
       { path: 'estimate', component: EstimateComponent },
       { path: 'wrap-up', component: EstimateWrapUpComponent },
+      { path: 'review', component: ReviewComponent },
     ],
   },
   { path: '**', component: PageNotFoundComponent }

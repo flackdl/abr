@@ -77,6 +77,13 @@ export class ApiService {
     );
   }
 
+  public hasReview(): boolean {
+    return Boolean(
+      // TODO
+      false
+    );
+  }
+
   public currentCustomer() {
     if (this.hasCurrentCustomer()) {
       return `${this.estimateData.first_name} ${this.estimateData.last_name}`;

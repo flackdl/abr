@@ -14,7 +14,7 @@ export class WizardComponent implements OnInit {
     {name: "Assessment", url: "/wizard/questionnaire",  complete: () => { return this.stepQuestionnaireComplete() }},
     {name: "Estimate", url: "/wizard/estimate",  complete: () => { return this.stepEstimateComplete() }},
     {name: "Wrap Up", url: "/wizard/wrap-up",  complete: () => { return this.stepWrapUpComplete() }},
-    {name: "Review", url: "TODO",  complete: () => false},
+    {name: "Review", url: "/wizard/review",  complete: () => { return this.stepReviewComplete() }},
     {name: "Notes", url: "TODO",  complete: () => false},
   ];
 
@@ -46,6 +46,10 @@ export class WizardComponent implements OnInit {
 
   public stepWrapUpComplete(): boolean {
     return this.api.hasEstimateWrapUp();
+  }
+
+  public stepReviewComplete(): boolean {
+    return this.api.hasReview();
   }
 
   ngOnInit() {
