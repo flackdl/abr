@@ -43,8 +43,9 @@ export class ReviewComponent implements OnInit {
 
   public clearSignature() {
     this.signature.clear();
-    delete this.api.estimateData.signature;
-    this.api.updateEstimateData();
+    this.api.updateEstimateData({
+      signature: '',
+    });
   }
 
   public submit() {
