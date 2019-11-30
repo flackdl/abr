@@ -12,6 +12,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 export class ReviewComponent implements OnInit {
   public signature: SignaturePad;
   public form: FormGroup;
+  public signatureInvalid = false;
 
   @ViewChild("signatureEl", {static: true}) signatureEl: ElementRef;
 
@@ -22,7 +23,14 @@ export class ReviewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.signature = new SignaturePad(this.signatureEl.nativeElement);
+
+    this.signature = new SignaturePad(this.signatureEl.nativeElement,
+      {
+        onEnd: () => {
+          this.signatureInvalid = false;
+        }
+      });
+
     if (this.api.estimateData.signature) {
       this.signature.fromDataURL(this.api.estimateData.signature);
     }
@@ -45,7 +53,9 @@ export class ReviewComponent implements OnInit {
 
     this.api.markFormDirty(this.form);
 
-    if (!this.form.valid || this.signature.isEmpty()) {
+    this.signatureInvalid = this.signature.isEmpty();
+
+    if (!this.form.valid || this.signatureInvalid) {
       this.toastr.error('Invalid form');
       return;
     }
