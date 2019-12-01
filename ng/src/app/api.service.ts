@@ -91,8 +91,8 @@ export class ApiService {
   }
 
   public clearEstimateData() {
-    this.storage.clear('estimate');
     this.estimateData = {};
+    this.updateEstimateData();
     this.estimateData$.next(null);
   }
 
