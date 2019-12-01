@@ -10,7 +10,6 @@ RUN apt-get update && \
         curl && \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -y \
-        curl \
         nodejs \
         git \
         python3-pip \
@@ -24,16 +23,23 @@ RUN apt-get update && \
         libxslt1-dev \
         libz-dev \
         libpango1.0-0 \
-        && true && \
-        # build angular app
-        mkdir -p ng-assets && \
-        npm --prefix ng run build && \
-        # install python dependencies
-        pip3 install --upgrade pip && \
-        pip3 install -r requirements.txt && \
-        # collect django static files
-        python3 manage.py collectstatic --noinput && \
-        true
+    && true && \
+    npm install -g --ignore-scripts @angular/cli && \
+    # build angular app
+    mkdir -p ng-assets && \
+    npm --prefix ng run build && \
+    # install python dependencies
+    #pip3 install --upgrade pip && \
+    pip3 install -r requirements.txt && \
+    # collect django static files
+    python3 manage.py collectstatic --noinput && \
+    apt-get remove -y \
+        git \
+        nodejs \
+        curl \
+    && true && \
+    apt-get autoremove -y && \
+    true
 
 # run wsgi app
 CMD gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
