@@ -21,7 +21,6 @@ from app import views
 import app.api.urls
 
 urlpatterns = [
-    path('grappelli/', include('grappelli.urls')),  # grappelli URLS
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.dashboard, name='dashboard'),
     url(r'^callback$', views.callback, name='callback'),

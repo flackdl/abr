@@ -29,7 +29,6 @@ RUN apt-get update && \
     mkdir -p ng-assets && \
     npm --prefix ng run build && \
     # install python dependencies
-    #pip3 install --upgrade pip && \
     pip3 install -r requirements.txt && \
     # collect django static files
     python3 manage.py collectstatic --noinput && \
@@ -39,6 +38,7 @@ RUN apt-get update && \
         curl \
     && true && \
     apt-get autoremove -y && \
+    rm -rf ng/node_modules && \
     true
 
 # run wsgi app
