@@ -30,8 +30,7 @@ RUN apt-get update && \
     npm --prefix ng run build && \
     # install python dependencies
     pip3 install -r requirements.txt && \
-    # collect django static files
-    python3 manage.py collectstatic --noinput && \
+    # remove
     apt-get remove -y \
         git \
         nodejs \
@@ -41,11 +40,12 @@ RUN apt-get update && \
     rm -rf ng/node_modules && \
     true
 
-
 CMD \
     # build/migrate tables
     python3 manage.py migrate && \
     # run init
     python3 manage.py init && \
+    # collect django static files
+    python3 manage.py collectstatic --noinput && \
     # start web server
     gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi

@@ -217,7 +217,7 @@ export class EstimateComponent implements OnInit {
   }
 
   public itemHasTax(item: any): boolean {
-    return item.type === 'Service';
+    return item.type === 'Inventory';
   }
 
   public getSubTotal(): number {
@@ -227,11 +227,12 @@ export class EstimateComponent implements OnInit {
   }
 
   public getTotal(): number {
-    return this.getSubTotal() + _.sum(this.api.estimateData.items.filter((item) => {
-      return item.type === 'Inventory';
+    const tax = _.sum(this.api.estimateData.items.filter((item) => {
+      return this.itemHasTax(item);
     }).map((item) => {
       return this.getItemTax(item);
     }));
+    return this.getSubTotal() + tax;
   }
 
   public getItemTax(item: any) {
