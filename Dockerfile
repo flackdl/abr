@@ -41,5 +41,4 @@ RUN apt-get update && \
     rm -rf ng/node_modules && \
     true
 
-# run wsgi app
-CMD gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
+ENTRYPOINT ['docker-entrypoint.sh']
