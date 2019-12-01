@@ -41,4 +41,11 @@ RUN apt-get update && \
     rm -rf ng/node_modules && \
     true
 
-ENTRYPOINT ['docker-entrypoint.sh']
+
+CMD \
+    # build/migrate tables
+    python3 manage.py migrate && \
+    # run init
+    python3 manage.py init && \
+    # start web server
+    gunicorn -w 3 --timeout 20 -b :${PORT:-80} abr.wsgi
