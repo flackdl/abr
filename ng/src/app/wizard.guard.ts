@@ -2,7 +2,6 @@ import {Router} from "@angular/router";
 import { Injectable } from '@angular/core';
 import { CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import {MainConcernComponent} from "./main-concern/main-concern.component";
 import {ApiService} from "./api.service";
 import { ToastrService } from 'ngx-toastr';
 import {WizardStepsService} from './wizard-steps.service';
@@ -22,25 +21,25 @@ export class WizardGuard implements CanActivateChild {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    let success = true;
-    let returnPath;
+    let success;
+    let previous;
 
-    if (next.component === MainConcernComponent) {
-      const stepIndex = this.wizardSteps.steps.findIndex((step) => {
-        return step.component === next.component;
-      });
-      if (stepIndex !== 0 && stepIndex !== -1) {
-        success = this.wizardSteps.steps[stepIndex - 1].complete();
-        returnPath = [this.wizardSteps.steps[stepIndex - 1].url];
-      }
+    const stepIndex = this.wizardSteps.steps.findIndex((step) => {
+      return step.component === next.component;
+    });
+
+    if (stepIndex === -1 || stepIndex === 0) {
+      return true;
     }
 
+    success = this.wizardSteps.steps[stepIndex - 1].complete();
+    previous = [this.wizardSteps.steps[stepIndex - 1].url];
+
     if (!success) {
-      this.router.navigate(returnPath || '/wizard');
+      this.router.navigate(previous);
       return false;
     }
 
-    return true;
+    return success;
   }
-
 }

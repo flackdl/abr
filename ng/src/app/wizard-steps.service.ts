@@ -6,6 +6,7 @@ import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {EstimateComponent} from "./estimate/estimate.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 import {ReviewComponent} from "./review/review.component";
+import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class WizardStepsService {
     {name: "Estimate", component: EstimateComponent, url: "/wizard/estimate",  complete: () => { return this.api.hasEstimate() }},
     {name: "Wrap Up", component: EstimateWrapUpComponent, url: "/wizard/wrap-up",  complete: () => { return this.api.hasEstimateWrapUp() }},
     {name: "Review", component: ReviewComponent, url: "/wizard/review",  complete: () => { return this.api.hasReview() }},
-    {name: "Notes", component: null, url: "TODO",  complete: () => false},
+    {name: "Notes", component: EstimateNotesComponent, url: "/wizard/notes",  complete: () => false},
   ];
 
   public canEnter(step: any): boolean {
@@ -34,6 +35,7 @@ export class WizardStepsService {
       if (matchIndex === 0) {
         return true;
       }
+      // can enter if the previous is complete
       return this.steps[matchIndex - 1].complete();
     }
     return false;

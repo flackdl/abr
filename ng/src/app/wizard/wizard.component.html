@@ -1,9 +1,9 @@
-<div class="row bg-light mt-3">
+<div class="steps d-flex justify-content-center align-content-center flex-wrap bg-light mt-3">
   <ng-container *ngFor="let step of wizardSteps.steps" [ngSwitch]="wizardSteps.canEnter(step)">
-    <a [class.success]="step.complete()" class="col border text-center text-muted step" *ngSwitchCase="true" [routerLink]="step.url" routerLinkActive="active">
+    <a [class.success]="step.complete()" class="border text-center text-dark step my-2" *ngSwitchCase="true" [routerLink]="step.url" routerLinkActive="active">
       {{ step.name }}
     </a>
-    <span class="col border text-center text-muted step" *ngSwitchCase="false">{{ step.name }}</span>
+    <span class="border text-center text-muted step my-2" *ngSwitchCase="false">{{ step.name }}</span>
   </ng-container>
 </div>
 <div class="d-flex justify-content-end mt-2">

@@ -8,6 +8,8 @@ import {ApiService} from "./api.service";
 })
 export class AppComponent implements OnInit {
   title = 'ABR';
+  isMenuCollapsed = true;
+
   constructor(
     public api: ApiService,
   ) {}

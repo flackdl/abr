@@ -1,17 +1,34 @@
-a {
-  &.step {
+@import "~bootstrap/scss/bootstrap";
+
+.steps {
+  height: 165px;
+  @include media-breakpoint-up(sm) {
+    height: 90px;
+  }
+  @include media-breakpoint-up(md) {
+    height: 70px;
+  }
+
+  .step {
     white-space: nowrap;
-    box-shadow: 0 5px gray, 0 -5px gray;
-    &.success {
-      box-shadow: 0 5px seagreen, 0 -5px seagreen;
-    }
-    &.active {
+  }
+
+  a,span {
+    &.step {
+      width: 120px;
+      white-space: nowrap;
+      box-shadow: 0 5px gray, 0 -5px gray;
       &.success {
-        box-shadow: 0 8px seagreen, 0 -8px seagreen;
+        box-shadow: 0 5px seagreen, 0 -5px seagreen;
       }
-      box-shadow: 0 8px slategray, 0 -8px slategray;
-      color: black!important;
-      font-weight: bold;
+      &.active {
+        &.success {
+          box-shadow: 0 8px seagreen, 0 -8px seagreen;
+        }
+        box-shadow: 0 8px slategray, 0 -8px slategray;
+        color: black!important;
+        font-weight: bold;
+      }
     }
   }
 }
