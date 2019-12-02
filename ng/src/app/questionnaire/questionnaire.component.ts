@@ -82,4 +82,11 @@ export class QuestionnaireComponent implements OnInit {
     const input = this.form.get('assessments').get(assessment);
     return input.valid;
   }
+
+  public setAssessmentAll(assessment: string) {
+    Object.keys((this.form.controls['assessments'] as FormGroup).controls).forEach((key) => {
+      const input = this.form.get('assessments').get(key);
+      input.setValue(assessment);
+    });
+  }
 }

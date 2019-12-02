@@ -22,10 +22,10 @@
           <div class="card-title d-flex justify-content-between">
             <h5>Wear</h5>
             <div class="d-flex w-25">
-              <div class="bg-success legend">Great</div>
-              <div class="bg-warning legend">Advise</div>
-              <div class="bg-danger legend">Poor</div>
-              <div class="bg-dark legend">N/A</div>
+              <button class="btn btn-success mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_GOOD)">Great</button>
+              <button class="btn btn-warning mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_OK)">Advise</button>
+              <button class="btn btn-danger mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_BAD)">Poor</button>
+              <button class="btn btn-dark mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_NA)">N/A</button>
             </div>
           </div>
           <div class="row" formGroupName="assessments" *ngFor="let category of api.categories">
