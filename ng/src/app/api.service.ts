@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {map} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
 import * as _ from 'lodash';
 import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
@@ -31,8 +31,14 @@ export class ApiService {
   public categories: any[];
   public categoriesChildren: any[];
   public categoryPrefixes: any[];
-
   public estimateData$ = new Subject();
+  public errorState: {
+    errored: boolean,
+    message: string,
+  } = {
+    errored: false,
+    message: '',
+  };
   public needsAuthentication = false;
 
   constructor(
@@ -48,6 +54,15 @@ export class ApiService {
       this.fetchCategory(),
       this.fetchCategoryChildren(),
       this.fetchCategoryPrefix(),
+    ).pipe(
+      catchError((error) => {
+        console.error(error);
+        this.errorState = {
+          errored: true,
+          message: 'An unknown error occurred loading initial data',
+        };
+        return of(error);
+      })
     );
   }
 

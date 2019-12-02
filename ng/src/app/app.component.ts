@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiService} from "./api.service";
 
 @Component({
@@ -6,9 +6,12 @@ import {ApiService} from "./api.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'ABR';
   constructor(
     public api: ApiService,
   ) {}
+
+  ngOnInit(): void {
+  }
 }

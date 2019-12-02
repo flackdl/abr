@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import {ApiService} from "../api.service";
 import {Router} from "@angular/router";
 import { Component, OnInit } from '@angular/core';
@@ -14,6 +15,7 @@ export class WizardComponent implements OnInit {
     public api: ApiService,
     private router: Router,
     private wizardSteps: WizardStepsService,
+    private toastr: ToastrService,
   ) { }
 
   public reset() {
@@ -22,6 +24,9 @@ export class WizardComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.api.errorState.errored) {
+      this.toastr.error(this.api.errorState.message);
+    }
   }
 
 }
