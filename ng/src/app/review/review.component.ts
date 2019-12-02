@@ -45,7 +45,12 @@ export class ReviewComponent implements OnInit {
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
+      paying_half_now: [this.api.estimateData.paying_half_now || false, Validators.required],
     });
+
+    if (this.api.getTotal() < 300) {
+      this.form.get('paying_half_now').disable();
+    }
 
     this.form.valueChanges.subscribe(
       (data) => {

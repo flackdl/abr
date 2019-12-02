@@ -6,7 +6,6 @@ import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-estimator',
@@ -216,29 +215,6 @@ export class EstimateComponent implements OnInit {
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
       'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
     };
-  }
-
-  public itemHasTax(item: any): boolean {
-    return item.type === 'Inventory';
-  }
-
-  public getSubTotal(): number {
-    return _.sum(this.api.estimateData.items.map((item) => {
-      return item.amount;
-    }));
-  }
-
-  public getTotal(): number {
-    const tax = _.sum(this.api.estimateData.items.filter((item) => {
-      return this.itemHasTax(item);
-    }).map((item) => {
-      return this.getItemTax(item);
-    }));
-    return this.getSubTotal() + tax;
-  }
-
-  public getItemTax(item: any) {
-    return item.amount * .0775;
   }
 
   public createEstimate() {

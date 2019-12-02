@@ -30,6 +30,22 @@
               <option>Call</option>
             </select>
           </div>
+          <!-- paying half now -->
+          <div class="form-group">
+            <label>Paying Half Now?</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.paying_half_now.dirty && !form.controls.paying_half_now.valid" id="paying_half_now-no" formControlName="paying_half_now">
+              <label class="form-check-label" for="paying_half_now-no">
+                No
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.paying_half_now.dirty && !form.controls.paying_half_now.valid" id="paying_half_now-yes" formControlName="paying_half_now">
+              <label class="form-check-label" for="paying_half_now-yes">
+                Yes
+              </label>
+            </div>
+          </div>
           <!-- signature -->
           <div class="d-flex justify-content-center" [ngClass]="{'border border-danger': !signatureValid}">
             <div>

@@ -34,4 +34,5 @@ export type EstimateData = {
   review_ok?: boolean,
   contact_method?: string,
   signature?: string,
+  paying_half_now?: boolean,
 };

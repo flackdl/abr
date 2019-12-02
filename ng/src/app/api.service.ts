@@ -99,6 +99,29 @@ export class ApiService {
     );
   }
 
+  public getSubTotal(): number {
+    return _.sum(this.estimateData.items.map((item) => {
+      return item.amount;
+    }));
+  }
+
+  public itemHasTax(item: any): boolean {
+    return item.type === 'Inventory';
+  }
+
+  public getTotal(): number {
+    const tax = _.sum(this.estimateData.items.filter((item) => {
+      return this.itemHasTax(item);
+    }).map((item) => {
+      return this.getItemTax(item);
+    }));
+    return this.getSubTotal() + tax;
+  }
+
+  public getItemTax(item: any) {
+    return item.amount * .0775;
+  }
+
   public hasNotes(): boolean {
     return Boolean(
       // TODO
