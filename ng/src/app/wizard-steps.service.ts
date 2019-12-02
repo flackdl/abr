@@ -25,4 +25,18 @@ export class WizardStepsService {
     {name: "Review", component: ReviewComponent, url: "/wizard/review",  complete: () => { return this.api.hasReview() }},
     {name: "Notes", component: null, url: "TODO",  complete: () => false},
   ];
+
+  public canEnter(step: any): boolean {
+    const matchIndex = this.steps.findIndex((s) => {
+      return step.name === s.name;
+    });
+    if (matchIndex !== -1) {
+      if (matchIndex === 0) {
+        return true;
+      }
+      return this.steps[matchIndex - 1].complete();
+    }
+    return false;
+  }
+
 }

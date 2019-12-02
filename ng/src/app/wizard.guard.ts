@@ -26,11 +26,11 @@ export class WizardGuard implements CanActivateChild {
     let returnPath;
 
     if (next.component === MainConcernComponent) {
-      success = this.api.hasMainConcern();
       const stepIndex = this.wizardSteps.steps.findIndex((step) => {
         return step.component === next.component;
       });
-      if (stepIndex !== -1) {
+      if (stepIndex !== 0 && stepIndex !== -1) {
+        success = this.wizardSteps.steps[stepIndex - 1].complete();
         returnPath = [this.wizardSteps.steps[stepIndex - 1].url];
       }
     }
