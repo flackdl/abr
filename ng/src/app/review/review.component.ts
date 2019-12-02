@@ -14,7 +14,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 export class ReviewComponent implements OnInit {
   public signature: SignaturePad;
   public form: FormGroup;
-  public signatureInvalid = false;
+  public signatureValid = true;
 
   @ViewChild("signatureEl", {static: true}) signatureEl: ElementRef;
 
@@ -31,7 +31,7 @@ export class ReviewComponent implements OnInit {
     this.signature = new SignaturePad(this.signatureEl.nativeElement,
       {
         onEnd: () => {
-          this.signatureInvalid = false;
+          this.signatureValid = true;
           this.formChanges(this.form.value);
         }
       });
@@ -39,6 +39,8 @@ export class ReviewComponent implements OnInit {
     if (this.api.estimateData.signature) {
       this.signature.fromDataURL(this.api.estimateData.signature);
     }
+
+    this.signatureValid = !this.signature.isEmpty();
 
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
@@ -59,6 +61,7 @@ export class ReviewComponent implements OnInit {
   }
 
   public clearSignature() {
+    this.signatureValid = false;
     this.signature.clear();
     this.api.updateEstimateData({
       signature: '',
@@ -69,14 +72,10 @@ export class ReviewComponent implements OnInit {
 
     this.api.markFormDirty(this.form);
 
-    this.signatureInvalid = this.signature.isEmpty();
-
-    if (!this.form.valid || this.signatureInvalid) {
+    if (!this.form.valid || !this.signatureValid) {
       this.toastr.error('Invalid form');
       return;
     }
-    // TODO - next step is invalid
-    console.log(this.wizardSteps.nextStep(self));
-    //this.router.navigate([this.wizardSteps.nextStep(self)]);
+    this.router.navigate([this.wizardSteps.nextStep(this)]);
   }
 }

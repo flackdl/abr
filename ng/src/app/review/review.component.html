@@ -31,7 +31,7 @@
             </select>
           </div>
           <!-- signature -->
-          <div class="d-flex justify-content-center" [ngClass]="{'border border-danger': signatureInvalid}">
+          <div class="d-flex justify-content-center" [ngClass]="{'border border-danger': !signatureValid}">
             <div>
               <h5>Employee Signature</h5>
               <canvas #signatureEl class="border border-dark"></canvas>
