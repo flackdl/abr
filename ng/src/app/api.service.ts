@@ -92,6 +92,14 @@ export class ApiService {
   }
 
   public hasReview(): boolean {
+    // TODO - need conditional fields
+    return Boolean(
+      this.estimateData.signature &&
+      this.estimateData.contact_method
+    );
+  }
+
+  public hasNotes(): boolean {
     return Boolean(
       // TODO
       false

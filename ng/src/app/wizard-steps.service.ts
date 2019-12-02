@@ -24,7 +24,7 @@ export class WizardStepsService {
     {name: "Estimate", component: EstimateComponent, url: "/wizard/estimate",  complete: () => { return this.api.hasEstimate() }},
     {name: "Wrap Up", component: EstimateWrapUpComponent, url: "/wizard/wrap-up",  complete: () => { return this.api.hasEstimateWrapUp() }},
     {name: "Review", component: ReviewComponent, url: "/wizard/review",  complete: () => { return this.api.hasReview() }},
-    {name: "Notes", component: EstimateNotesComponent, url: "/wizard/notes",  complete: () => false},
+    {name: "Notes", component: EstimateNotesComponent, url: "/wizard/notes",  complete: () => { return this.api.hasNotes() }},
   ];
 
   public canEnter(step: any): boolean {
@@ -39,6 +39,15 @@ export class WizardStepsService {
       return this.steps[matchIndex - 1].complete();
     }
     return false;
+  }
+
+  public nextStep(componentInstance: any) {
+    const matchingIndex = this.steps.findIndex((step) => {
+      return componentInstance instanceof step.component;
+    });
+    if (matchingIndex !== -1 && this.steps.length >= matchingIndex + 1) {
+      return this.steps[matchingIndex + 1].url;
+    }
   }
 
 }

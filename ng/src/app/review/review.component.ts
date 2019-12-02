@@ -1,4 +1,6 @@
+import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
+import {Router} from "@angular/router";
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import SignaturePad from "signature_pad";
 import {ApiService} from "../api.service";
@@ -18,8 +20,10 @@ export class ReviewComponent implements OnInit {
 
   constructor(
     private api: ApiService,
+    private router: Router,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    public wizardSteps: WizardStepsService,
   ) { }
 
   ngOnInit() {
@@ -28,6 +32,7 @@ export class ReviewComponent implements OnInit {
       {
         onEnd: () => {
           this.signatureInvalid = false;
+          this.formChanges(this.form.value);
         }
       });
 
@@ -39,6 +44,18 @@ export class ReviewComponent implements OnInit {
       review_ok: [this.api.estimateData.review_ok, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
     });
+
+    this.form.valueChanges.subscribe(
+      (data) => {
+        this.formChanges(data);
+      },
+    )
+  }
+
+  public formChanges(data) {
+    // overwrite signature with data url
+    data['signature'] = this.signature.toDataURL();
+    this.api.updateEstimateData(data);
   }
 
   public clearSignature() {
@@ -49,8 +66,6 @@ export class ReviewComponent implements OnInit {
   }
 
   public submit() {
-    console.log(this.signature);
-    console.log(this.form);
 
     this.api.markFormDirty(this.form);
 
@@ -60,9 +75,8 @@ export class ReviewComponent implements OnInit {
       this.toastr.error('Invalid form');
       return;
     }
-
-    this.api.updateEstimateData({
-      signature: this.signature.toDataURL(),
-    });
+    // TODO - next step is invalid
+    console.log(this.wizardSteps.nextStep(self));
+    //this.router.navigate([this.wizardSteps.nextStep(self)]);
   }
 }

@@ -3,6 +3,7 @@ import {ApiService} from "../api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import {WizardStepsService} from "../wizard-steps.service";
 
 @Component({
   selector: 'app-questionnaire',
@@ -22,6 +23,7 @@ export class QuestionnaireComponent implements OnInit {
     private api: ApiService,
     private toastr: ToastrService,
     private router: Router,
+    public wizardSteps: WizardStepsService,
   ) { }
 
   ngOnInit() {
@@ -67,7 +69,7 @@ export class QuestionnaireComponent implements OnInit {
     });
 
     if (this.form.valid) {
-      this.router.navigate(['/wizard', 'estimate']);
+      this.router.navigate([this.wizardSteps.nextStep(this)]);
     } else {
       this.toastr.error('Invalid form');
     }

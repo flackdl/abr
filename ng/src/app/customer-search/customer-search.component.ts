@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import {concat, Observable, of, Subject} from "rxjs";
 import {catchError, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {ToastrService} from "ngx-toastr";
+import {WizardStepsService} from "../wizard-steps.service";
 
 @Component({
   selector: 'app-customer',
@@ -21,6 +22,7 @@ export class CustomerSearchComponent implements OnInit {
   constructor(
     private api: ApiService,
     private toastr: ToastrService,
+    public wizardSteps: WizardStepsService,
   ) { }
 
   ngOnInit() {

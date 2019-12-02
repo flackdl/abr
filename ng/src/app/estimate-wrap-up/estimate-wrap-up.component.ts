@@ -1,3 +1,4 @@
+import {WizardStepsService} from "../wizard-steps.service";
 import {Router} from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
@@ -18,6 +19,7 @@ export class EstimateWrapUpComponent implements OnInit {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private router: Router,
+    public wizardSteps: WizardStepsService,
   ) { }
 
   ngOnInit() {
@@ -54,7 +56,7 @@ export class EstimateWrapUpComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/wizard', 'review']);
+    this.router.navigate([this.wizardSteps.nextStep(this)]);
   }
 
 }

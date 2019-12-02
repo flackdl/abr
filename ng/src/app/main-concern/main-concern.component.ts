@@ -1,3 +1,4 @@
+import {WizardStepsService} from "../wizard-steps.service";
 import {ApiService} from "../api.service";
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -12,6 +13,7 @@ export class MainConcernComponent implements OnInit {
   constructor(
     public api: ApiService,
     public router: Router,
+    public wizardSteps: WizardStepsService,
   ) { }
 
   public question: string = 'What are the main concerns?';
@@ -27,6 +29,6 @@ export class MainConcernComponent implements OnInit {
 
   public save(answer) {
     this.api.updateEstimateData({main_concern: answer});
-    this.router.navigate(['/wizard', 'questionnaire'])
+    this.router.navigate([this.wizardSteps.nextStep(this)]);
   }
 }

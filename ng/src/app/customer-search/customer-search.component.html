@@ -60,7 +60,7 @@
     </div>
 
     <div class="d-flex justify-content-end" *ngIf="customer">
-      <a class="btn btn-success" [routerLink]="['/wizard', 'main-concern']">Next</a>
+      <a class="btn btn-success" [routerLink]="wizardSteps.nextStep(this)">Next</a>
     </div>
   </div>
 </div>

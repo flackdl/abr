@@ -1,3 +1,4 @@
+import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
@@ -29,6 +30,7 @@ export class EstimateComponent implements OnInit {
     private api: ApiService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    public wizardSteps: WizardStepsService,
   ) {
   }
 
