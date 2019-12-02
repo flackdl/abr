@@ -9,7 +9,6 @@ import {LocalStorageService} from 'ngx-webstorage';
 import {EstimateData} from "./estimate-data";
 
 
-
 @Injectable({
   providedIn: 'root'
 })

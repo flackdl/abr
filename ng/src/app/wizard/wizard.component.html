@@ -1,5 +1,5 @@
 <div class="row bg-light mt-3">
-  <a *ngFor="let step of steps" class="col border text-center step text-muted" [class.success]="step.complete()" [routerLink]="step.url" routerLinkActive="active">
+  <a *ngFor="let step of wizardSteps.steps" class="col border text-center step text-muted" [class.success]="step.complete()" [routerLink]="step.url" routerLinkActive="active">
     {{ step.name }}
   </a>
 </div>

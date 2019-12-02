@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {Routes, RouterModule} from '@angular/router';
 import {EstimateComponent} from "./estimate/estimate.component";
 import {CustomerSearchComponent} from "./customer-search/customer-search.component";
 import {CustomerCreateComponent} from "./customer-create/customer-create.component";
@@ -10,6 +10,7 @@ import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {CustomerComponent} from "./customer/customer.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 import {ReviewComponent} from "./review/review.component";
+import {WizardGuard} from "./wizard.guard";
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
   {
     path: 'wizard',
     component: WizardComponent,
+    canActivateChild: [WizardGuard],
     children: [
       { path: '', redirectTo: 'customer', pathMatch: 'full' },
       {
