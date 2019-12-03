@@ -210,9 +210,7 @@ export class ApiService {
   public fetchQBOPreferences(): Observable<any> {
     return this._responseProxy(this.http.get(this.API_QBO_PREFERENCES, ).pipe(
       map((data: any) => {
-        if (data.length > 0) {
-          this.qboPreferences = data[0];
-        }
+        this.qboPreferences = data;
         return this.qboPreferences;
       }),
     ));

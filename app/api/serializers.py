@@ -37,6 +37,14 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
     bike_model = serializers.CharField()
     expiration_date = serializers.DateField()
     expiration_time = serializers.TimeField()
+    items = serializers.JSONField()  # validated against EstimateLineCreateQBOSerializer
+
+
+class EstimateLineCreateQBOSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    quantity = serializers.IntegerField()
+    amount = serializers.FloatField()
 
 
 class CustomerCreateQBOSerializer(serializers.Serializer):
