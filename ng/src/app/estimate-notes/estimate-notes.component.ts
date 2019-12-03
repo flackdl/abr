@@ -1,3 +1,5 @@
+import {WizardStepsService} from "../wizard-steps.service";
+import { ApiService } from "../api.service";
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EstimateNotesComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public api: ApiService,
+    public wizardSteps: WizardStepsService,
+  ) { }
 
   ngOnInit() {
   }
 
+  public submit(notes: string) {
+    this.api.updateEstimateData({
+      public_notes: notes,
+    });
+    this.wizardSteps.navigateToNextStep(this);
+  }
 }

@@ -35,7 +35,6 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=STATUSES)
     tag_number = serializers.CharField()
     bike_model = serializers.CharField()
-    estimate_date = serializers.DateField()
     expiration_date = serializers.DateField()
     expiration_time = serializers.TimeField()
 

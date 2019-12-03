@@ -92,10 +92,11 @@ export class ApiService {
   }
 
   public hasReview(): boolean {
-    // TODO - need conditional fields
     return Boolean(
       this.estimateData.signature &&
-      this.estimateData.contact_method
+      this.estimateData.contact_method &&
+      this.estimateData.payment_option &&
+      this.estimateData.status
     );
   }
 
@@ -127,10 +128,15 @@ export class ApiService {
     return item.amount * .0775;
   }
 
-  public hasNotes(): boolean {
+  public hasEstimateNotes(): boolean {
     return Boolean(
-      // TODO
-      false
+      this.estimateData.public_notes
+    );
+  }
+
+  public hasStatementNotes(): boolean {
+    return Boolean(
+      this.estimateData.private_notes
     );
   }
 
@@ -150,6 +156,28 @@ export class ApiService {
     this.estimateData = this.getEmptyEstimateData();
     this.updateEstimateData();
     this.estimateData$.next(null);
+  }
+
+  public getPublicNotes(): string {
+    return [
+      // main concern
+      `Main Concern: ${this.estimateData.main_concern}`,
+      // additional public notes
+      this.estimateData.public_notes,
+    ].join('\n');
+
+  }
+
+  public getPrivateNotes(): string {
+    let notes = [];
+    // include assessments
+    notes = notes.concat(Object.keys(this.estimateData.assessments).map((assessment) => {
+      return `${assessment}: ${this.estimateData.assessments[assessment]}`;
+    }));
+    // additional private notes
+    notes.push(this.estimateData.private_notes);
+
+    return notes.join('\n');
   }
 
   public loadEstimateData(): Observable<any> {

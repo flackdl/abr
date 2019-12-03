@@ -12,6 +12,8 @@ export class QuestionComponent implements OnInit, OnChanges {
   @Input('question') question: string;
   @Input('inputType') inputType: string;
   @Input('defaultAnswer') defaultAnswer: string = '';
+  @Input('submitButtonClass') submitButtonClass: string = 'btn-primary';
+  @Input('submitButtonLabel') submitButtonLabel: string = 'Next';
   @Output() answer = new EventEmitter<string>();
 
   public input: FormControl;
