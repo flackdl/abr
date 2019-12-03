@@ -100,9 +100,12 @@ export class ApiService {
   }
 
   public getSubTotal(): number {
-    return _.sum(this.estimateData.items.map((item) => {
-      return item.amount;
-    }));
+    if (this.estimateData.items) {
+      return _.sum(this.estimateData.items.map((item) => {
+        return item.amount;
+      }));
+    }
+    return 0;
   }
 
   public itemHasTax(item: any): boolean {
@@ -110,12 +113,14 @@ export class ApiService {
   }
 
   public getTotal(): number {
-    const tax = _.sum(this.estimateData.items.filter((item) => {
-      return this.itemHasTax(item);
-    }).map((item) => {
-      return this.getItemTax(item);
-    }));
-    return this.getSubTotal() + tax;
+    if (this.estimateData.items) {
+      const tax = _.sum(this.estimateData.items.filter((item) => {
+        return this.itemHasTax(item);
+      }).map((item) => {
+        return this.getItemTax(item);
+      }));
+      return this.getSubTotal() + tax;
+    }
   }
 
   public getItemTax(item: any) {

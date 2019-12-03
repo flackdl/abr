@@ -32,19 +32,13 @@
           </div>
           <!-- paying half now -->
           <div class="form-group">
-            <label>Paying Half Now?</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.paying_half_now.dirty && !form.controls.paying_half_now.valid" id="paying_half_now-no" formControlName="paying_half_now">
-              <label class="form-check-label" for="paying_half_now-no">
-                No
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.paying_half_now.dirty && !form.controls.paying_half_now.valid" id="paying_half_now-yes" formControlName="paying_half_now">
-              <label class="form-check-label" for="paying_half_now-yes">
-                Yes
-              </label>
-            </div>
+            <label for="contact-method">Payment Option</label>
+            <select class="form-control" id="payment-option" [class.is-invalid]="form.controls.payment_option.dirty && !form.controls.payment_option.valid" formControlName="payment_option">
+              <option></option>
+              <option>Not Paid</option>
+              <option>Paid</option>
+              <option>Half Now</option>
+            </select>
           </div>
           <!-- signature -->
           <div class="d-flex justify-content-center" [ngClass]="{'border border-danger': !signatureValid}">

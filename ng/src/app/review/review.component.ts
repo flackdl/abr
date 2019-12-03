@@ -40,17 +40,11 @@ export class ReviewComponent implements OnInit {
       this.signature.fromDataURL(this.api.estimateData.signature);
     }
 
-    this.signatureValid = !this.signature.isEmpty();
-
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
-      paying_half_now: [this.api.estimateData.paying_half_now || false, Validators.required],
+      payment_option: [this.api.estimateData.payment_option || false, Validators.required],
     });
-
-    if (this.api.getTotal() < 300) {
-      this.form.get('paying_half_now').disable();
-    }
 
     this.form.valueChanges.subscribe(
       (data) => {
@@ -76,6 +70,7 @@ export class ReviewComponent implements OnInit {
   public submit() {
 
     this.api.markFormDirty(this.form);
+    this.signatureValid = !this.signature.isEmpty();
 
     if (!this.form.valid || !this.signatureValid) {
       this.toastr.error('Invalid form');
