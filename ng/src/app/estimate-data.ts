@@ -1,4 +1,5 @@
 export type EstimateData = {
+  status?: string,
   crm?: string,
   customer_id?: number,
   first_name?: string,

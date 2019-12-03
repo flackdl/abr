@@ -43,7 +43,7 @@ export class ReviewComponent implements OnInit {
     this.form = this.fb.group({
       review_ok: [this.api.estimateData.review_ok, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
-      payment_option: [this.api.estimateData.payment_option || false, Validators.required],
+      payment_option: [this.api.estimateData.payment_option, Validators.required],
     });
 
     this.form.valueChanges.subscribe(
@@ -53,9 +53,17 @@ export class ReviewComponent implements OnInit {
     )
   }
 
-  public formChanges(data) {
+  public formChanges(data: any) {
     // overwrite signature with data url
-    data['signature'] = this.signature.toDataURL();
+    if (!this.signature.isEmpty()) {
+      data['signature'] = this.signature.toDataURL();
+    }
+
+    if (data.review_ok) {
+      data['status'] = 'Accepted';
+    } else {
+      data['status'] = 'Rejected';
+    }
     this.api.updateEstimateData(data);
   }
 

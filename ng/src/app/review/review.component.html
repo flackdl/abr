@@ -40,10 +40,19 @@
               <option>Half Now</option>
             </select>
           </div>
+          <!-- details -->
+          <div class="d-flex justify-content-center">
+            <div class="alert" [ngClass]="{'alert-success': api.estimateData.status === 'Accepted', 'alert-danger': api.estimateData.status === 'Rejected', 'alert-info': !api.estimateData.status}">
+              <div><strong>Estimate Status:</strong> {{ api.estimateData.status }}</div>
+              <div><strong>Due:</strong> {{ api.estimateData.expiration_date + ' ' + api.estimateData.expiration_time | amDateFormat: 'MMM Do hh:mm a' }}</div>
+              <div><strong>Phone:</strong> {{ api.estimateData.phone }}</div>
+              <div><strong>Email:</strong> {{ api.estimateData.email }}</div>
+            </div>
+          </div>
           <!-- signature -->
           <div class="d-flex justify-content-center" [ngClass]="{'border border-danger': !signatureValid}">
             <div>
-              <h5>Employee Signature</h5>
+              <h5>Customer Signature</h5>
               <canvas #signatureEl class="border border-dark"></canvas>
               <button class="d-block btn btn-sm btn-outline-warning" type="button" (click)="clearSignature()">Clear</button>
             </div>

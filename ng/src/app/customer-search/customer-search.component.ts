@@ -36,7 +36,7 @@ export class CustomerSearchComponent implements OnInit {
       }
     );
 
-    // customer-search search
+    // customer search
     this.customers$ = concat(
       of([]), // default items
       this.customerInput$.pipe(
@@ -87,6 +87,8 @@ export class CustomerSearchComponent implements OnInit {
             customer_id: this.customer.Id,
             first_name: this.customer.GivenName,
             last_name: this.customer.FamilyName,
+            email: this.customer.PrimaryEmailAddr ? this.customer.PrimaryEmailAddr.Address : '',
+            phone: this.customer.PrimaryPhone ? this.customer.PrimaryPhone.FreeFormNumber : '',
           });
         },
         (error) => {
