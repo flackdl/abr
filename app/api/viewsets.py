@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException
@@ -162,7 +163,8 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 
         estimate = Estimate()
         estimate.TxnStatus = data['status']
-        estimate.TxnDate = data['estimate_date'].isoformat()
+        #estimate.TxnDate = data['estimate_date'].isoformat()
+        estimate.TxnDate = datetime.now().isoformat()
         estimate.CustomerRef = {
             "value": data['customer_id'],
         }
@@ -172,25 +174,29 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
                 "SalesItemLineDetail": {
                     "Qty": 1,
                     "ItemRef": {
-                        "name": "Rock Fountain",
-                        "value": "5",
+                        "name": "Accessory-Delta-iPhoneHolder",
+                        "value": "834",
                     },
                 },
                 "Amount": 10.0,
             },
         ]
 
-        estimate.CustomField = [{
-            "DefinitionId": "2",
-            "Type": "StringType",
-            "Name": "Tag #",
-            "StringValue": data['tag_number'],
-        }]
+        logging.info('=============')
+        logging.info(estimate.to_dict())
+        logging.info('=============')
+
+        # TODO get the "index" from the qbo preferences?
+        #estimate.CustomField = [{
+        #    "DefinitionId": "2",
+        #    "Type": "StringType",
+        #    "Name": "Tag #",
+        #    "StringValue": data['tag_number'],
+        #}]
 
         # TODO
         #estimate.ExpirationDate = None
         #estimate.DueDate = None
-        #estimate.TxnStatus = None
 
         estimate.save(qb=self.qbo_client)
 

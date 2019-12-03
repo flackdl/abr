@@ -36,4 +36,6 @@ export type EstimateData = {
   contact_method?: string,
   signature?: string,
   payment_option?: string,
+  public_notes?: string,
+  private_notes?: string,
 };

@@ -1,3 +1,4 @@
+import {Router} from "@angular/router";
 import { Injectable } from '@angular/core';
 import {ApiService} from "./api.service";
 import {CustomerSearchComponent} from "./customer-search/customer-search.component";
@@ -7,6 +8,7 @@ import {EstimateComponent} from "./estimate/estimate.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 import {ReviewComponent} from "./review/review.component";
 import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
+import {StatementNotesComponent} from "./statement-notes/statement-notes.component"
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,7 @@ export class WizardStepsService {
 
   constructor(
     public api: ApiService,
+    private router: Router,
   ) {}
 
   public steps = [
@@ -24,7 +27,8 @@ export class WizardStepsService {
     {name: "Estimate", component: EstimateComponent, url: "/wizard/estimate",  complete: () => { return this.api.hasEstimate() }},
     {name: "Wrap Up", component: EstimateWrapUpComponent, url: "/wizard/wrap-up",  complete: () => { return this.api.hasEstimateWrapUp() }},
     {name: "Review", component: ReviewComponent, url: "/wizard/review",  complete: () => { return this.api.hasReview() }},
-    {name: "Notes", component: EstimateNotesComponent, url: "/wizard/notes",  complete: () => { return this.api.hasNotes() }},
+    {name: "Estimate Notes", component: EstimateNotesComponent, url: "/wizard/estimate-notes",  complete: () => { return this.api.hasEstimateNotes() }},
+    {name: "Statement Notes", component: StatementNotesComponent, url: "/wizard/statement-notes",  complete: () => { return this.api.hasStatementNotes() }},
   ];
 
   public canEnter(step: any): boolean {
@@ -39,6 +43,10 @@ export class WizardStepsService {
       return this.steps[matchIndex - 1].complete();
     }
     return false;
+  }
+
+  public navigateToNextStep(componentInstance: any) {
+    this.router.navigate([this.nextStep(componentInstance)]);
   }
 
   public nextStep(componentInstance: any) {
