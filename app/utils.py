@@ -280,3 +280,13 @@ def get_inventory_items(request, pos, all_stock=False):
 
     # limit items that are in stock
     return [r for r in results if r.QtyOnHand > 0]
+
+
+def get_tag_number_index_from_preferences(preferences: dict) -> int:
+    if 'SalesFormsPrefs' in preferences:
+        if 'CustomField' in preferences['SalesFormsPrefs']:
+            for index, custom_field in enumerate(preferences['SalesFormsPrefs']['CustomField']):
+                for field in custom_field['CustomField']:
+                    if 'StringValue' in field and field['StringValue'] == 'Tag #':
+                        return index
+    return -1

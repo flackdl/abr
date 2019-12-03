@@ -11,8 +11,8 @@ from app.api.mixins import CustomerRefFilterMixin
 from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
-    CategoryPrefixSerializer)
-from app.utils import get_qbo_client, get_callback_url, quickbooks_auth
+    CategoryPrefixSerializer, EstimateLineCreateQBOSerializer)
+from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_tag_number_index_from_preferences
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
 GENERIC_VENDOR_QUOTE = 'QUOTE'
@@ -156,47 +156,50 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 
     def create(self, request):
 
-        # validate
-        estimate_create_serializer = EstimateCreateQBOSerializer(data=request.data)
-        estimate_create_serializer.is_valid(raise_exception=True)
-        data = estimate_create_serializer.validated_data
+        # validate estimate data
+        estimate_serializer = EstimateCreateQBOSerializer(data=request.data)
+        estimate_serializer.is_valid(raise_exception=True)
+        estimate_data = estimate_serializer.validated_data
 
+        # validate estimate lines data
+        estimate_line_serializer = EstimateLineCreateQBOSerializer(data=estimate_data['items'], many=True)
+        estimate_line_serializer.is_valid(raise_exception=True)
+        lines = estimate_line_serializer.validated_data
+
+        # create estimate
         estimate = Estimate()
-        estimate.TxnStatus = data['status']
-        #estimate.TxnDate = data['estimate_date'].isoformat()
-        estimate.TxnDate = datetime.now().isoformat()
+        estimate.TxnStatus = estimate_data['status']
         estimate.CustomerRef = {
-            "value": data['customer_id'],
+            "value": estimate_data['customer_id'],
         }
-        estimate.Line = [
-            {
-                "DetailType": "SalesItemLineDetail",
-                "SalesItemLineDetail": {
-                    "Qty": 1,
-                    "ItemRef": {
-                        "name": "Accessory-Delta-iPhoneHolder",
-                        "value": "834",
-                    },
-                },
-                "Amount": 10.0,
-            },
-        ]
-
-        logging.info('=============')
-        logging.info(estimate.to_dict())
-        logging.info('=============')
-
-        # TODO get the "index" from the qbo preferences?
-        #estimate.CustomField = [{
-        #    "DefinitionId": "2",
-        #    "Type": "StringType",
-        #    "Name": "Tag #",
-        #    "StringValue": data['tag_number'],
-        #}]
 
         # TODO
         #estimate.ExpirationDate = None
         #estimate.DueDate = None
+
+        # build lines
+        for line in lines:
+            estimate.Line.append({
+                "DetailType": "SalesItemLineDetail",
+                "SalesItemLineDetail": {
+                    "Qty": line['quantity'],
+                    "ItemRef": {
+                        "name": line['name'],
+                        "value": line['id']
+                    },
+                },
+                "Amount": line['amount'],
+            })
+
+        # query preferences so we can get the "Tag #" custom field
+        preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
+
+        estimate.CustomField = [{
+            "DefinitionId": get_tag_number_index_from_preferences(preferences),
+            "Type": "StringType",
+            "Name": "Tag #",
+            "StringValue": estimate_data['tag_number'],
+        }]
 
         estimate.save(qb=self.qbo_client)
 
@@ -238,6 +241,10 @@ class InvoiceQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 @method_decorator(cache_page(timeout=3600), name='dispatch')
 class PreferencesQBOViewSet(QBOBaseViewSet):
     model_class = Preferences
+
+    def list(self, request):
+        # qbo preferences returns a list but there's only one object
+        return Response(Preferences.filter(qb=self.qbo_client)[0].to_dict())
 
 
 class CategoryParentViewSet(viewsets.ModelViewSet):
