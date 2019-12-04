@@ -12,6 +12,10 @@ import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.compo
 import {ReviewComponent} from "./review/review.component";
 import {WizardGuard} from "./wizard.guard";
 import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
+import {CustomerEditComponent} from "./customer-edit/customer-edit.component";
+
+
+// TODO - customer edit...modal?
 
 
 const routes: Routes = [

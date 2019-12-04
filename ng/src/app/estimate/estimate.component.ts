@@ -1,3 +1,4 @@
+import {Router} from "@angular/router";
 import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit, ViewChild} from '@angular/core';
@@ -28,6 +29,7 @@ export class EstimateComponent implements OnInit {
   @ViewChild("serviceSelect", {static: true}) serviceSelect: NgSelectComponent;
 
   constructor(
+    private router: Router,
     private api: ApiService,
     private fb: FormBuilder,
     private toastr: ToastrService,
@@ -158,10 +160,6 @@ export class EstimateComponent implements OnInit {
   public itemAdded(item: any) {
     // add form control
     (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
-    // define items if it doesn't already exist
-    if (!this.api.estimateData.items) {
-      this.api.estimateData.items = [];
-    }
     this.api.estimateData.items.push({
       id: item.Id,
       name: item.Name,
@@ -227,17 +225,10 @@ export class EstimateComponent implements OnInit {
     // mark all controls as dirty to force validation
     this.api.markFormDirty(this.form);
 
-    /*
     if (this.form.valid) {
-      this.api.createEstimate(this.form.value).subscribe((data) => {
-        // TODO
-        console.log(data);
-      }, (error) => {
-        this.toastr.error('An unknown error occurred');
-      });
+      this.router.navigate([this.wizardSteps.nextStep(this)]);
     } else {
       this.toastr.error('Invalid form');
     }
-     */
   }
 }

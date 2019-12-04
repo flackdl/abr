@@ -26,7 +26,10 @@ export class ApiService {
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
 
   public settings: any;
-  public estimateData: EstimateData = {};
+  public estimateData: EstimateData = {
+    // define the items so it can simply be appended to later
+    items: [],
+  };
   public qboPreferences: any;
   public categories: any[];
   public categoriesChildren: any[];
@@ -147,12 +150,10 @@ export class ApiService {
   }
 
   public loadEstimateData(): Observable<any> {
-    return of([this.storage.retrieve('estimate')]).pipe(
+    return of(this.storage.retrieve('estimate')).pipe(
       map((data) => {
-        if (data.length && data[0]) {
-          this.estimateData = data[0];
-        } else {
-          this.estimateData = {};
+        if (Object.keys(data).length > 0) {
+          this.estimateData = data;
         }
       })
     );

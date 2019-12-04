@@ -27,6 +27,7 @@ import { CustomerComponent } from './customer/customer.component';
 import { EstimateWrapUpComponent } from './estimate-wrap-up/estimate-wrap-up.component';
 import { ReviewComponent } from './review/review.component';
 import { EstimateNotesComponent } from './estimate-notes/estimate-notes.component';
+import { CustomerEditComponent } from './customer-edit/customer-edit.component';
 
 
 export function init(api: ApiService) {
@@ -55,6 +56,7 @@ export function init(api: ApiService) {
     EstimateWrapUpComponent,
     ReviewComponent,
     EstimateNotesComponent,
+    CustomerEditComponent,
   ],
   imports: [
     BrowserModule,
