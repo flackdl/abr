@@ -34,7 +34,7 @@
             </div>
           </div>
           <!-- parts in inventory? -->
-          <div class="form-group" [ngStyle]="{'visibility': form.value.need_parts ? 'visible' : 'hidden'}">
+          <div class="form-group" [ngClass]="{'d-block': form.value.need_parts, 'd-none': !form.value.need_parts}">
             <label>Are the parts needed in our list of inventory?</label>
             <div class="form-check">
               <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.parts_in_inventory.dirty && !form.controls.parts_in_inventory.valid" id="inventory-yes" formControlName="parts_in_inventory">

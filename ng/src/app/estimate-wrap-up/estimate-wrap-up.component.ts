@@ -37,6 +37,15 @@ export class EstimateWrapUpComponent implements OnInit {
     this.form.valueChanges.subscribe((data) => {
       this.api.updateEstimateData(this.form.value);
     });
+
+    // toggle "parts in inventory" based on "need parts"
+    this.form.get('need_parts').valueChanges.subscribe((value) => {
+      if (!value) {
+        this.form.get('parts_in_inventory').disable();
+      } else {
+        this.form.get('parts_in_inventory').enable();
+      }
+    });
   }
 
   public submit() {
