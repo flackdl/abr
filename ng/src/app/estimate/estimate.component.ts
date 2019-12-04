@@ -6,6 +6,8 @@ import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+
 
 @Component({
   selector: 'app-estimator',
@@ -215,6 +217,10 @@ export class EstimateComponent implements OnInit {
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
       'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
     };
+  }
+
+  public dropItem(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.api.estimateData.items, event.previousIndex, event.currentIndex);
   }
 
   public createEstimate() {
