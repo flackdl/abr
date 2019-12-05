@@ -95,7 +95,7 @@
     </div>
   </div>
   <!-- line items -->
-  <div class="card mt-3" *ngIf="api.estimateData.items">
+  <div class="card mt-3" *ngIf="api.estimateData.categoryItems">
     <div class="card-header">
       <h5>Items</h5>
     </div>
@@ -112,26 +112,29 @@
           <th></th>
         </tr>
         </thead>
-        <tbody>
-        <ng-container *ngFor="let categoryItems of getItemsGroupedByCategory()">
-          <tr>
-            <td colspan="100" class="bg-info text-light">{{ categoryItems.name }}</td>
-          </tr>
-          <!-- TODO - index is probably wrong since we grouped by category -->
-          <tr *ngFor="let item of categoryItems.items; let i = index" formArrayName="quantities">
-            <td>{{ item.name }}</td>
-            <td>{{ item.description }}</td>
-            <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
-            <td>${{ item.price }}</td>
-            <td>${{ item.amount }}</td>
-            <td>
-              <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
-            </td>
-            <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, i)"><span class="oi oi-x"></span></button></td>
-          </tr>
-          <tr>
-            <td colspan="100" class="bg-light text-right text-muted"><strong>Subtotal: </strong>{{ categoryItems.subtotal | currency }}</td>
-          </tr>
+        <tbody formGroupName="categories">
+        <ng-container *ngFor="let category of api.estimateData.categoryItems; let catIndex = index">
+          <ng-container *ngIf="category.items.length > 0">
+            <tr>
+              <td colspan="100" class="bg-info text-white text-right"><strong>{{ category.name }}</strong></td>
+            </tr>
+            <ng-container [formGroupName]="category.name">
+              <tr *ngFor="let item of category.items; let i = index">
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
+                <td>${{ item.price }}</td>
+                <td>${{ item.amount }}</td>
+                <td>
+                  <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
+                </td>
+                <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, category.name, i)"><span class="oi oi-x"></span></button></td>
+              </tr>
+              <tr>
+                <td colspan="100" class="bg-light text-right text-muted"><strong>Subtotal: </strong>{{ api.getSubTotalForCategory(category.name) | currency }}</td>
+              </tr>
+            </ng-container>
+          </ng-container>
         </ng-container>
         </tbody>
       </table>

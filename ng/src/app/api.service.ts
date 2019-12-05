@@ -79,7 +79,7 @@ export class ApiService {
   }
 
   public hasEstimate(): boolean {
-    return Boolean(this.estimateData.items && this.estimateData.items.length > 0);
+    return Boolean(this.estimateData.categoryItems && this.estimateData.categoryItems.length > 0);
   }
 
   public hasEstimateWrapUp(): boolean {
@@ -101,12 +101,13 @@ export class ApiService {
   }
 
   public getSubTotal(): number {
-    if (this.estimateData.items) {
-      return _.sum(this.estimateData.items.map((item) => {
-        return item.amount;
-      }));
-    }
-    return 0;
+    let sum = 0;
+    this.estimateData.categoryItems.forEach((catItem) => {
+      catItem.items.forEach((item) => {
+        sum += item.amount;
+      })
+    });
+    return sum;
   }
 
   public getSubTotalForItems(items: any[]): number {
@@ -115,19 +116,30 @@ export class ApiService {
     }));
   }
 
+  public getSubTotalForCategory(category: string): number {
+    let sum = 0;
+    this.estimateData.categoryItems.forEach((catItem) => {
+      if (catItem.name === category) {
+        sum = this.getSubTotalForItems(catItem.items);
+      }
+    });
+    return sum;
+  }
+
   public itemHasTax(item: any): boolean {
     return item.type === 'Inventory';
   }
 
   public getTotal(): number {
-    if (this.estimateData.items) {
-      const tax = _.sum(this.estimateData.items.filter((item) => {
+    let tax = 0;
+    this.estimateData.categoryItems.forEach((catItem) => {
+      tax += _.sum(catItem.items.filter((item) => {
         return this.itemHasTax(item);
       }).map((item) => {
         return this.getItemTax(item);
       }));
-      return this.getSubTotal() + tax;
-    }
+    });
+    return this.getSubTotal() + tax;
   }
 
   public getItemTax(item: any) {
@@ -154,7 +166,7 @@ export class ApiService {
 
   public getEmptyEstimateData(): EstimateData {
     return {
-      items: [],
+      categoryItems: [],
     }
   }
 
@@ -189,7 +201,7 @@ export class ApiService {
   public loadEstimateData(): Observable<any> {
     return of(this.storage.retrieve('estimate')).pipe(
       map((data) => {
-        if (Object.keys(data).length > 0) {
+        if (data && Object.keys(data).length > 0) {
           this.estimateData = data;
         } else {
           this.estimateData = this.getEmptyEstimateData();

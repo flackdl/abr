@@ -16,6 +16,10 @@ export type EstimateItem = {
   amount: number,
   description: string,
 };
+export type CategoryItem = {
+  name: string,
+  items: EstimateItem[],
+};
 export type EstimateData = {
   status?: string,
   crm?: string,
@@ -34,7 +38,7 @@ export type EstimateData = {
   assessments?: {
     [name: string]: string,
   },
-  items?: EstimateItem[],
+  categoryItems?: CategoryItem[],
   tag_number?: string,
   expiration_date?: string,
   expiration_time?: string,

@@ -8,14 +8,7 @@ import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
 import * as _ from 'lodash';
-import {EstimateItem, Item} from "../estimate-data";
-
-type CategoryItem = {
-  name: string,
-  items: EstimateItem[],
-  subtotal: number,
-};
-
+import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 
 
 @Component({
@@ -48,24 +41,20 @@ export class EstimateComponent implements OnInit {
   ngOnInit() {
 
     // build form
-    this.form = this.fb.group({
-      'quantities': new FormArray([]),
-    });
-
-    // load existing data from storage
-    this.buildFormFromExistingEstimate();
+    this.buildForm();
 
     // watch for quantity changes
-    this.form.controls['quantities'].valueChanges.subscribe(
-      (values: any[]) => {
-        values.forEach((value, i) => {
-          if (this.api.estimateData.items && this.api.estimateData.items[i]) {
-            const item = this.api.estimateData.items[i];
-            if (item) {
-              item.quantity = value;
-              item.amount = item.price * item.quantity;
+    this.form.valueChanges.subscribe(
+      (data: any) => {
+        _.forEach(data.categories, (quantities: number[], catName: string) => {
+          this.api.estimateData.categoryItems.forEach((catItem: CategoryItem) => {
+            if (catItem.name === catName) {
+              catItem.items.forEach((item, i: number) => {
+                item.quantity = quantities[i];
+                item.amount = item.price * item.quantity;
+              })
             }
-          }
+          });
         });
         this.api.updateEstimateData();
       }
@@ -158,14 +147,24 @@ export class EstimateComponent implements OnInit {
     }
   }
 
-  public buildFormFromExistingEstimate() {
-    this.api.estimateData.items.forEach((item: EstimateItem) => {
-      if (item.type === 'Service') {
-        this.selectedServiceItems.push(item);
-      } else {
-        this.selectedInventoryItems.push(item);
-      }
-      (this.form.controls['quantities'] as FormArray).push(new FormControl(item.quantity));
+  public buildForm() {
+    // build form
+    this.form = this.fb.group({
+      'categories': this.fb.group({}),
+    });
+
+    this.api.categories.forEach((category: any) => {
+
+      // add controls
+      const itemQuantityControl = new FormArray([]);
+      (this.form.get('categories') as FormGroup).addControl(category.name, itemQuantityControl);
+
+      this.api.estimateData.categoryItems.forEach((catItem: CategoryItem) => {
+        if (catItem.name === category.name) {
+          // add quantity control
+          itemQuantityControl.push(new FormControl(1));
+        }
+      });
     });
   }
 
@@ -189,61 +188,93 @@ export class EstimateComponent implements OnInit {
     return category ? category.name : null;
   }
 
-  public getItemsGroupedByCategory(): CategoryItem[] {
-    const categoryItems: CategoryItem[] = [];
-    const groups = _.groupBy(this.api.estimateData.items, (item) => {
-      return this.getCategoryNameForItemName(item.name);
+  public itemAdded(item: Item) {
+    const cat = this.getCategoryNameForItemName(item.name);
+    // add new form control to category
+    (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
+    // add to category items
+    const category = this.api.estimateData.categoryItems.find((catItem) => {
+      return catItem.name === cat;
     });
-    _.forEach(groups, (items, categoryName) => {
-      categoryItems.push({
-        name: categoryName,
-        items: items,
-        subtotal: this.api.getSubTotalForItems(items),
+    const estimateItem: EstimateItem = {
+      id: item.id,
+      name: item.name,
+      full_name: item.full_name,
+      type: item.type,
+      price: item.price,
+      amount: item.price,
+      description: item.description,
+      quantity: 1,
+    };
+    if (category) {
+      category.items.push(estimateItem);
+    } else {
+      this.api.estimateData.categoryItems.push({
+        name: cat,
+        items: [estimateItem],
+        subtotal: 0,
       });
-    });
-    return categoryItems;
-  }
-
-  public itemAdded(item: any) {
-    // add new form control
-    (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
-    // add to estimate items
-    this.api.estimateData.items.push(item);
+    }
     // save estimate to local storage
     this.api.updateEstimateData();
   }
 
   public itemRemoved(event: any) {
     // the "item" is in event.value
-    const matchingIndex = this.api.estimateData.items.findIndex((it) => {
-      return it.id === event.value.id;
+    const item = event.value;
+    const cat = this.getCategoryNameForItemName(item.name);
+    const matchingCatIndex = this.api.estimateData.categoryItems.findIndex((catItem) => {
+      return catItem.name === cat;
     });
-    if (matchingIndex !== -1) {
-      this.api.estimateData.items.splice(matchingIndex, 1);
+    if (matchingCatIndex !== -1) {
+      const matchingIndex = this.api.estimateData.categoryItems[matchingCatIndex].items.findIndex((item) => {
+        return item.id === item.id;
+      });
+      if (matchingIndex !== -1) {
+        this.api.estimateData.categoryItems[matchingCatIndex].items.splice(matchingIndex, 1);
+      }
       this.api.updateEstimateData();
     }
   }
 
-  public removeItem(item: Item, i: number) {
-    console.log('removing', item, i);
-    (this.form.get('quantities') as FormArray).removeAt(i);
-    const matchingIndex = this.selectedInventoryItems.findIndex((it) => {
+  public removeItem(item: Item, catName: string, itemIndex: number) {
+    // remove control
+    ((this.form.get('categories') as FormGroup).get(catName) as FormArray).removeAt(itemIndex);
+
+    // update selected values
+    const selectedItems = item.type === 'Service' ? this.selectedServiceItems : this.selectedInventoryItems;
+    const matchingIndex = selectedItems.findIndex((it) => {
       return item.id === it.id;
     });
-    // TODO - handle "Service"
     if (matchingIndex !== -1) {
-      this.selectedInventoryItems.splice(matchingIndex, 1);
-      // this method is necessary for change detection with ng-select
+      selectedItems.splice(matchingIndex, 1);
+      // update selected items
+      // reassign like this for change detection with ng-select
       // https://github.com/ng-select/ng-select#change-detection
       this.selectedInventoryItems = [...this.selectedInventoryItems];
+      this.selectedServiceItems = [...this.selectedServiceItems];
     }
-    this.api.estimateData.items.splice(i, 1);
+
+    // remove the item from the estimate data
+    this.api.estimateData.categoryItems.forEach((catItem) => {
+      let catItemIndex = -1;
+      catItem.items.forEach((it, i) => {
+        if (it.id === item.id) {
+          catItemIndex = i;
+        }
+      });
+      if (catItemIndex >= 0) {
+        catItem.items.splice(catItemIndex, 1);
+      }
+    });
+
+    // save to local storage
     this.api.updateEstimateData();
   }
 
   public hasAssessmentResultForCategory(result: string, category: any): boolean {
     // checks if there are any assessments for this category matching "result"
-    // result: "good", "ok", "bad"
+    // result: "good", "ok", "bad" etc
     const assessments = this.api.categories.filter((cat) => {
       if (cat.id === category.id) {
         if (this.api.estimateData.assessments[category.name] === result) {
