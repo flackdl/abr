@@ -212,7 +212,6 @@ export class EstimateComponent implements OnInit {
       this.api.estimateData.categoryItems.push({
         name: cat,
         items: [estimateItem],
-        subtotal: 0,
       });
     }
     // save estimate to local storage
