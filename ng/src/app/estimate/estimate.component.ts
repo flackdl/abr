@@ -8,6 +8,12 @@ import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import * as _ from 'lodash';
+import {EstimateItem} from "../estimate-data";
+
+type CategoryItems = {
+  [name: string]: EstimateItem[],
+}
 
 
 @Component({
@@ -47,7 +53,7 @@ export class EstimateComponent implements OnInit {
     // load existing data from storage
     this.buildFormFromExistingEstimate();
 
-    // watch for changes
+    // watch for quantity changes
     this.form.controls['quantities'].valueChanges.subscribe(
       (values: any[]) => {
         values.forEach((value, i) => {
@@ -93,13 +99,14 @@ export class EstimateComponent implements OnInit {
     const inventoryQueries = [];
     const serviceQueries = [];
 
-    // query inventory and services with matching prefixes for this category and, if a child, it's parent category
+    // query inventory and services with matching prefixes for this category and, if a child, it's parent category too
     this.api.categoryPrefixes.filter((prefix) => {
 
       if (prefix.category === category.id) {
         return true;
       }
 
+      // child category
       if (category.parent) {
         const parentCategory = this.api.categories.find((cat) => {
           return cat.id === category.parent;
@@ -157,7 +164,26 @@ export class EstimateComponent implements OnInit {
     }
   }
 
-  public itemAdded(item: any) {
+  public getCategoryNameForItemName(name: string) {
+    let category;
+    const prefixMatch = this.api.categoryPrefixes.find((prefix) => {
+      return name.toLowerCase().startsWith(prefix.prefix.toLowerCase());
+    });
+    if (prefixMatch) {
+      category = this.api.categories.concat(this.api.categoriesChildren).find((cat) => {
+        return cat.id === prefixMatch.category;
+      });
+    }
+    return category ? category.name : null;
+  }
+
+  public getItemsGroupedByCategory(): CategoryItems[] {
+    return _.groupBy(this.api.estimateData.items, 'category_name');
+  }
+
+  public itemAdded(item: any) {  // expects qbo item
+    // TODO - prevent duplicates
+
     // add form control
     (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
     this.api.estimateData.items.push({
@@ -169,6 +195,7 @@ export class EstimateComponent implements OnInit {
       type: item.Type, // Inventory|Service
       amount: item.UnitPrice * 1,
       description: item.Description,
+      category_name: this.getCategoryNameForItemName(item.Name),
     });
     // save estimate to local storage
     this.api.updateEstimateData();

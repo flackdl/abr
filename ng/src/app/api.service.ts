@@ -26,10 +26,7 @@ export class ApiService {
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
 
   public settings: any;
-  public estimateData: EstimateData = {
-    // define the items so it can simply be appended to later
-    items: [],
-  };
+  public estimateData: EstimateData;
   public qboPreferences: any;
   public categories: any[];
   public categoriesChildren: any[];
@@ -143,8 +140,14 @@ export class ApiService {
     }
   }
 
+  public getEmptyEstimateData(): EstimateData {
+    return {
+      items: [],
+    }
+  }
+
   public clearEstimateData() {
-    this.estimateData = {};
+    this.estimateData = this.getEmptyEstimateData();
     this.updateEstimateData();
     this.estimateData$.next(null);
   }
@@ -154,6 +157,8 @@ export class ApiService {
       map((data) => {
         if (Object.keys(data).length > 0) {
           this.estimateData = data;
+        } else {
+          this.estimateData = this.getEmptyEstimateData();
         }
       })
     );

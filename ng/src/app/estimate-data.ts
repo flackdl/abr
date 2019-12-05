@@ -1,3 +1,14 @@
+export type EstimateItem = {
+  name: string,
+  full_name: string,
+  id: string
+  type: string, // Inventory|Service
+  quantity: number,
+  price: number,
+  amount: number,
+  description: string,
+  category_name: string, // only used internally for grouping
+};
 export type EstimateData = {
   status?: string,
   crm?: string,
@@ -16,16 +27,7 @@ export type EstimateData = {
   assessments?: {
     [name: string]: string,
   },
-  items?: {
-    name: string,
-    full_name: string,
-    id: string
-    type: string, // Inventory|Service
-    quantity: number,
-    price: number,
-    amount: number,
-    description: string,
-  }[],
+  items?: EstimateItem[],
   tag_number?: string,
   expiration_date?: string,
   expiration_time?: string,
