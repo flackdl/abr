@@ -4,39 +4,36 @@
 
     <!-- categories -->
     <div class="col-4">
+
+      <!-- labor -->
       <div class="card mb-3">
         <div class="card-header">
           <h5>Labor Categories</h5>
         </div>
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <!-- service only categories -->
-            <div>
-              <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
-                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
-              </div>
-            </div>
+          <!-- service only categories -->
+          <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
+            <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
           </div>
         </div>
       </div>
+
+
+      <!-- inventory -->
       <div class="card">
         <div class="card-header">
           <h5>Inventory Categories</h5>
         </div>
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <!-- main categories -->
-            <div>
-              <div *ngFor="let category of getMainCategories()" class="my-2">
-                <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
-                  <button class="btn btn-sm" type="button" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
-                  <div ngbDropdownMenu>
-                    <button ngbDropdownItem type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
-                  </div>
-                </div>
-                <button class="btn btn-sm" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
+          <!-- main categories -->
+          <div *ngFor="let category of getMainCategories()" class="my-2">
+            <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
+              <button class="btn btn-block" type="button" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
+              <div ngbDropdownMenu>
+                <button ngbDropdownItem type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
               </div>
             </div>
+            <button class="btn btn-block" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
           </div>
         </div>
       </div>
