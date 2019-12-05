@@ -4,9 +4,24 @@
 
     <!-- categories -->
     <div class="col-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>Labor Categories</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <!-- service only categories -->
+            <div>
+              <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="card">
         <div class="card-header">
-          <h5>Categories</h5>
+          <h5>Inventory Categories</h5>
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -20,14 +35,6 @@
                   </div>
                 </div>
                 <button class="btn btn-sm" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
-              </div>
-            </div>
-            <!-- service only categories -->
-            <div>
-              <div class="border border-dark p-2">
-                <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
-                  <button class="btn btn-sm btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
-                </div>
               </div>
             </div>
           </div>
@@ -53,8 +60,9 @@
               [ngModelOptions]="{standalone: true}"
               [(ngModel)]="selectedInventoryItems"
               (add)="itemAdded($event)"
+              (remove)="itemRemoved($event)"
               #inventorySelect
-              bindLabel="Description"
+              bindLabel="description"
               placeholder="Select items"
             >
             </ng-select>
@@ -79,7 +87,7 @@
               [(ngModel)]="selectedServiceItems"
               #serviceSelect
               (add)="itemAdded($event)"
-              bindLabel="Description"
+              bindLabel="description"
               placeholder="Select items"
             >
             </ng-select>
@@ -98,8 +106,6 @@
       <table class="table table-bordered table-condensed">
         <thead>
         <tr>
-          <th>#</th>
-          <th>Category</th>
           <th>Product/Service</th>
           <th>Description</th>
           <th>Quantity</th>
@@ -109,15 +115,13 @@
           <th></th>
         </tr>
         </thead>
-        <tbody (cdkDropListDropped)="dropItem($event)" cdkDropList>
-        <!-- TODO - the ng-container messes up the drag 'n drop -->
-        <ng-container *ngFor="let category of getItemsGroupedByCategory() | keyvalue">
-          <tr cdkDrag>
-            <td colspan="100" class="bg-light">{{ category.key }}</td>
+        <tbody>
+        <ng-container *ngFor="let categoryItems of getItemsGroupedByCategory()">
+          <tr>
+            <td colspan="100" class="bg-info text-light">{{ categoryItems.name }}</td>
           </tr>
-          <tr *ngFor="let item of category.value; let i = index" formArrayName="quantities" cdkDrag>
-            <td><span class="oi oi-grid-four-up"></span></td>
-            <td>{{ getCategoryNameForItemName(item.name) }}</td>
+          <!-- TODO - index is probably wrong since we grouped by category -->
+          <tr *ngFor="let item of categoryItems.items; let i = index" formArrayName="quantities">
             <td>{{ item.name }}</td>
             <td>{{ item.description }}</td>
             <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
@@ -126,7 +130,10 @@
             <td>
               <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
             </td>
-            <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(i)"><span class="oi oi-x"></span></button></td>
+            <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, i)"><span class="oi oi-x"></span></button></td>
+          </tr>
+          <tr>
+            <td colspan="100" class="bg-light text-right text-muted"><strong>Subtotal: </strong>{{ categoryItems.subtotal | currency }}</td>
           </tr>
         </ng-container>
         </tbody>

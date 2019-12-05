@@ -1,13 +1,20 @@
-export type EstimateItem = {
+export type Item = {
+  id: string
   name: string,
   full_name: string,
+  type: string, // Inventory|Service
+  price: number,
+  description: string,
+};
+export type EstimateItem = {
   id: string
+  name: string,
+  full_name: string,
   type: string, // Inventory|Service
   quantity: number,
   price: number,
   amount: number,
   description: string,
-  category_name: string, // only used internally for grouping
 };
 export type EstimateData = {
   status?: string,

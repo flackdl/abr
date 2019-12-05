@@ -8,7 +8,6 @@ import { NgxLoadingModule } from 'ngx-loading';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {NgxWebstorageModule} from 'ngx-webstorage';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -78,7 +77,6 @@ export function init(api: ApiService) {
     NgxLoadingModule.forRoot({}),
     NgxWebstorageModule.forRoot(),
     NgbModule,
-    DragDropModule,
   ],
   providers: [
     { provide: APP_INITIALIZER, useFactory: init, deps: [ApiService], multi: true },

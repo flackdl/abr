@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {LocalStorageService} from 'ngx-webstorage';
-import {EstimateData} from "./estimate-data";
+import {EstimateData, Item} from "./estimate-data";
 
 
 @Injectable({
@@ -107,6 +107,12 @@ export class ApiService {
       }));
     }
     return 0;
+  }
+
+  public getSubTotalForItems(items: any[]): number {
+    return _.sum(items.map((item) => {
+      return item.amount;
+    }));
   }
 
   public itemHasTax(item: any): boolean {
@@ -242,14 +248,32 @@ export class ApiService {
     return this._responseProxy(this.http.get(this.API_QBO_ESTIMATE, {params: httpParams}));
   }
 
-  public fetchInventory(params?: any): Observable<any> {
-    const httpParams = new HttpParams({fromObject: params});
-    return this._responseProxy(this._responseProxy(this.http.get(this.API_QBO_INVENTORY, {params: httpParams})));
+  public fetchInventory(params?: any): Observable<Item[]> {
+    return this._fetchItems('Inventory', params);
   }
 
   public fetchService(params?: any): Observable<any> {
+    return this._fetchItems('Service', params);
+  }
+
+  protected _fetchItems(type: string, params?: any): Observable<any> {
     const httpParams = new HttpParams({fromObject: params});
-    return this._responseProxy(this.http.get(this.API_QBO_SERVICE, {params: httpParams}));
+    const url = type === 'Service' ? this.API_QBO_SERVICE : this.API_QBO_INVENTORY;
+    return this._responseProxy(
+      this.http.get(url, {params: httpParams}).pipe(
+        map((items: any[]) => {
+          return items.map((item) => {
+            return {
+              id: item.Id,
+              name: item.Name,
+              full_name: item.FullyQualifiedName,
+              price: item.UnitPrice,
+              type: item.Type, // Inventory|Service
+              description: item.Description,
+            }
+          })
+        })
+      ));
   }
 
   public fetchCategory(params?: any): Observable<any> {

@@ -7,13 +7,15 @@ import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import {NgSelectComponent} from "@ng-select/ng-select";
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as _ from 'lodash';
-import {EstimateItem} from "../estimate-data";
+import {EstimateItem, Item} from "../estimate-data";
 
-type CategoryItems = {
-  [name: string]: EstimateItem[],
-}
+type CategoryItem = {
+  name: string,
+  items: EstimateItem[],
+  subtotal: number,
+};
+
 
 
 @Component({
@@ -25,10 +27,10 @@ export class EstimateComponent implements OnInit {
   public isLoading = false;
   public isItemsLoading = false;
   public form: FormGroup;
-  public selectedInventoryItems: any[];
-  public selectedServiceItems: any[];
-  public inventoryResults: any[] = [];
-  public serviceResults: any[] = [];
+  public selectedInventoryItems: any[] = [];
+  public selectedServiceItems: any[] = [];
+  public inventoryResults: Item[] = [];
+  public serviceResults: Item[] = [];
   public selectedCategory: string;
 
   @ViewChild("inventorySelect", {static: true}) inventorySelect: NgSelectComponent;
@@ -157,11 +159,14 @@ export class EstimateComponent implements OnInit {
   }
 
   public buildFormFromExistingEstimate() {
-    if (this.api.estimateData.items) {
-      this.api.estimateData.items.forEach((item) => {
-        (this.form.controls['quantities'] as FormArray).push(new FormControl(item.quantity));
-      });
-    }
+    this.api.estimateData.items.forEach((item: EstimateItem) => {
+      if (item.type === 'Service') {
+        this.selectedServiceItems.push(item);
+      } else {
+        this.selectedInventoryItems.push(item);
+      }
+      (this.form.controls['quantities'] as FormArray).push(new FormControl(item.quantity));
+    });
   }
 
   public getCategoryNameForItemName(name: string) {
@@ -174,35 +179,64 @@ export class EstimateComponent implements OnInit {
         return cat.id === prefixMatch.category;
       });
     }
+
+    // return parent category this is a child category
+    if (category.parent) {
+      category = this.api.categories.find((cat) => {
+        return cat.id === category.parent;
+      })
+    }
     return category ? category.name : null;
   }
 
-  public getItemsGroupedByCategory(): CategoryItems[] {
-    return _.groupBy(this.api.estimateData.items, 'category_name');
+  public getItemsGroupedByCategory(): CategoryItem[] {
+    const categoryItems: CategoryItem[] = [];
+    const groups = _.groupBy(this.api.estimateData.items, (item) => {
+      return this.getCategoryNameForItemName(item.name);
+    });
+    _.forEach(groups, (items, categoryName) => {
+      categoryItems.push({
+        name: categoryName,
+        items: items,
+        subtotal: this.api.getSubTotalForItems(items),
+      });
+    });
+    return categoryItems;
   }
 
-  public itemAdded(item: any) {  // expects qbo item
-    // TODO - prevent duplicates
-
-    // add form control
+  public itemAdded(item: any) {
+    // add new form control
     (this.form.controls['quantities'] as FormArray).push(new FormControl(1));
-    this.api.estimateData.items.push({
-      id: item.Id,
-      name: item.Name,
-      full_name: item.FullyQualifiedName,
-      quantity: 1,
-      price: item.UnitPrice,
-      type: item.Type, // Inventory|Service
-      amount: item.UnitPrice * 1,
-      description: item.Description,
-      category_name: this.getCategoryNameForItemName(item.Name),
-    });
+    // add to estimate items
+    this.api.estimateData.items.push(item);
     // save estimate to local storage
     this.api.updateEstimateData();
   }
 
-  public removeItem(i: number) {
+  public itemRemoved(event: any) {
+    // the "item" is in event.value
+    const matchingIndex = this.api.estimateData.items.findIndex((it) => {
+      return it.id === event.value.id;
+    });
+    if (matchingIndex !== -1) {
+      this.api.estimateData.items.splice(matchingIndex, 1);
+      this.api.updateEstimateData();
+    }
+  }
+
+  public removeItem(item: Item, i: number) {
+    console.log('removing', item, i);
     (this.form.get('quantities') as FormArray).removeAt(i);
+    const matchingIndex = this.selectedInventoryItems.findIndex((it) => {
+      return item.id === it.id;
+    });
+    // TODO - handle "Service"
+    if (matchingIndex !== -1) {
+      this.selectedInventoryItems.splice(matchingIndex, 1);
+      // this method is necessary for change detection with ng-select
+      // https://github.com/ng-select/ng-select#change-detection
+      this.selectedInventoryItems = [...this.selectedInventoryItems];
+    }
     this.api.estimateData.items.splice(i, 1);
     this.api.updateEstimateData();
   }
@@ -242,10 +276,6 @@ export class EstimateComponent implements OnInit {
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
       'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
     };
-  }
-
-  public dropItem(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.api.estimateData.items, event.previousIndex, event.currentIndex);
   }
 
   public createEstimate() {
