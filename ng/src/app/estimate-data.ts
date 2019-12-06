@@ -5,6 +5,7 @@ export type Item = {
   type: string, // Inventory|Service
   price: number,
   description: string,
+  sku: string,
 };
 export type EstimateItem = {
   id: string

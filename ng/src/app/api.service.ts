@@ -264,11 +264,11 @@ export class ApiService {
     return this._fetchItems('Inventory', params);
   }
 
-  public fetchService(params?: any): Observable<any> {
+  public fetchService(params?: any): Observable<Item[]> {
     return this._fetchItems('Service', params);
   }
 
-  protected _fetchItems(type: string, params?: any): Observable<any> {
+  protected _fetchItems(type: string, params?: any): Observable<Item[]> {
     const httpParams = new HttpParams({fromObject: params});
     const url = type === 'Service' ? this.API_QBO_SERVICE : this.API_QBO_INVENTORY;
     return this._responseProxy(
@@ -282,6 +282,7 @@ export class ApiService {
               price: item.UnitPrice,
               type: item.Type, // Inventory|Service
               description: item.Description,
+              sku: item.Sku,
             }
           })
         })

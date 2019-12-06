@@ -58,7 +58,7 @@ export class EstimateComponent implements OnInit {
         });
         this.api.updateEstimateData();
       }
-    )
+    );
   }
 
   public getMainCategories() {
@@ -155,14 +155,16 @@ export class EstimateComponent implements OnInit {
 
     this.api.categories.forEach((category: any) => {
 
-      // add controls
-      const itemQuantityControl = new FormArray([]);
-      (this.form.get('categories') as FormGroup).addControl(category.name, itemQuantityControl);
+      // add quantities control
+      const itemQuantitiesControl = new FormArray([]);
+      (this.form.get('categories') as FormGroup).addControl(category.name, itemQuantitiesControl);
 
       this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
         if (catItem.name === category.name) {
           // add quantity control
-          itemQuantityControl.push(new FormControl(1));
+          catItem.items.forEach((item) => {
+            itemQuantitiesControl.push(new FormControl(item.quantity));
+          });
         }
       });
     });
@@ -189,6 +191,8 @@ export class EstimateComponent implements OnInit {
   }
 
   public itemAdded(item: Item) {
+    // TODO - prevent duplicates
+
     const cat = this.getCategoryNameForItemName(item.name);
     // add new form control to category
     (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
@@ -236,7 +240,7 @@ export class EstimateComponent implements OnInit {
     }
   }
 
-  public removeItem(item: Item, catName: string, itemIndex: number) {
+  public removeItem(item: EstimateItem, catName: string, itemIndex: number) {
     // remove control
     ((this.form.get('categories') as FormGroup).get(catName) as FormArray).removeAt(itemIndex);
 

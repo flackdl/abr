@@ -59,9 +59,12 @@
               (add)="itemAdded($event)"
               (remove)="itemRemoved($event)"
               #inventorySelect
-              bindLabel="description"
+              bindLabel="name"
               placeholder="Select items"
             >
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <app-item-dropdown [item]="item"></app-item-dropdown>
+              </ng-template>
             </ng-select>
           </div>
         </div>
@@ -84,9 +87,12 @@
               [(ngModel)]="selectedServiceItems"
               #serviceSelect
               (add)="itemAdded($event)"
-              bindLabel="description"
+              bindLabel="name"
               placeholder="Select items"
             >
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <app-item-dropdown [item]="item"></app-item-dropdown>
+              </ng-template>
             </ng-select>
           </div>
         </div>
@@ -113,7 +119,7 @@
         </tr>
         </thead>
         <tbody formGroupName="categories">
-        <ng-container *ngFor="let category of api.estimateData.category_items; let catIndex = index">
+        <ng-container *ngFor="let category of api.estimateData.category_items">
           <ng-container *ngIf="category.items.length > 0">
             <tr>
               <td colspan="100" class="bg-info text-white text-right"><strong>{{ category.name }}</strong></td>
