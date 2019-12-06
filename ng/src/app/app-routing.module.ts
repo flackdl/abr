@@ -9,7 +9,6 @@ import {MainConcernComponent} from "./main-concern/main-concern.component";
 import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {CustomerComponent} from "./customer/customer.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
-import {ReviewComponent} from "./review/review.component";
 import {WizardGuard} from "./wizard.guard";
 import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
 import {StatementNotesComponent} from "./statement-notes/statement-notes.component";
@@ -35,7 +34,6 @@ const routes: Routes = [
       { path: 'questionnaire', component: QuestionnaireComponent },
       { path: 'estimate', component: EstimateComponent },
       { path: 'wrap-up', component: EstimateWrapUpComponent },
-      { path: 'review', component: ReviewComponent },
       { path: 'estimate-notes', component: EstimateNotesComponent },
       { path: 'statement-notes', component: StatementNotesComponent },
     ],

@@ -1,7 +1,8 @@
+import SignaturePad from "signature_pad";
 import {WizardStepsService} from "../wizard-steps.service";
 import {Router} from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
@@ -17,6 +18,10 @@ export class EstimateWrapUpComponent implements OnInit {
   public form: FormGroup;
   public expirationTime: any;
   public isTimeValid = true;
+  public signature: SignaturePad;
+  public signatureValid = true;
+
+  @ViewChild("signatureEl", {static: true}) signatureEl: ElementRef;
 
   constructor(
     private api: ApiService,
@@ -28,17 +33,31 @@ export class EstimateWrapUpComponent implements OnInit {
 
   ngOnInit() {
 
+    this.signature = new SignaturePad(this.signatureEl.nativeElement,
+      {
+        onEnd: () => {
+          this.signatureValid = true;
+          this.formChanges(this.form.value);
+        }
+      });
+    if (this.api.estimateData.signature) {
+      this.signature.fromDataURL(this.api.estimateData.signature);
+    }
+
     this.form = this.fb.group({
       expiration_date: [this.api.estimateData.expiration_date, Validators.required],
       tag_number: [this.api.estimateData.tag_number, Validators.required],
       employee_initials: [this.api.estimateData.employee_initials, Validators.required],
       need_parts: [this.api.estimateData.need_parts, Validators.required],
       parts_in_inventory: [this.api.estimateData.parts_in_inventory],  // conditionally required if need_parts is true
+      review_ok: [this.api.estimateData.review_ok, Validators.required],
+      contact_method: [this.api.estimateData.contact_method, Validators.required],
+      payment_option: [this.api.estimateData.payment_option, Validators.required],
     });
 
     // update estimate data in local storage on update
     this.form.valueChanges.subscribe((data) => {
-      this.api.updateEstimateData(this.form.value);
+      this.formChanges(data);
     });
 
     // toggle "parts in inventory" based on "need parts"
@@ -72,6 +91,8 @@ export class EstimateWrapUpComponent implements OnInit {
   public submit() {
     this.isTimeValid = !!this.expirationTime;
 
+    this.signatureValid = !this.signature.isEmpty();
+
     // mark form dirty
     this.api.markFormDirty(this.form);
 
@@ -89,6 +110,28 @@ export class EstimateWrapUpComponent implements OnInit {
     }
 
     this.router.navigate([this.wizardSteps.nextStep(this)]);
+  }
+
+  public formChanges(data: any) {
+    // overwrite signature with data url
+    if (!this.signature.isEmpty()) {
+      data['signature'] = this.signature.toDataURL();
+    }
+
+    if (data.review_ok) {
+      data['status'] = 'Accepted';
+    } else {
+      data['status'] = 'Rejected';
+    }
+    this.api.updateEstimateData(data);
+  }
+
+  public clearSignature() {
+    this.signatureValid = false;
+    this.signature.clear();
+    this.api.updateEstimateData({
+      signature: '',
+    });
   }
 
 }
