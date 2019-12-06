@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {catchError, map} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
@@ -79,7 +79,7 @@ export class ApiService {
   }
 
   public hasEstimate(): boolean {
-    return Boolean(this.estimateData.categoryItems && this.estimateData.categoryItems.length > 0);
+    return Boolean(this.estimateData.category_items && this.estimateData.category_items.length > 0);
   }
 
   public hasEstimateWrapUp(): boolean {
@@ -102,7 +102,7 @@ export class ApiService {
 
   public getSubTotal(): number {
     let sum = 0;
-    this.estimateData.categoryItems.forEach((catItem) => {
+    this.estimateData.category_items.forEach((catItem) => {
       catItem.items.forEach((item) => {
         sum += item.amount;
       })
@@ -118,7 +118,7 @@ export class ApiService {
 
   public getSubTotalForCategory(category: string): number {
     let sum = 0;
-    this.estimateData.categoryItems.forEach((catItem) => {
+    this.estimateData.category_items.forEach((catItem) => {
       if (catItem.name === category) {
         sum = this.getSubTotalForItems(catItem.items);
       }
@@ -132,7 +132,7 @@ export class ApiService {
 
   public getTotal(): number {
     let tax = 0;
-    this.estimateData.categoryItems.forEach((catItem) => {
+    this.estimateData.category_items.forEach((catItem) => {
       tax += _.sum(catItem.items.filter((item) => {
         return this.itemHasTax(item);
       }).map((item) => {
@@ -166,7 +166,7 @@ export class ApiService {
 
   public getEmptyEstimateData(): EstimateData {
     return {
-      categoryItems: [],
+      category_items: [],
     }
   }
 
@@ -318,8 +318,21 @@ export class ApiService {
     ));
   }
 
-  public createEstimate(data: any): Observable<any> {
-    return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, data));
+  public createEstimate(data: EstimateData): Observable<any> {
+    // flatten category items into just the items themselves
+    const postData = Object.assign({}, data);
+    let items = [];
+    data.category_items.forEach((catItem) => {
+      items = items.concat(catItem.items);
+    });
+    postData['items'] = items;
+
+    return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, postData)).pipe(
+      tap((data) => {
+        // clear local storage
+        this.storage.clear('estimate');
+      })
+    );
   }
 
   public markFormDirty(form: FormGroup) {

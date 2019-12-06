@@ -1,5 +1,5 @@
 <ngx-loading [show]="isLoading"></ngx-loading>
-<form [formGroup]="form" (ngSubmit)="createEstimate()">
+<form [formGroup]="form" (ngSubmit)="submit()">
   <div class="row">
 
     <!-- categories -->
@@ -95,7 +95,7 @@
     </div>
   </div>
   <!-- line items -->
-  <div class="card mt-3" *ngIf="api.estimateData.categoryItems">
+  <div class="card mt-3" *ngIf="api.estimateData.category_items">
     <div class="card-header">
       <h5>Items</h5>
     </div>
@@ -113,7 +113,7 @@
         </tr>
         </thead>
         <tbody formGroupName="categories">
-        <ng-container *ngFor="let category of api.estimateData.categoryItems; let catIndex = index">
+        <ng-container *ngFor="let category of api.estimateData.category_items; let catIndex = index">
           <ng-container *ngIf="category.items.length > 0">
             <tr>
               <td colspan="100" class="bg-info text-white text-right"><strong>{{ category.name }}</strong></td>

@@ -38,7 +38,7 @@ export type EstimateData = {
   assessments?: {
     [name: string]: string,
   },
-  categoryItems?: CategoryItem[],
+  category_items?: CategoryItem[],
   tag_number?: string,
   expiration_date?: string,
   expiration_time?: string,

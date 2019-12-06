@@ -47,7 +47,7 @@ export class EstimateComponent implements OnInit {
     this.form.valueChanges.subscribe(
       (data: any) => {
         _.forEach(data.categories, (quantities: number[], catName: string) => {
-          this.api.estimateData.categoryItems.forEach((catItem: CategoryItem) => {
+          this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
             if (catItem.name === catName) {
               catItem.items.forEach((item, i: number) => {
                 item.quantity = quantities[i];
@@ -159,7 +159,7 @@ export class EstimateComponent implements OnInit {
       const itemQuantityControl = new FormArray([]);
       (this.form.get('categories') as FormGroup).addControl(category.name, itemQuantityControl);
 
-      this.api.estimateData.categoryItems.forEach((catItem: CategoryItem) => {
+      this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
         if (catItem.name === category.name) {
           // add quantity control
           itemQuantityControl.push(new FormControl(1));
@@ -193,7 +193,7 @@ export class EstimateComponent implements OnInit {
     // add new form control to category
     (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
     // add to category items
-    const category = this.api.estimateData.categoryItems.find((catItem) => {
+    const category = this.api.estimateData.category_items.find((catItem) => {
       return catItem.name === cat;
     });
     const estimateItem: EstimateItem = {
@@ -209,7 +209,7 @@ export class EstimateComponent implements OnInit {
     if (category) {
       category.items.push(estimateItem);
     } else {
-      this.api.estimateData.categoryItems.push({
+      this.api.estimateData.category_items.push({
         name: cat,
         items: [estimateItem],
       });
@@ -222,15 +222,15 @@ export class EstimateComponent implements OnInit {
     // the "item" is in event.value
     const item = event.value;
     const cat = this.getCategoryNameForItemName(item.name);
-    const matchingCatIndex = this.api.estimateData.categoryItems.findIndex((catItem) => {
+    const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === cat;
     });
     if (matchingCatIndex !== -1) {
-      const matchingIndex = this.api.estimateData.categoryItems[matchingCatIndex].items.findIndex((item) => {
+      const matchingIndex = this.api.estimateData.category_items[matchingCatIndex].items.findIndex((item) => {
         return item.id === item.id;
       });
       if (matchingIndex !== -1) {
-        this.api.estimateData.categoryItems[matchingCatIndex].items.splice(matchingIndex, 1);
+        this.api.estimateData.category_items[matchingCatIndex].items.splice(matchingIndex, 1);
       }
       this.api.updateEstimateData();
     }
@@ -255,7 +255,7 @@ export class EstimateComponent implements OnInit {
     }
 
     // remove the item from the estimate data
-    this.api.estimateData.categoryItems.forEach((catItem) => {
+    this.api.estimateData.category_items.forEach((catItem) => {
       let catItemIndex = -1;
       catItem.items.forEach((it, i) => {
         if (it.id === item.id) {
@@ -308,7 +308,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public createEstimate() {
+  public submit() {
     // mark all controls as dirty to force validation
     this.api.markFormDirty(this.form);
 

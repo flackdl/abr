@@ -31,8 +31,8 @@ export class QuestionnaireComponent implements OnInit {
     const assessmentGroup = {};
 
     // build assessment form controls
-    this.api.categories.forEach((category) => {
-        assessmentGroup[category.name] = [this.getExistingAssessment(category.name), Validators.required];
+    this.getMainCategories().forEach((category) => {
+      assessmentGroup[category.name] = [this.getExistingAssessment(category.name), Validators.required];
     });
 
     this.form = this.fb.group({
@@ -43,6 +43,12 @@ export class QuestionnaireComponent implements OnInit {
     this.form.valueChanges.subscribe((data) => {
       this.api.updateEstimateData(this.form.value);
     })
+  }
+
+  public getMainCategories() {
+    return this.api.categories.filter((cat) => {
+      return !cat.service_only;
+    });
   }
 
   public getExistingBikeModel() {

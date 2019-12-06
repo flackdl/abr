@@ -25,11 +25,9 @@ export class StatementNotesComponent implements OnInit {
     this.api.updateEstimateData({
       private_notes: notes,
     });
-    console.log('all done');
     this.api.createEstimate(this.api.estimateData).subscribe(
       (data) => {
         this.toastr.success('Successfully created estimate');
-        // TODO - clear local storage
         this.router.navigate(['/wizard']);
       }, (error) => {
         this.toastr.error('An unknown error occurred');

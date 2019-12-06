@@ -21,14 +21,14 @@
         <div class="card-body">
           <div class="card-title d-flex justify-content-between">
             <h5>Wear</h5>
-            <div class="d-flex w-25">
+            <div class="text-right">
               <button class="btn btn-success mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_GOOD)">Great</button>
               <button class="btn btn-warning mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_OK)">Advise</button>
               <button class="btn btn-danger mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_BAD)">Poor</button>
               <button class="btn btn-dark mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_NA)">N/A</button>
             </div>
           </div>
-          <div class="row" formGroupName="assessments" *ngFor="let category of api.categories">
+          <div class="row" formGroupName="assessments" *ngFor="let category of getMainCategories()">
             <div class="col-6 my-1 text-right">
               <div class="text-black-50 font-weight-bold">{{ category.name }}</div>
             </div>
