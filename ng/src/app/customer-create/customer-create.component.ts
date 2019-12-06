@@ -27,10 +27,9 @@ export class CustomerCreateComponent implements OnInit {
       email: new FormControl('', [Validators.email, Validators.required]),
       phone: new FormControl('', [Validators.pattern(/^\d{10}$/), Validators.required]),
       crm: ['', Validators.required],
-      address_line1: ['', Validators.required],
+      address_line1: [''],
       address_line2: [''],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
+      city: [''],
       zip: ['', Validators.required],
     });
   }

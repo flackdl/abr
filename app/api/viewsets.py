@@ -1,5 +1,3 @@
-import logging
-from datetime import datetime
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException
@@ -120,10 +118,9 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         phone = PhoneNumber()
         phone.FreeFormNumber = data['phone']
         billing_address = Address()
-        billing_address.Line1 = data['address_line1']
-        billing_address.Line2 = data['address_line2']
-        billing_address.City = data['city']
-        billing_address.CountrySubDivisionCode = data['state']
+        billing_address.Line1 = data.get('address_line1')
+        billing_address.Line2 = data.get('address_line2')
+        billing_address.City = data.get('city')
         billing_address.PostalCode = data['zip']
 
         customer = Customer()

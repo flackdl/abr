@@ -52,10 +52,9 @@ class CustomerCreateQBOSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     email = serializers.CharField()
     phone = serializers.IntegerField()
-    address_line1 = serializers.CharField()
+    address_line1 = serializers.CharField(required=False, allow_blank=True)
     address_line2 = serializers.CharField(required=False, allow_blank=True)
-    city = serializers.CharField()
-    state = serializers.CharField()
+    city = serializers.CharField(required=False, allow_blank=True)
     zip = serializers.CharField()
     crm = serializers.ChoiceField(choices=[crm[0] for crm in CRMS])
 
