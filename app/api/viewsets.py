@@ -10,7 +10,7 @@ from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
     CategoryPrefixSerializer, EstimateLineCreateQBOSerializer)
-from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_tag_number_index_from_preferences
+from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_custom_field_index_from_preferences
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
 GENERIC_VENDOR_QUOTE = 'QUOTE'
@@ -163,16 +163,17 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate_line_serializer.is_valid(raise_exception=True)
         lines = estimate_line_serializer.validated_data
 
+        #
         # create estimate
+        #
+
         estimate = Estimate()
         estimate.TxnStatus = estimate_data['status']
         estimate.CustomerRef = {
             "value": estimate_data['customer_id'],
         }
 
-        # TODO
-        #estimate.ExpirationDate = None
-        #estimate.DueDate = None
+        estimate.ExpirationDate = estimate_data['expiration_date'].isoformat()
 
         # build lines
         for line in lines:
@@ -191,11 +192,20 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         # query preferences so we can get the "Tag #" custom field
         preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
 
+        # add custom field "Tag #"
         estimate.CustomField = [{
-            "DefinitionId": get_tag_number_index_from_preferences(preferences),
+            "DefinitionId": get_custom_field_index_from_preferences('Tag #', preferences),
             "Type": "StringType",
             "Name": "Tag #",
             "StringValue": estimate_data['tag_number'],
+        }]
+
+        # add custom field "Expiration Time"
+        estimate.CustomField = [{
+            "DefinitionId": get_custom_field_index_from_preferences('Expiration Time', preferences),
+            "Type": "StringType",
+            "Name": "Expiration Time",
+            "StringValue": estimate_data['expiration_time'].isoformat(),
         }]
 
         estimate.save(qb=self.qbo_client)
