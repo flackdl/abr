@@ -8,6 +8,8 @@ import {FormGroup} from "@angular/forms";
 import {LocalStorageService} from 'ngx-webstorage';
 import {EstimateData, Item} from "./estimate-data";
 
+import * as moment from 'moment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +26,10 @@ export class ApiService {
   public API_CATEGORY= '/api/category/';
   public API_CATEGORY_CHILDREN = '/api/category-children/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
+
+  public OPTION_PAYMENT_NOT_PAID = 'Not Paid';
+  public OPTION_PAYMENT_PAID = 'Paid';
+  public OPTION_PAYMENT_HALF_NOW = 'Half Now';
 
   public settings: any;
   public estimateData: EstimateData;
@@ -87,16 +93,11 @@ export class ApiService {
       this.estimateData.expiration_date &&
       this.estimateData.expiration_time &&
       this.estimateData.employee_initials &&
-      this.estimateData.need_parts !== undefined
-    );
-  }
-
-  public hasReview(): boolean {
-    return Boolean(
       this.estimateData.signature &&
       this.estimateData.contact_method &&
       this.estimateData.payment_option &&
-      this.estimateData.status
+      this.estimateData.status &&
+      this.estimateData.need_parts !== undefined
     );
   }
 
@@ -177,23 +178,53 @@ export class ApiService {
   }
 
   public getPublicNotes(): string {
-    return [
+    let notes = [
       // main concern
       `Main Concern: ${this.estimateData.main_concern}`,
-      // additional public notes
-      this.estimateData.public_notes,
-    ].join('\n');
+    ];
+    // include assessments
+    notes = notes.concat(Object.keys(this.estimateData.assessments).map((assessment) => {
+      return `${assessment}: ${this.estimateData.assessments[assessment]}`;
+    }));
+    // additional notes notes
+    if (this.estimateData.public_notes) {
+      notes.push(`Extra Notes: ${this.estimateData.public_notes}`);
+    }
+    return notes.join('\n');
 
   }
 
   public getPrivateNotes(): string {
     let notes = [];
-    // include assessments
-    notes = notes.concat(Object.keys(this.estimateData.assessments).map((assessment) => {
-      return `${assessment}: ${this.estimateData.assessments[assessment]}`;
-    }));
+
+    // payment
+    if (this.estimateData.payment_option === this.OPTION_PAYMENT_PAID) {
+      notes.push('$');
+    } else if (this.estimateData.payment_option === this.OPTION_PAYMENT_NOT_PAID) {
+      notes.push('* NOT PAID *');
+    } else if (this.estimateData.payment_option === this.OPTION_PAYMENT_HALF_NOW) {
+      notes.push('* PAID HALF *');
+    }
+
+    // need to order parts
+    if (this.estimateData.need_parts) {
+      notes.push('Need to order parts');
+      // need to add to inventory
+      if (!this.estimateData.parts_in_inventory) {
+        notes.push('Parts not in inventory')
+      }
+    }
+
+    // initials
+    notes.push(this.estimateData.employee_initials);
+
+    // timestamp
+    notes.push(moment().format());
+
     // additional private notes
-    notes.push(this.estimateData.private_notes);
+    if (this.estimateData.private_notes) {
+      notes.push(`Extra Notes: ${this.estimateData.private_notes}`);
+    }
 
     return notes.join('\n');
   }

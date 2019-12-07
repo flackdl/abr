@@ -17,10 +17,13 @@ export class EstimateNotesComponent implements OnInit {
   ngOnInit() {
   }
 
-  public submit(notes: string) {
+  public changed(notes: string) {
     this.api.updateEstimateData({
       public_notes: notes,
     });
+  }
+
+  public submit() {
     this.wizardSteps.navigateToNextStep(this);
   }
 }

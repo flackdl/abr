@@ -27,8 +27,11 @@ export class MainConcernComponent implements OnInit {
     }
   }
 
-  public save(answer) {
+  public change(answer) {
     this.api.updateEstimateData({main_concern: answer});
+  }
+
+  public submit() {
     this.router.navigate([this.wizardSteps.nextStep(this)]);
   }
 }

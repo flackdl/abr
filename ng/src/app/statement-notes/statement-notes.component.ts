@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./statement-notes.component.scss']
 })
 export class StatementNotesComponent implements OnInit {
+  public isLoading = false;
 
   constructor(
     private router: Router,
@@ -21,12 +22,17 @@ export class StatementNotesComponent implements OnInit {
   ngOnInit() {
   }
 
-  public submit(notes: string) {
+  public change(notes: string) {
     this.api.updateEstimateData({
       private_notes: notes,
     });
+  }
+
+  public submit() {
+    this.isLoading = true;
     this.api.createEstimate(this.api.estimateData).subscribe(
       (data) => {
+        this.isLoading = false;
         this.toastr.success('Successfully created estimate');
         this.router.navigate(['/wizard']);
       }, (error) => {

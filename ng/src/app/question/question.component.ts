@@ -14,12 +14,16 @@ export class QuestionComponent implements OnInit, OnChanges {
   @Input('defaultAnswer') defaultAnswer: string = '';
   @Input('submitButtonClass') submitButtonClass: string = 'btn-primary';
   @Input('submitButtonLabel') submitButtonLabel: string = 'Next';
-  @Output() answer = new EventEmitter<string>();
+  @Output() submitted = new EventEmitter<string>();
+  @Output() changed = new EventEmitter<string>();
 
   public input: FormControl;
 
   constructor() {
     this.input = new FormControl('', Validators.required);
+    this.input.valueChanges.subscribe((data) => {
+      this.changed.emit(data);
+    })
   }
 
   ngOnInit() {
@@ -36,7 +40,7 @@ export class QuestionComponent implements OnInit, OnChanges {
     if (!this.input.valid) {
       return;
     }
-    this.answer.emit(this.input.value);
+    this.submitted.emit();
   }
 
 }

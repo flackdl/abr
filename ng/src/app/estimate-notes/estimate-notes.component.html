@@ -2,4 +2,4 @@
   <h4>Estimate Notes</h4>
   <textarea readonly disabled class="w-100" rows="10">{{ api.getPublicNotes()}}</textarea>
 </div>
-<app-question inputType="textarea" question="Additional Notes" (answer)="submit($event)" [defaultAnswer]="api.estimateData?.public_notes"></app-question>
+<app-question inputType="textarea" question="Additional Notes" (submitted)="submit()" (changed)="changed($event)" [defaultAnswer]="api.estimateData?.public_notes"></app-question>

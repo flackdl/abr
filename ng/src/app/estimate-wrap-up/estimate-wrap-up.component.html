@@ -80,9 +80,9 @@
             <label for="contact-method">Payment Option</label>
             <select class="form-control" id="payment-option" [class.is-invalid]="form.controls.payment_option.dirty && !form.controls.payment_option.valid" formControlName="payment_option">
               <option></option>
-              <option>Not Paid</option>
-              <option>Paid</option>
-              <option>Half Now</option>
+              <option>{{api.OPTION_PAYMENT_NOT_PAID}}</option>
+              <option>{{api.OPTION_PAYMENT_PAID}}</option>
+              <option>{{api.OPTION_PAYMENT_HALF_NOW}}</option>
             </select>
           </div>
           <!-- signature -->

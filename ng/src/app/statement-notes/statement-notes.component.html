@@ -1,5 +1,6 @@
+<ngx-loading [show]="isLoading"></ngx-loading>
 <div class="alert alert-info">
   <h4>Statement Notes</h4>
   <textarea readonly disabled class="w-100" rows="10">{{ api.getPrivateNotes()}}</textarea>
 </div>
-<app-question inputType="textarea" question="Additional Notes" (answer)="submit($event)" [defaultAnswer]="api.estimateData?.private_notes" submitButtonClass="btn-success" submitButtonLabel="Create Estimate"></app-question>
+<app-question inputType="textarea" question="Additional Notes" (submitted)="submit()" (changed)="change($event)" [defaultAnswer]="api.estimateData?.private_notes" submitButtonClass="btn-success" submitButtonLabel="Create Estimate"></app-question>
