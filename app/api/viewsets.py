@@ -152,6 +152,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
+        # TODO - signature/attachment
 
         # validate estimate data
         estimate_serializer = EstimateCreateQBOSerializer(data=request.data)
@@ -172,7 +173,10 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate.CustomerRef = {
             "value": estimate_data['customer_id'],
         }
-
+        estimate.PrivateNote = estimate_data['private_notes']
+        estimate.CustomerMemo = {
+            "value": estimate_data['public_notes'],
+        }
         estimate.ExpirationDate = estimate_data['expiration_date'].isoformat()
 
         # build lines
@@ -189,7 +193,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
                 "Amount": line['amount'],
             })
 
-        # query preferences so we can get the "Tag #" custom field
+        # query preferences so we can get the custom field ids
         preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
 
         # custom field Tag #

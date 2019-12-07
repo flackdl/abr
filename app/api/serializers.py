@@ -38,6 +38,8 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
     expiration_date = serializers.DateField()
     expiration_time = serializers.TimeField()
     items = serializers.JSONField()  # validated against EstimateLineCreateQBOSerializer
+    public_notes = serializers.CharField()
+    private_notes = serializers.CharField()
 
 
 class EstimateLineCreateQBOSerializer(serializers.Serializer):
