@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ApiService} from "../api.service";
 import {Router} from "@angular/router";
+import {EstimateData} from "../estimate-data";
 
 @Component({
   selector: 'app-customer-create',
@@ -42,10 +43,13 @@ export class CustomerCreateComponent implements OnInit {
       this.isLoading = true;
       // create new customer
       this.api.createCustomer(this.form.value).subscribe(
-        (data) => {
+        (data: any) => {
           this.toastr.success('Successfully created new customer');
           // update estimate data
-          this.api.updateEstimateData(this.form.value);
+          const estimateData: EstimateData = this.form.value;
+          // add customer id
+          estimateData.customer_id = data.Id;
+          this.api.updateEstimateData(estimateData);
           this.router.navigate(['wizard', 'main-concern']).then(() => {
             this.isLoading = false;
           })
