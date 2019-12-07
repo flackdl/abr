@@ -361,8 +361,8 @@ export class ApiService {
 
     return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, postData)).pipe(
       tap((data) => {
-        // clear local storage
-        this.storage.clear('estimate');
+        // clear estimate from local storage
+        this.clearEstimateData();
       })
     );
   }
