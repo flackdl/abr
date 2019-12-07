@@ -40,6 +40,7 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
     items = serializers.JSONField()  # validated against EstimateLineCreateQBOSerializer
     public_notes = serializers.CharField()
     private_notes = serializers.CharField()
+    signature = serializers.CharField()  # data uri
 
 
 class EstimateLineCreateQBOSerializer(serializers.Serializer):

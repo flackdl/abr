@@ -1,7 +1,9 @@
+import tempfile
+from base64 import b64decode
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException
-from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address
+from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable, AttachableRef
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -216,6 +218,27 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         )
 
         estimate.save(qb=self.qbo_client)
+
+        # save signature (data uri) to temporary file so we can upload and attach it to the estimate
+        with tempfile.NamedTemporaryFile(delete=False) as fh:
+
+            # save to image
+            header, encoded = estimate_data['signature'].split(",", 1)
+            data = b64decode(encoded)
+            fh.write(data)
+
+            # create attachment
+            attachment = Attachable()
+            attachable_ref = AttachableRef()
+            attachable_ref.EntityRef = {
+                "type": 'Estimate',
+                "value": estimate.Id,
+            }
+            attachment.AttachableRef.append(attachable_ref)
+            attachment.FileName = 'signature.png'
+            attachment._FilePath = fh.name
+            attachment.ContentType = 'image/png'
+            attachment.save(qb=self.qbo_client)
 
         return Response(estimate.to_dict())
 
