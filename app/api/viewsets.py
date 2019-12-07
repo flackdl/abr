@@ -192,21 +192,24 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         # query preferences so we can get the "Tag #" custom field
         preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
 
-        # add custom field "Tag #"
-        estimate.CustomField = [{
-            "DefinitionId": get_custom_field_index_from_preferences('Tag #', preferences),
-            "Type": "StringType",
-            "Name": "Tag #",
-            "StringValue": estimate_data['tag_number'],
-        }]
-
-        # add custom field "Expiration Time"
-        estimate.CustomField = [{
-            "DefinitionId": get_custom_field_index_from_preferences('Expiration Time', preferences),
-            "Type": "StringType",
-            "Name": "Expiration Time",
-            "StringValue": estimate_data['expiration_time'].isoformat(),
-        }]
+        # custom field Tag #
+        estimate.CustomField.append(
+            {
+                "DefinitionId": get_custom_field_index_from_preferences('Tag #', preferences),
+                "Type": "StringType",
+                "Name": "Tag #",
+                "StringValue": estimate_data['tag_number'],
+            }
+        )
+        # custom field Expiration Time
+        estimate.CustomField.append(
+            {
+                "DefinitionId": get_custom_field_index_from_preferences('Expiration Time', preferences),
+                "Type": "StringType",
+                "Name": "Expiration Time",
+                "StringValue": estimate_data['expiration_time'].isoformat(),
+            }
+        )
 
         estimate.save(qb=self.qbo_client)
 

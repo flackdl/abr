@@ -285,8 +285,9 @@ def get_inventory_items(request, pos, all_stock=False):
 def get_custom_field_index_from_preferences(field_name: str, preferences: dict) -> int:
     if 'SalesFormsPrefs' in preferences:
         if 'CustomField' in preferences['SalesFormsPrefs']:
-            for index, custom_field in enumerate(preferences['SalesFormsPrefs']['CustomField']):
+            for custom_field in preferences['SalesFormsPrefs']['CustomField']:
                 for field in custom_field['CustomField']:
                     if 'StringValue' in field and field['StringValue'] == field_name:
-                        return index
+                        # return the digit from the "Name" which looks something like "SalesCustomName3"
+                        return field['Name'][-1]
     return -1
