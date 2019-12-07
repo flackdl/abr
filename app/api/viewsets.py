@@ -230,6 +230,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             # create attachment
             attachment = Attachable()
             attachable_ref = AttachableRef()
+            attachable_ref.IncludeOnSend = True
             attachable_ref.EntityRef = {
                 "type": 'Estimate',
                 "value": estimate.Id,
