@@ -28,28 +28,30 @@
       <div *ngIf="!invoices.length" class="alert alert-info">
         This customer has no invoices
       </div>
-      <table class="table table-bordered table-striped table-condensed" *ngIf="invoices.length">
-        <thead>
-        <tr>
-          <th>Service Date</th>
-          <th>Estimate Number</th>
-          <th>Total Amount</th>
-          <th>Notes</th>
-          <th>Items</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let invoice of invoices">
-          <td>{{ invoice.TxnDate }}</td>
-          <td>{{ invoice.DocNumber }}</td>
-          <td>${{ invoice.TotalAmt }}</td>
-          <td>{{ invoice.PrivateNote }}</td>
-          <td>
-            <div *ngFor="let line of invoice.Line">{{ line.Description }}</div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-condensed" *ngIf="invoices.length">
+          <thead>
+          <tr>
+            <th>Service Date</th>
+            <th>Estimate Number</th>
+            <th>Total Amount</th>
+            <th>Notes</th>
+            <th>Items</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let invoice of invoices">
+            <td>{{ invoice.TxnDate }}</td>
+            <td>{{ invoice.DocNumber }}</td>
+            <td>${{ invoice.TotalAmt }}</td>
+            <td>{{ invoice.PrivateNote }}</td>
+            <td>
+              <div *ngFor="let line of invoice.Line">{{ line.Description }}</div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="d-flex justify-content-center mt-5" *ngIf="needsNewCustomer">
