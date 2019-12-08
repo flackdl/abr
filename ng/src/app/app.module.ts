@@ -28,6 +28,7 @@ import { EstimateNotesComponent } from './estimate-notes/estimate-notes.componen
 import { CustomerEditComponent } from './customer-edit/customer-edit.component';
 import { StatementNotesComponent } from './statement-notes/statement-notes.component';
 import { ItemDropdownComponent } from './item-dropdown/item-dropdown.component';
+import { CustomerFormComponent } from './customer-form/customer-form.component';
 
 
 export function init(api: ApiService) {
@@ -58,6 +59,7 @@ export function init(api: ApiService) {
     CustomerEditComponent,
     StatementNotesComponent,
     ItemDropdownComponent,
+    CustomerFormComponent,
   ],
   imports: [
     BrowserModule,

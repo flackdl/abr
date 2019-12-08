@@ -12,6 +12,7 @@ import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.compo
 import {WizardGuard} from "./wizard.guard";
 import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
 import {StatementNotesComponent} from "./statement-notes/statement-notes.component";
+import {CustomerEditComponent} from "./customer-edit/customer-edit.component";
 
 
 const routes: Routes = [
@@ -29,6 +30,7 @@ const routes: Routes = [
           { path: '', redirectTo: 'search', pathMatch: 'full' },
           { path: 'search', component: CustomerSearchComponent },
           { path: 'create', component: CustomerCreateComponent },
+          { path: 'edit', component: CustomerEditComponent },
         ]},
       { path: 'main-concern', component: MainConcernComponent },
       { path: 'questionnaire', component: QuestionnaireComponent },

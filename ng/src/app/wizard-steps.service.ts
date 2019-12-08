@@ -47,7 +47,19 @@ export class WizardStepsService {
     this.router.navigate([this.nextStep(componentInstance)]);
   }
 
-  public nextStep(componentInstance: any) {
+  public navigateToFurthestStep() {
+    let step = this.steps.find((step) => {
+      return !step.complete();
+    });
+    if (!step) {
+      // last step
+      step = this.steps[this.steps.length];
+    }
+    // navigate to the furthest step or the last
+    this.router.navigate([step.url]);
+  }
+
+  public nextStep(componentInstance: any): string {
     const matchingIndex = this.steps.findIndex((step) => {
       return componentInstance instanceof step.component;
     });

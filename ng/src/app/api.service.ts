@@ -249,10 +249,6 @@ export class ApiService {
     this.estimateData$.next(this.estimateData);
   }
 
-  public createCustomer(data: any): Observable<any> {
-    return this._responseProxy(this.http.post(this.API_QBO_CUSTOMER, data));
-  }
-
   public fetchSettings(): Observable<any> {
     return this._responseProxy(this.http.get(this.API_SETTINGS).pipe(
       map((data: any) => {
@@ -350,6 +346,10 @@ export class ApiService {
     ));
   }
 
+  public createCustomer(data: any): Observable<any> {
+    return this._responseProxy(this.http.post(this.API_QBO_CUSTOMER, data));
+  }
+
   public createEstimate(data: EstimateData): Observable<any> {
     // flatten category items into just the items themselves
     const postData = Object.assign({}, data);
@@ -365,6 +365,10 @@ export class ApiService {
         this.clearEstimateData();
       })
     );
+  }
+
+  public updateCustomer(id: number, data: any) : Observable<any> {
+    return this._responseProxy(this.http.put(`${this.API_QBO_CUSTOMER}${id}/`, data));
   }
 
   public markFormDirty(form: FormGroup) {

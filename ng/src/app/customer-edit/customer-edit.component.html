@@ -1,1 +1,9 @@
-<p>customer-edit works!</p>
+<div class="card">
+  <ngx-loading [show]="isLoading"></ngx-loading>
+  <div class="card-header">
+    <h3>Edit Customer</h3>
+  </div>
+  <div class="card-body">
+    <app-customer-form (validSubmit)="submit($event)" [initial]="initial"></app-customer-form>
+  </div>
+</div>

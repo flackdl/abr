@@ -104,6 +104,24 @@ class QBOBaseViewSet(viewsets.ViewSet):
 class CustomerQBOViewSet(QBOBaseViewSet):
     model_class = Customer
 
+    def update(self, request, pk):
+        # validate
+        serializer_customer = CustomerCreateQBOSerializer(data=request.data)
+        serializer_customer.is_valid(raise_exception=True)
+
+        # populate instance
+        customer = Customer.get(pk, qb=self.qbo_client)
+        data = serializer_customer.validated_data
+        self._populate_customer(customer, data)
+
+        # save
+        try:
+            customer.save(qb=self.qbo_client)
+        except ValidationException as e:
+            return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(customer.to_dict())
+
     def create(self, request):
 
         # validate
@@ -115,24 +133,8 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         # save
         #
 
-        email = EmailAddress()
-        email.Address = data['email']
-        phone = PhoneNumber()
-        phone.FreeFormNumber = data['phone']
-        billing_address = Address()
-        billing_address.Line1 = data.get('address_line1')
-        billing_address.Line2 = data.get('address_line2')
-        billing_address.City = data.get('city')
-        billing_address.PostalCode = data['zip']
-
         customer = Customer()
-        customer.PrimaryEmailAddr = email
-        customer.PrimaryPhone = phone
-        customer.BillAddr = billing_address
-        customer.GivenName = data['first_name']
-        customer.FamilyName = data['last_name']
-        # hijacking this field which has a max character limit so we're storing the id associated to the CRM
-        customer.ResaleNum = data['crm']
+        self._populate_customer(customer, data)
 
         try:
             customer.save(qb=self.qbo_client)
@@ -148,6 +150,27 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         else:
             objects = Customer.where("Active = True", qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
+
+    def _populate_customer(self, customer: Customer, data: dict):
+
+        email = EmailAddress()
+        email.Address = data['email']
+        phone = PhoneNumber()
+        phone.FreeFormNumber = data['phone']
+        billing_address = Address()
+        billing_address.Line1 = data.get('address_line1')
+        billing_address.Line2 = data.get('address_line2')
+        billing_address.City = data.get('city')
+        billing_address.PostalCode = data['zip']
+
+        customer.PrimaryEmailAddr = email
+        customer.PrimaryPhone = phone
+        customer.BillAddr = billing_address
+        customer.GivenName = data['first_name']
+        customer.FamilyName = data['last_name']
+
+        # hijacking this field which has a max character limit so we're storing the id associated to the CRM
+        customer.ResaleNum = data['crm']
 
 
 class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):

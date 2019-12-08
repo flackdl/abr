@@ -103,13 +103,14 @@
             <label for="initials">Employee Initials</label>
             <input type="text" minlength="2" maxlength="10" class="form-control" id="initials" [class.is-invalid]="form.controls.employee_initials.dirty && !form.controls.employee_initials.valid" formControlName="employee_initials">
           </div>
-          <!-- details -->
+          <!-- review details -->
           <div class="d-flex justify-content-center">
             <div class="alert" [ngClass]="{'alert-success': api.estimateData.status === 'Accepted', 'alert-danger': api.estimateData.status === 'Rejected', 'alert-info': !api.estimateData.status}">
               <div><strong>Estimate Status:</strong> {{ api.estimateData.status }}</div>
               <div><strong>Due:</strong> {{ api.estimateData.expiration_date + ' ' + api.estimateData.expiration_time | amDateFormat: 'MMM Do hh:mm a' }}</div>
               <div><strong>Phone:</strong> {{ api.estimateData.phone }}</div>
               <div><strong>Email:</strong> {{ api.estimateData.email }}</div>
+              <div class="text-right w-100"><a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']"><span class="oi oi-pencil"></span></a></div>
             </div>
           </div>
         </div>
