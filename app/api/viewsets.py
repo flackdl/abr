@@ -146,7 +146,7 @@ class CustomerQBOViewSet(QBOBaseViewSet):
     def list(self, request):
         last_name = request.query_params.get('last_name')
         if last_name:
-            objects = Customer.where("Active = True AND FamilyName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
+            objects = Customer.where("Active = True AND DisplayName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
         else:
             objects = Customer.where("Active = True", qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
