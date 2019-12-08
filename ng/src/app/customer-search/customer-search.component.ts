@@ -89,6 +89,11 @@ export class CustomerSearchComponent implements OnInit {
             last_name: this.customer.FamilyName,
             email: this.customer.PrimaryEmailAddr ? this.customer.PrimaryEmailAddr.Address : '',
             phone: this.customer.PrimaryPhone ? this.customer.PrimaryPhone.FreeFormNumber : '',
+            address_line1: this.customer.BillAddr ? this.customer.BillAddr.Line1 : '',
+            address_line2: this.customer.BillAddr ? this.customer.BillAddr.Line2 : '',
+            zip: this.customer.BillAddr ? this.customer.BillAddr.PostalCode : '',
+            city: this.customer.BillAddr ? this.customer.BillAddr.City : '',
+            crm: this.customer.ResaleNum,
           });
         },
         (error) => {
