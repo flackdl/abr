@@ -109,26 +109,24 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         serializer_customer = CustomerCreateQBOSerializer(data=request.data)
         serializer_customer.is_valid(raise_exception=True)
 
-        # populate instance
+        # query existing customer to get sync token
         customer = Customer.get(pk, qb=self.qbo_client)
+        # populate new instance with updated data and perform a "sparse" update
+        updated_customer = Customer()
+        updated_customer.Id = pk
+        updated_customer.SyncToken = customer.SyncToken
+        updated_customer.sparse = True
         data = serializer_customer.validated_data
 
-        self._populate_customer(customer, data)
-
-        # TODO - update isn't working for existing users, though it works for newly created users
-        import logging
-        logging.info('====================')
-        logging.info(customer.to_dict())
-        logging.info(data)
-        logging.info('====================')
+        self._populate_customer(updated_customer, data)
 
         # save
         try:
-            customer.save(qb=self.qbo_client)
+            updated_customer.save(qb=self.qbo_client)
         except ValidationException as e:
             return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(customer.to_dict())
+        return Response(updated_customer.to_dict())
 
     def create(self, request):
 
@@ -165,15 +163,16 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         email.Address = data['email']
         phone = PhoneNumber()
         phone.FreeFormNumber = data['phone']
-        billing_address = Address()
-        billing_address.Line1 = data.get('address_line1')
-        billing_address.Line2 = data.get('address_line2')
-        billing_address.City = data.get('city')
-        billing_address.PostalCode = data['zip']
+        address = Address()
+        address.Line1 = data.get('address_line1')
+        address.Line2 = data.get('address_line2')
+        address.City = data.get('city')
+        address.PostalCode = data['zip']
 
         customer.PrimaryEmailAddr = email
         customer.PrimaryPhone = phone
-        customer.BillAddr = billing_address
+        customer.BillAddr = address
+        customer.ShipAddr = address
         customer.GivenName = data['first_name']
         customer.FamilyName = data['last_name']
 

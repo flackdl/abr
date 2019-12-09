@@ -20,11 +20,17 @@ export class CustomerFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    // remove non-digits from phone
+    let phone = this.initial.phone || '';
+    phone = phone.replace(/\D/g,'');
+
+    // populate with any initial values
     this.form = this.fb.group({
       first_name: [this.initial.first_name, Validators.required],
       last_name: [this.initial.last_name, Validators.required],
       email: new FormControl(this.initial.email, [Validators.email, Validators.required]),
-      phone: new FormControl(this.initial.phone, [Validators.pattern(/^\d{10}$/), Validators.required]),
+      phone: new FormControl(phone, [Validators.pattern(/^\d{10}$/), Validators.required]),
       crm: [this.initial.crm, Validators.required],
       address_line1: [this.initial.address_line1],
       address_line2: [this.initial.address_line2],

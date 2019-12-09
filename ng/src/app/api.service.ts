@@ -73,7 +73,7 @@ export class ApiService {
   }
 
   public hasCurrentCustomer(): boolean {
-    return Boolean(this.estimateData.first_name && this.estimateData.last_name);
+    return Boolean(this.estimateData.customer_id && this.estimateData.first_name && this.estimateData.last_name);
   }
 
   public hasMainConcern(): boolean {
