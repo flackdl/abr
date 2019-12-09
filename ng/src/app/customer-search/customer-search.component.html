@@ -39,7 +39,8 @@
             <th>Service Date</th>
             <th>Estimate Number</th>
             <th>Total Amount</th>
-            <th>Notes</th>
+            <th>Invoice Notes</th>
+            <th>Statement Notes</th>
             <th>Items</th>
           </tr>
           </thead>
@@ -48,6 +49,7 @@
             <td>{{ invoice.TxnDate }}</td>
             <td>{{ invoice.DocNumber }}</td>
             <td>${{ invoice.TotalAmt }}</td>
+            <td>{{ invoice.CustomerMemo?.value }}</td>
             <td>{{ invoice.PrivateNote }}</td>
             <td>
               <div *ngFor="let line of invoice.Line">{{ line.Description }}</div>
