@@ -26,6 +26,10 @@ Supports the management/tracking of vendor orders.
     
     # trigger a release 
     heroku container:release -a XXX web
+   
+Run one-off command in a new dyno:
+
+    heroku  run -a XXX bash
   
 *Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
 
