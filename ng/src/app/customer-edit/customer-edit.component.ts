@@ -43,7 +43,7 @@ export class CustomerEditComponent implements OnInit {
     this.api.updateCustomer(this.api.estimateData.customer_id, form.value).subscribe(
       (data: any) => {
         this.toastr.success('Successfully updated customer');
-        this.api.updateEstimateData(data);
+        this.api.updateEstimateData(form.value);
         this.wizardSteps.navigateToFurthestStep();
         this.isLoading = false;
       }, (response) => {
