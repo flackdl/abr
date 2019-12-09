@@ -35,6 +35,7 @@ export class EstimateWrapUpComponent implements OnInit {
 
     this.signature = new SignaturePad(this.signatureEl.nativeElement,
       {
+        backgroundColor: "white",  // sets non-transparent background and saves as a jpg
         onEnd: () => {
           this.signatureValid = true;
           this.formChanges(this.form.value);

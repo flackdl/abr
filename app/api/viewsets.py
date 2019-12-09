@@ -266,9 +266,9 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
                 "value": estimate.Id,
             }
             attachment.AttachableRef.append(attachable_ref)
-            attachment.FileName = 'signature.png'
+            attachment.FileName = 'signature.jpg'
             attachment._FilePath = fh.name
-            attachment.ContentType = 'image/png'
+            attachment.ContentType = 'image/jpg'
             attachment.save(qb=self.qbo_client)
 
         return Response(estimate.to_dict())
