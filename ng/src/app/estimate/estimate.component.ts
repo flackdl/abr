@@ -108,8 +108,11 @@ export class EstimateComponent implements OnInit {
       return false;
 
     }).forEach((catPrefix) => {
-      inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
-      serviceQueries.push(this.api.fetchService({name: catPrefix.prefix}));
+      if (catPrefix.type === 'service') {
+        serviceQueries.push(this.api.fetchService({name: catPrefix.prefix}));
+      } else {
+        inventoryQueries.push(this.api.fetchInventory({name: catPrefix.prefix}));
+      }
     });
 
     if (inventoryQueries.concat(serviceQueries).length > 1) {

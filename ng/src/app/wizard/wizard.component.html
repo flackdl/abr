@@ -12,8 +12,8 @@
       <span class="text-muted">Customer: </span><span class="text-dark">{{ api.currentCustomer() }} </span>
       <button class="btn btn-sm btn-outline-warning" (click)="reset()"><span class="oi oi-x"></span></button>
     </div>
-    <div>
-      <span class="text-muted" *ngIf="api.hasEstimate()">Total: </span><span class="text-dark">{{ api.getTotal() | currency }} </span>
+    <div *ngIf="api.hasEstimate()">
+      <span class="text-muted">Total: </span><span class="text-dark">{{ api.getTotal() | currency }} </span>
     </div>
   </div>
 </div>

@@ -203,7 +203,7 @@
   "model": "app.category",
   "pk": 25,
   "fields": {
-    "name": "Single Speed",
+    "name": "1",
     "position": 1,
     "parent": 1,
     "service_only": false
@@ -213,8 +213,8 @@
   "model": "app.category",
   "pk": 26,
   "fields": {
-    "name": "Chain 8 Speed",
-    "position": 3,
+    "name": "8",
+    "position": 2,
     "parent": 1,
     "service_only": false
   }
@@ -223,8 +223,8 @@
   "model": "app.category",
   "pk": 27,
   "fields": {
-    "name": "Chain 9 Speed",
-    "position": 4,
+    "name": "9",
+    "position": 3,
     "parent": 1,
     "service_only": false
   }
@@ -233,18 +233,8 @@
   "model": "app.category",
   "pk": 28,
   "fields": {
-    "name": "Chain 10 speed",
-    "position": 5,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 31,
-  "fields": {
-    "name": "Chain 3 Speed",
-    "position": 2,
+    "name": "10",
+    "position": 4,
     "parent": 1,
     "service_only": false
   }
@@ -300,12 +290,42 @@
   }
 },
 {
+  "model": "app.category",
+  "pk": 38,
+  "fields": {
+    "name": "11",
+    "position": 5,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 39,
+  "fields": {
+    "name": "12",
+    "position": 6,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 40,
+  "fields": {
+    "name": "other",
+    "position": 7,
+    "parent": 1,
+    "service_only": false
+  }
+},
+{
   "model": "app.categoryprefix",
   "pk": 1,
   "fields": {
     "category": 1,
     "prefix": "ch-install",
-    "type": "inventory"
+    "type": "service"
   }
 },
 {
@@ -421,7 +441,7 @@
   "pk": 20,
   "fields": {
     "category": 17,
-    "prefix": "brk-rr",
+    "prefix": "brk",
     "type": "inventory"
   }
 },
@@ -499,19 +519,10 @@
 },
 {
   "model": "app.categoryprefix",
-  "pk": 29,
-  "fields": {
-    "category": 25,
-    "prefix": "ch-s-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
   "pk": 30,
   "fields": {
     "category": 26,
-    "prefix": "ch-8-",
+    "prefix": "ch-8",
     "type": "inventory"
   }
 },
@@ -520,7 +531,7 @@
   "pk": 31,
   "fields": {
     "category": 25,
-    "prefix": "ch-1-",
+    "prefix": "ch-1",
     "type": "inventory"
   }
 },
@@ -529,7 +540,7 @@
   "pk": 32,
   "fields": {
     "category": 27,
-    "prefix": "ch-9-",
+    "prefix": "ch-9",
     "type": "inventory"
   }
 },
@@ -538,16 +549,7 @@
   "pk": 33,
   "fields": {
     "category": 28,
-    "prefix": "ch-10-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 34,
-  "fields": {
-    "category": 31,
-    "prefix": "ch-3-",
+    "prefix": "ch-10",
     "type": "inventory"
   }
 },
@@ -557,7 +559,7 @@
   "fields": {
     "category": 33,
     "prefix": "tuneup-",
-    "type": "inventory"
+    "type": "service"
   }
 },
 {
@@ -566,7 +568,7 @@
   "fields": {
     "category": 34,
     "prefix": "labor-",
-    "type": "inventory"
+    "type": "service"
   }
 },
 {
@@ -575,15 +577,6 @@
   "fields": {
     "category": 35,
     "prefix": "build-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 38,
-  "fields": {
-    "category": 17,
-    "prefix": "brk",
     "type": "service"
   }
 },
@@ -629,6 +622,42 @@
   "fields": {
     "category": 37,
     "prefix": "SHF-FT",
+    "type": "service"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 44,
+  "fields": {
+    "category": 38,
+    "prefix": "ch-11",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 45,
+  "fields": {
+    "category": 39,
+    "prefix": "ch-12",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 46,
+  "fields": {
+    "category": 40,
+    "prefix": "ch-other",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 47,
+  "fields": {
+    "category": 17,
+    "prefix": "brk-rr",
     "type": "service"
   }
 }
