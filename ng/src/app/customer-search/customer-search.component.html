@@ -1,5 +1,19 @@
 <ngx-loading [show]="isLoading"></ngx-loading>
-<div class="card">
+<div class="card" *ngIf="api.hasCurrentCustomer()">
+  <div class="card-header">
+    <h4>Current Customer</h4>
+  </div>
+  <div class="card-body">
+    <div>First Name: {{ api.estimateData.first_name}} </div>
+    <div>Last Name: {{ api.estimateData.last_name}} </div>
+    <div>Email: {{ api.estimateData.email}} </div>
+    <div>Phone: {{ api.estimateData.phone}} </div>
+    <div class="d-flex justify-content-end my-2">
+      <a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']">Edit <span class="oi oi-pencil"></span></a>
+    </div>
+  </div>
+</div>
+<div class="card" *ngIf="!api.hasCurrentCustomer()">
   <div class="card-header">
     <h4>Search for a customer</h4>
   </div>
