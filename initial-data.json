@@ -280,11 +280,32 @@
   }
 },
 {
+  "model": "app.category",
+  "pk": 36,
+  "fields": {
+    "name": "Shifters RR",
+    "position": 24,
+    "parent": null,
+    "service_only": false
+  }
+},
+{
+  "model": "app.category",
+  "pk": 37,
+  "fields": {
+    "name": "Shifters FT",
+    "position": 25,
+    "parent": null,
+    "service_only": false
+  }
+},
+{
   "model": "app.categoryprefix",
   "pk": 1,
   "fields": {
     "category": 1,
-    "prefix": "ch-install"
+    "prefix": "ch-install",
+    "type": "inventory"
   }
 },
 {
@@ -292,7 +313,8 @@
   "pk": 2,
   "fields": {
     "category": 2,
-    "prefix": "chr-"
+    "prefix": "chr-",
+    "type": "inventory"
   }
 },
 {
@@ -300,7 +322,8 @@
   "pk": 3,
   "fields": {
     "category": 3,
-    "prefix": "cs-"
+    "prefix": "cs-",
+    "type": "inventory"
   }
 },
 {
@@ -308,7 +331,8 @@
   "pk": 4,
   "fields": {
     "category": 4,
-    "prefix": "bb-"
+    "prefix": "bb-",
+    "type": "inventory"
   }
 },
 {
@@ -316,7 +340,8 @@
   "pk": 5,
   "fields": {
     "category": 5,
-    "prefix": "headset-"
+    "prefix": "headset-",
+    "type": "inventory"
   }
 },
 {
@@ -324,7 +349,8 @@
   "pk": 8,
   "fields": {
     "category": 8,
-    "prefix": "fork-"
+    "prefix": "fork-",
+    "type": "inventory"
   }
 },
 {
@@ -332,7 +358,8 @@
   "pk": 13,
   "fields": {
     "category": 11,
-    "prefix": "der-hanger-"
+    "prefix": "der-hanger-",
+    "type": "inventory"
   }
 },
 {
@@ -340,7 +367,8 @@
   "pk": 14,
   "fields": {
     "category": 12,
-    "prefix": "der-pulley"
+    "prefix": "der-pulley",
+    "type": "inventory"
   }
 },
 {
@@ -348,7 +376,8 @@
   "pk": 15,
   "fields": {
     "category": 14,
-    "prefix": "der-rr-"
+    "prefix": "der-rr-",
+    "type": "inventory"
   }
 },
 {
@@ -356,7 +385,8 @@
   "pk": 16,
   "fields": {
     "category": 13,
-    "prefix": "der-cb-"
+    "prefix": "der-cb-",
+    "type": "inventory"
   }
 },
 {
@@ -364,7 +394,8 @@
   "pk": 17,
   "fields": {
     "category": 15,
-    "prefix": "der-ft-"
+    "prefix": "der-ft-",
+    "type": "inventory"
   }
 },
 {
@@ -372,7 +403,8 @@
   "pk": 18,
   "fields": {
     "category": 16,
-    "prefix": "der-cb-"
+    "prefix": "der-cb-",
+    "type": "inventory"
   }
 },
 {
@@ -380,7 +412,8 @@
   "pk": 19,
   "fields": {
     "category": 18,
-    "prefix": "brk-cb-"
+    "prefix": "brk-cb-",
+    "type": "inventory"
   }
 },
 {
@@ -388,7 +421,8 @@
   "pk": 20,
   "fields": {
     "category": 17,
-    "prefix": "brk-rr-"
+    "prefix": "brk-rr",
+    "type": "inventory"
   }
 },
 {
@@ -396,7 +430,8 @@
   "pk": 21,
   "fields": {
     "category": 19,
-    "prefix": "brk-ft-"
+    "prefix": "brk-ft",
+    "type": "inventory"
   }
 },
 {
@@ -404,7 +439,8 @@
   "pk": 22,
   "fields": {
     "category": 20,
-    "prefix": "brk-cb-"
+    "prefix": "brk-cb-",
+    "type": "inventory"
   }
 },
 {
@@ -412,7 +448,8 @@
   "pk": 23,
   "fields": {
     "category": 21,
-    "prefix": "tr-"
+    "prefix": "tr-",
+    "type": "inventory"
   }
 },
 {
@@ -420,7 +457,8 @@
   "pk": 24,
   "fields": {
     "category": 22,
-    "prefix": "tr-"
+    "prefix": "tr-",
+    "type": "inventory"
   }
 },
 {
@@ -428,7 +466,8 @@
   "pk": 25,
   "fields": {
     "category": 23,
-    "prefix": "tr-sealant-"
+    "prefix": "tr-sealant-",
+    "type": "inventory"
   }
 },
 {
@@ -436,7 +475,8 @@
   "pk": 26,
   "fields": {
     "category": 23,
-    "prefix": "sealant-"
+    "prefix": "sealant-",
+    "type": "inventory"
   }
 },
 {
@@ -444,7 +484,8 @@
   "pk": 27,
   "fields": {
     "category": 24,
-    "prefix": "ele-"
+    "prefix": "ele-",
+    "type": "inventory"
   }
 },
 {
@@ -452,7 +493,8 @@
   "pk": 28,
   "fields": {
     "category": 24,
-    "prefix": "ebike-"
+    "prefix": "ebike-",
+    "type": "inventory"
   }
 },
 {
@@ -460,7 +502,8 @@
   "pk": 29,
   "fields": {
     "category": 25,
-    "prefix": "ch-s-"
+    "prefix": "ch-s-",
+    "type": "inventory"
   }
 },
 {
@@ -468,7 +511,8 @@
   "pk": 30,
   "fields": {
     "category": 26,
-    "prefix": "ch-8-"
+    "prefix": "ch-8-",
+    "type": "inventory"
   }
 },
 {
@@ -476,7 +520,8 @@
   "pk": 31,
   "fields": {
     "category": 25,
-    "prefix": "ch-1-"
+    "prefix": "ch-1-",
+    "type": "inventory"
   }
 },
 {
@@ -484,7 +529,8 @@
   "pk": 32,
   "fields": {
     "category": 27,
-    "prefix": "ch-9-"
+    "prefix": "ch-9-",
+    "type": "inventory"
   }
 },
 {
@@ -492,7 +538,8 @@
   "pk": 33,
   "fields": {
     "category": 28,
-    "prefix": "ch-10-"
+    "prefix": "ch-10-",
+    "type": "inventory"
   }
 },
 {
@@ -500,7 +547,8 @@
   "pk": 34,
   "fields": {
     "category": 31,
-    "prefix": "ch-3-"
+    "prefix": "ch-3-",
+    "type": "inventory"
   }
 },
 {
@@ -508,7 +556,8 @@
   "pk": 35,
   "fields": {
     "category": 33,
-    "prefix": "tuneup-"
+    "prefix": "tuneup-",
+    "type": "inventory"
   }
 },
 {
@@ -516,7 +565,8 @@
   "pk": 36,
   "fields": {
     "category": 34,
-    "prefix": "labor-"
+    "prefix": "labor-",
+    "type": "inventory"
   }
 },
 {
@@ -524,7 +574,62 @@
   "pk": 37,
   "fields": {
     "category": 35,
-    "prefix": "build-"
+    "prefix": "build-",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 38,
+  "fields": {
+    "category": 17,
+    "prefix": "brk",
+    "type": "service"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 39,
+  "fields": {
+    "category": 19,
+    "prefix": "brk",
+    "type": "service"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 40,
+  "fields": {
+    "category": 36,
+    "prefix": "SHF",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 41,
+  "fields": {
+    "category": 36,
+    "prefix": "SHF-RR",
+    "type": "service"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 42,
+  "fields": {
+    "category": 37,
+    "prefix": "SHF",
+    "type": "inventory"
+  }
+},
+{
+  "model": "app.categoryprefix",
+  "pk": 43,
+  "fields": {
+    "category": 37,
+    "prefix": "SHF-FT",
+    "type": "service"
   }
 }
 ]

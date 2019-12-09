@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -70,6 +69,7 @@ class CategoryChild(Category):
 class CategoryPrefix(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     prefix = models.CharField(max_length=255)
+    type = models.CharField(max_length=20, choices=(('inventory', 'Inventory'), ('service', 'Service')))
 
     class Meta:
         verbose_name_plural = 'category prefixes'

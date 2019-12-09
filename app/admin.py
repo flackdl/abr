@@ -54,10 +54,13 @@ class CategoryParentAdmin(admin.ModelAdmin):
 
     def prefixes(self, obj: Category):
         # parent category prefixes
-        prefixes = [p.prefix for p in obj.categoryprefix_set.all()]
+        prefixes = [p for p in obj.categoryprefix_set.all()]
         # child category prefixes
-        prefixes += [p.prefix for c in Category.children.filter(parent=obj) for p in c.categoryprefix_set.all()]
-        return prefixes
+        prefixes += [p for c in Category.children.filter(parent=obj) for p in c.categoryprefix_set.all()]
+        # group by type
+        inventory = [p.prefix for p in prefixes if p.type == 'inventory']
+        service = [p.prefix for p in prefixes if p.type == 'service']
+        return 'Inventory: {}, Service: {}'.format('|'.join(inventory), '|'.join(service))
 
 
 @admin.register(CategoryChild)

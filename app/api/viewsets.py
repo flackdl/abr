@@ -112,7 +112,15 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         # populate instance
         customer = Customer.get(pk, qb=self.qbo_client)
         data = serializer_customer.validated_data
+
         self._populate_customer(customer, data)
+
+        # TODO - update isn't working for existing users, though it works for newly created users
+        import logging
+        logging.info('====================')
+        logging.info(customer.to_dict())
+        logging.info(data)
+        logging.info('====================')
 
         # save
         try:

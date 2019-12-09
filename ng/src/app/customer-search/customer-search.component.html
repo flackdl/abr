@@ -23,6 +23,10 @@
       </div>
     </form>
 
+    <div class="d-flex justify-content-end my-2" *ngIf="customer">
+      <a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']">Edit <span class="oi oi-pencil"></span></a>
+    </div>
+
     <div *ngIf="invoices" class="mt-5">
       <h5>Customer Invoices</h5>
       <div *ngIf="!invoices.length" class="alert alert-info">
