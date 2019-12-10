@@ -15,7 +15,7 @@
           <div class="card-body">
             <!-- service only categories -->
             <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
-              <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
+              <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)">{{ category.name }}</button>
             </div>
           </div>
         </div>

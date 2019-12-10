@@ -21,7 +21,6 @@ import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap/modal/modal-ref";
 export class EstimateComponent implements OnInit {
   public isLoading = false;
   public form: FormGroup;
-  public selectedCategory: any;
   public inventoryResults: Item[] = [];
   public serviceResults: Item[] = [];
   public modalRef: NgbModalRef;
@@ -78,7 +77,6 @@ export class EstimateComponent implements OnInit {
   }
 
   public categorySelected(category: any) {
-    this.selectedCategory = category;
 
     // reset
     this.isLoading = true;
@@ -130,7 +128,7 @@ export class EstimateComponent implements OnInit {
       ).pipe(
         tap(() => {
           this.isLoading = false;
-          this.openCategoryItemsModal();
+          this.openCategoryItemsModal(category);
         }),
       ).subscribe(
         () => {},
@@ -202,25 +200,8 @@ export class EstimateComponent implements OnInit {
     return assessments.length > 0;
   }
 
-  public isCategorySelected(category: any): boolean {
-    if(!this.selectedCategory) {
-      return false;
-    }
-
-    // parent category is selected
-    if (this.selectedCategory.name === category.name) {
-      return true;
-    }
-
-    // child category is selected
-    return this.api.categoriesChildren.find((child) => {
-      return child.parent === category.id && child.name === this.selectedCategory.name;
-    });
-  }
-
   public categoryButtonClass(category: any) {
     return {
-      'category-selected': this.isCategorySelected(category),
       'btn-outline-danger': this.hasAssessmentResultForCategory('bad', category),
       'btn-outline-warning': this.hasAssessmentResultForCategory('ok', category),
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
@@ -228,7 +209,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public openCategoryItemsModal() {
+  public openCategoryItemsModal(category: any) {
 
     // unsubscribe any existing subscriptions
     if (this.modalRef && this.modalRef.componentInstance) {
@@ -240,7 +221,7 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.category = this.selectedCategory;
+    this.modalRef.componentInstance.category = category;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
