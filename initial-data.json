@@ -203,7 +203,7 @@
   "model": "app.category",
   "pk": 25,
   "fields": {
-    "name": "1",
+    "name": "1 speed",
     "position": 1,
     "parent": 1,
     "service_only": false
@@ -213,7 +213,7 @@
   "model": "app.category",
   "pk": 26,
   "fields": {
-    "name": "8",
+    "name": "8 speed",
     "position": 2,
     "parent": 1,
     "service_only": false
@@ -223,7 +223,7 @@
   "model": "app.category",
   "pk": 27,
   "fields": {
-    "name": "9",
+    "name": "9 speed",
     "position": 3,
     "parent": 1,
     "service_only": false
@@ -233,7 +233,7 @@
   "model": "app.category",
   "pk": 28,
   "fields": {
-    "name": "10",
+    "name": "10 speed",
     "position": 4,
     "parent": 1,
     "service_only": false
@@ -293,7 +293,7 @@
   "model": "app.category",
   "pk": 38,
   "fields": {
-    "name": "11",
+    "name": "11 speed",
     "position": 5,
     "parent": 1,
     "service_only": false
@@ -303,7 +303,7 @@
   "model": "app.category",
   "pk": 39,
   "fields": {
-    "name": "12",
+    "name": "12 speed",
     "position": 6,
     "parent": 1,
     "service_only": false
