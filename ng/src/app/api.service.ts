@@ -307,21 +307,26 @@ export class ApiService {
     const httpParams = new HttpParams({fromObject: params});
     const url = type === 'Service' ? this.API_QBO_SERVICE : this.API_QBO_INVENTORY;
     return this._responseProxy(
-      this.http.get(url, {params: httpParams}).pipe(
+      this.http.get(url, {params: httpParams})
+    ).pipe(
         map((items: any[]) => {
-          return items.map((item) => {
-            return {
-              id: item.Id,
-              name: item.Name,
-              full_name: item.FullyQualifiedName,
-              price: item.UnitPrice,
-              type: item.Type, // Inventory|Service
-              description: item.Description,
-              sku: item.Sku,
-            }
-          })
+          if (items.length) {
+            return items.map((item) => {
+              return {
+                id: item.Id,
+                name: item.Name,
+                full_name: item.FullyQualifiedName,
+                price: item.UnitPrice,
+                type: item.Type, // Inventory|Service
+                description: item.Description,
+                sku: item.Sku,
+              }
+            });
+          } else {
+            return [];
+          }
         })
-      ));
+      );
   }
 
   public fetchCategory(params?: any): Observable<any> {

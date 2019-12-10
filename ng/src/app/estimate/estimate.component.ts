@@ -115,7 +115,7 @@ export class EstimateComponent implements OnInit {
       }
     });
 
-    if (inventoryQueries.concat(serviceQueries).length > 1) {
+    if (inventoryQueries.concat(serviceQueries).length >= 1) {
       merge(
         forkJoin(inventoryQueries).pipe(
           map((data: any[]) => {

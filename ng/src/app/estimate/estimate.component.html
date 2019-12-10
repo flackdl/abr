@@ -41,7 +41,7 @@
     </div>
 
     <!-- right -->
-    <div class="col-lg-9">
+    <div class="col-lg-9 order-first order-lg-last">
 
       <div class="row">
 
@@ -83,6 +83,7 @@
               [(ngModel)]="selectedServiceItems"
 				      #serviceSelect
               (add)="itemAdded($event)"
+              (remove)="itemRemoved($event)"
               bindLabel="name"
               [placeholder]="selectedCategory ? 'Select Labor...' : 'Choose a category first'"
               [disabled]="!selectedCategory"
