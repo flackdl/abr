@@ -2,7 +2,7 @@ export type Item = {
   id: string
   name: string,
   full_name: string,
-  type: string, // Inventory|Service
+  type: string, // inventory|service
   price: number,
   description: string,
   sku: string,
@@ -11,7 +11,7 @@ export type EstimateItem = {
   id: string
   name: string,
   full_name: string,
-  type: string, // Inventory|Service
+  type: string, // inventory|service
   quantity: number,
   price: number,
   amount: number,

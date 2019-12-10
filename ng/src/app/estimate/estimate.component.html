@@ -1,156 +1,112 @@
-<ngx-loading [show]="isLoading"></ngx-loading>
-<form [formGroup]="form" (ngSubmit)="submit()">
+<div class="position-relative">
+  <ngx-loading [show]="isLoading"></ngx-loading>
+  <form [formGroup]="form" (ngSubmit)="submit()">
 
-  <div class="row">
+    <div class="row">
 
-    <!-- left -->
-    <div class="col-lg-3">
+      <!-- left -->
+      <div class="col-lg-3">
 
-      <!-- labor -->
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>Labor Categories</h5>
-        </div>
-        <div class="card-body">
-          <!-- service only categories -->
-          <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
-            <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
+        <!-- labor -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>Labor Categories</h5>
           </div>
-        </div>
-      </div>
-
-
-      <!-- inventory -->
-      <div class="card">
-        <div class="card-header">
-          <h5>Inventory Categories</h5>
-        </div>
-        <div class="card-body">
-          <!-- main categories -->
-          <div *ngFor="let category of getMainCategories()" class="my-2">
-            <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
-              <button class="btn btn-block" type="button" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
-              <div ngbDropdownMenu>
-                <button ngbDropdownItem type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
-              </div>
+          <div class="card-body">
+            <!-- service only categories -->
+            <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
+              <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)" [class.category-selected]="this.isCategorySelected(category)">{{ category.name }}</button>
             </div>
-            <button class="btn btn-block" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- right -->
-    <div class="col-lg-9 order-first order-lg-last">
-
-      <div class="row">
-
-        <!-- inventory items -->
-        <div class="col-12">
-          <div class="form-group">
-            <ng-select
-              [items]="inventoryResults"
-              [multiple]="true"
-              [loading]="isItemsLoading"
-              [closeOnSelect]="true"
-              [searchable]="true"
-              [ngModelOptions]="{standalone: true}"
-              [(ngModel)]="selectedInventoryItems"
-              (add)="itemAdded($event)"
-              (remove)="itemRemoved($event)"
-				      #inventorySelect
-              bindLabel="name"
-              [placeholder]="selectedCategory ? 'Select Inventory...' : 'Choose a category first'"
-              [disabled]="!selectedCategory"
-            >
-              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <app-item-dropdown [item]="item"></app-item-dropdown>
-              </ng-template>
-            </ng-select>
           </div>
         </div>
 
-        <!-- labor items -->
-        <div class="col-12">
-          <div class="form-group">
-            <ng-select
-              [items]="serviceResults"
-              [multiple]="true"
-              [loading]="isItemsLoading"
-              [closeOnSelect]="true"
-              [searchable]="true"
-              [ngModelOptions]="{standalone: true}"
-              [(ngModel)]="selectedServiceItems"
-				      #serviceSelect
-              (add)="itemAdded($event)"
-              (remove)="itemRemoved($event)"
-              bindLabel="name"
-              [placeholder]="selectedCategory ? 'Select Labor...' : 'Choose a category first'"
-              [disabled]="!selectedCategory"
-            >
-              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <app-item-dropdown [item]="item"></app-item-dropdown>
-              </ng-template>
-            </ng-select>
+
+        <!-- inventory -->
+        <div class="card">
+          <div class="card-header">
+            <h5>Inventory Categories</h5>
+          </div>
+          <div class="card-body">
+            <!-- main categories -->
+            <div *ngFor="let category of getMainCategories()" class="my-2">
+              <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
+                <button class="btn btn-block" type="button" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
+                </div>
+              </div>
+              <button class="btn btn-block" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- line items -->
-      <div class="table-responsive">
-        <table class="table table-bordered table-condensed table-hover" *ngIf="api.estimateData.category_items">
-          <thead class="thead-dark">
-          <tr>
-            <th>Product/Service</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Rate</th>
-            <th>Amount</th>
-            <th>Tax</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody formGroupName="categories">
-          <ng-container *ngFor="let category of api.estimateData.category_items">
-            <ng-container *ngIf="category.items.length > 0">
-              <tr>
-                <td colspan="100" class="bg-light text-primary text-right"><strong>{{ category.name }}</strong></td>
-              </tr>
-              <ng-container [formGroupName]="category.name">
-                <tr *ngFor="let item of category.items; let i = index">
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.description }}</td>
-                  <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
-                  <td>${{ item.price }}</td>
-                  <td>${{ item.amount }}</td>
-                  <td>
-                    <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
-                  </td>
-                  <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, category.name, i)"><span class="oi oi-x"></span></button></td>
-                </tr>
+      <!-- right -->
+      <div class="col-lg-9 order-first order-lg-last">
+
+        <!-- line items -->
+        <div class="card">
+          <div class="card-header">
+            <h5>Estimate</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-condensed table-hover" *ngIf="api.estimateData.category_items">
+                <thead class="thead-dark">
                 <tr>
-                  <td colspan="100" class="bg-light text-right text-muted"><strong>Subtotal: </strong>{{ api.getSubTotalForCategory(category.name) | currency }}</td>
+                  <th>Product/Service</th>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Rate</th>
+                  <th>Amount</th>
+                  <th>Tax</th>
+                  <th></th>
                 </tr>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-          </tbody>
-        </table>
-      </div>
-      <div class="text-right">
-        <div class="d-flex justify-content-end my-2">
-          <strong class="mr-3">Subtotal: </strong>
-          <strong>{{ api.getSubTotal() | currency }}</strong>
+                </thead>
+                <tbody formGroupName="categories">
+                <ng-container *ngFor="let category of api.estimateData.category_items">
+                  <ng-container *ngIf="category.items.length > 0">
+                    <tr>
+                      <td colspan="100" class="bg-light text-primary text-right"><strong>{{ category.name }}</strong></td>
+                    </tr>
+                    <ng-container [formGroupName]="category.name">
+                      <tr *ngFor="let item of category.items; let i = index">
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
+                        <td>${{ item.price }}</td>
+                        <td>${{ item.amount }}</td>
+                        <td>
+                          <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
+                        </td>
+                        <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, category.name, i)"><span class="oi oi-x"></span></button></td>
+                      </tr>
+                      <tr>
+                        <td colspan="100" class="bg-light text-right text-muted"><strong>Subtotal: </strong>{{ api.getSubTotalForCategory(category.name) | currency }}</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="d-flex justify-content-end my-2">
-          <strong class="mr-3">Total: </strong>
-          <strong>{{ api.getTotal() | currency }}</strong>
+        <div class="text-right">
+          <div class="d-flex justify-content-end my-2">
+            <strong class="mr-3">Subtotal: </strong>
+            <strong>{{ api.getSubTotal() | currency }}</strong>
+          </div>
+          <div class="d-flex justify-content-end my-2">
+            <strong class="mr-3">Total: </strong>
+            <strong>{{ api.getTotal() | currency }}</strong>
+          </div>
         </div>
-      </div>
-      <div class="d-flex justify-content-end my-3">
-        <button class="btn btn-primary">Next</button>
-      </div>
+        <div class="d-flex justify-content-end my-3">
+          <button class="btn btn-primary">Next</button>
+        </div>
 
+      </div>
     </div>
-  </div>
-</form>
+  </form>
+</div>

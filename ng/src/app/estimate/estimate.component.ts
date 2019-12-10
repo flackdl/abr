@@ -1,14 +1,16 @@
 import {Router} from "@angular/router";
 import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {forkJoin, merge} from "rxjs";
 import {map, tap} from "rxjs/operators";
-import {NgSelectComponent} from "@ng-select/ng-select";
 import * as _ from 'lodash';
 import {CategoryItem, EstimateItem, Item} from "../estimate-data";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {ItemSelectModalComponent} from "../item-select-modal/item-select-modal.component";
+import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap/modal/modal-ref";
 
 
 @Component({
@@ -18,22 +20,18 @@ import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 })
 export class EstimateComponent implements OnInit {
   public isLoading = false;
-  public isItemsLoading = false;
   public form: FormGroup;
-  public selectedInventoryItems: any[] = [];
-  public selectedServiceItems: any[] = [];
+  public selectedCategory: any;
   public inventoryResults: Item[] = [];
   public serviceResults: Item[] = [];
-  public selectedCategory: string;
-
-  @ViewChild("inventorySelect", {static: true}) inventorySelect: NgSelectComponent;
-  @ViewChild("serviceSelect", {static: true}) serviceSelect: NgSelectComponent;
+  public modalRef: NgbModalRef;
 
   constructor(
     private router: Router,
     private api: ApiService,
     private fb: FormBuilder,
     private toastr: ToastrService,
+    private modalService: NgbModal,
     public wizardSteps: WizardStepsService,
   ) {
   }
@@ -80,12 +78,12 @@ export class EstimateComponent implements OnInit {
   }
 
   public categorySelected(category: any) {
-    this.selectedCategory = category.name;
+    this.selectedCategory = category;
 
     // reset
-    this.isItemsLoading = true;
-    this.selectedInventoryItems = [];
-    this.selectedServiceItems = [];
+    this.isLoading = true;
+    this.inventoryResults = [];
+    this.serviceResults = [];
 
     const inventoryQueries = [];
     const serviceQueries = [];
@@ -131,12 +129,8 @@ export class EstimateComponent implements OnInit {
         )
       ).pipe(
         tap(() => {
-          this.isItemsLoading = false;
-          if (category.service_only) {
-            this.serviceSelect.open();
-          } else {
-            this.inventorySelect.open();
-          }
+          this.isLoading = false;
+          this.openCategoryItemsModal();
         }),
       ).subscribe(
         () => {},
@@ -146,7 +140,7 @@ export class EstimateComponent implements OnInit {
         }
       );
     } else {
-      this.isItemsLoading = false;
+      this.isLoading = false;
     }
   }
 
@@ -173,93 +167,9 @@ export class EstimateComponent implements OnInit {
     });
   }
 
-  public getCategoryNameForItemName(name: string) {
-    let category;
-    const prefixMatch = this.api.categoryPrefixes.find((prefix) => {
-      return name.toLowerCase().startsWith(prefix.prefix.toLowerCase());
-    });
-    if (prefixMatch) {
-      category = this.api.categories.concat(this.api.categoriesChildren).find((cat) => {
-        return cat.id === prefixMatch.category;
-      });
-    }
-
-    // return parent category this is a child category
-    if (category.parent) {
-      category = this.api.categories.find((cat) => {
-        return cat.id === category.parent;
-      })
-    }
-    return category ? category.name : null;
-  }
-
-  public itemAdded(item: Item) {
-    // TODO - prevent duplicates
-
-    const cat = this.getCategoryNameForItemName(item.name);
-    // add new form control to category
-    (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
-    // add to category items
-    const category = this.api.estimateData.category_items.find((catItem) => {
-      return catItem.name === cat;
-    });
-    const estimateItem: EstimateItem = {
-      id: item.id,
-      name: item.name,
-      full_name: item.full_name,
-      type: item.type,
-      price: item.price,
-      amount: item.price,
-      description: item.description,
-      quantity: 1,
-    };
-    if (category) {
-      category.items.push(estimateItem);
-    } else {
-      this.api.estimateData.category_items.push({
-        name: cat,
-        items: [estimateItem],
-      });
-    }
-    // save estimate to local storage
-    this.api.updateEstimateData();
-  }
-
-  public itemRemoved(event: any) {
-    // the "item" is in event.value
-    const item = event.value;
-    const cat = this.getCategoryNameForItemName(item.name);
-    const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
-      return catItem.name === cat;
-    });
-    if (matchingCatIndex !== -1) {
-      const matchingIndex = this.api.estimateData.category_items[matchingCatIndex].items.findIndex((item) => {
-        return item.id === item.id;
-      });
-      if (matchingIndex !== -1) {
-        this.api.estimateData.category_items[matchingCatIndex].items.splice(matchingIndex, 1);
-      }
-      this.api.updateEstimateData();
-    }
-  }
-
   public removeItem(item: EstimateItem, catName: string, itemIndex: number) {
     // remove control
     ((this.form.get('categories') as FormGroup).get(catName) as FormArray).removeAt(itemIndex);
-
-    // update selected values
-    const selectedItems = item.type === 'Service' ? this.selectedServiceItems : this.selectedInventoryItems;
-    const matchingIndex = selectedItems.findIndex((it) => {
-      return item.id === it.id;
-    });
-    if (matchingIndex !== -1) {
-      selectedItems.splice(matchingIndex, 1);
-      // update selected items
-      // reassign like this for change detection with ng-select
-      // https://github.com/ng-select/ng-select#change-detection
-      this.selectedInventoryItems = [...this.selectedInventoryItems];
-      this.selectedServiceItems = [...this.selectedServiceItems];
-    }
 
     // remove the item from the estimate data
     this.api.estimateData.category_items.forEach((catItem) => {
@@ -293,15 +203,18 @@ export class EstimateComponent implements OnInit {
   }
 
   public isCategorySelected(category: any): boolean {
+    if(!this.selectedCategory) {
+      return false;
+    }
 
     // parent category is selected
-    if (this.selectedCategory === category.name) {
+    if (this.selectedCategory.name === category.name) {
       return true;
     }
 
     // child category is selected
     return this.api.categoriesChildren.find((child) => {
-      return child.parent === category.id && child.name === this.selectedCategory;
+      return child.parent === category.id && child.name === this.selectedCategory.name;
     });
   }
 
@@ -313,6 +226,111 @@ export class EstimateComponent implements OnInit {
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
       'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
     };
+  }
+
+  public openCategoryItemsModal() {
+
+    // unsubscribe any existing subscriptions
+    if (this.modalRef && this.modalRef.componentInstance) {
+      const component = this.modalRef.componentInstance;
+      component.addItemChange.unsubscribe();
+      component.removeItemChange.unsubscribe();
+    }
+
+    this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
+
+    // inputs
+    this.modalRef.componentInstance.category = this.selectedCategory;
+    this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
+    this.modalRef.componentInstance.serviceResults = this.serviceResults;
+
+    // outputs
+    this.modalRef.componentInstance.removeItemChange.subscribe(
+      (item) => {
+        this.itemRemoved(item);
+      }
+    );
+    this.modalRef.componentInstance.addItemChange.subscribe(
+      (item) => {
+        this.itemAdded(item);
+      }
+    );
+
+    // model closed
+    this.modalRef.result
+      .finally(() => {
+        this.modalService.dismissAll();
+        window.scrollTo(0, 0);
+      });
+  }
+
+  public itemAdded(item: Item) {
+    // TODO - prevent duplicates or automatically increment quantity?
+
+    // add new form control to category
+    const cat = this.getCategoryNameForItemName(item.name);
+    (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
+
+    // add to category items
+    const category = this.api.estimateData.category_items.find((catItem) => {
+      return catItem.name === cat;
+    });
+    const estimateItem: EstimateItem = {
+      id: item.id,
+      name: item.name,
+      full_name: item.full_name,
+      type: item.type.toLowerCase(),
+      price: item.price,
+      amount: item.price,
+      description: item.description,
+      quantity: 1,
+    };
+    if (category) {
+      category.items.push(estimateItem);
+    } else {
+      this.api.estimateData.category_items.push({
+        name: cat,
+        items: [estimateItem],
+      });
+    }
+    // save estimate to local storage
+    this.api.updateEstimateData();
+  }
+
+  public itemRemoved(item: any) {
+    const cat = this.getCategoryNameForItemName(item.name);
+    const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
+      return catItem.name === cat;
+    });
+    if (matchingCatIndex !== -1) {
+      const matchingIndex = this.api.estimateData.category_items[matchingCatIndex].items.findIndex((item) => {
+        return item.id === item.id;
+      });
+      if (matchingIndex !== -1) {
+        this.api.estimateData.category_items[matchingCatIndex].items.splice(matchingIndex, 1);
+      }
+      this.api.updateEstimateData();
+    }
+  }
+
+  public getCategoryNameForItemName(name: string) {
+    let category;
+    const prefixMatch = this.api.categoryPrefixes.find((prefix) => {
+      return name.toLowerCase().startsWith(prefix.prefix.toLowerCase());
+    });
+    if (prefixMatch) {
+      category = this.api.categories.concat(this.api.categoriesChildren).find((cat) => {
+        return cat.id === prefixMatch.category;
+      });
+    }
+
+    // return parent category this is a child category
+    if (category.parent) {
+      category = this.api.categories.find((cat) => {
+        return cat.id === category.parent;
+      })
+    }
+    return category ? category.name : null;
   }
 
   public submit() {

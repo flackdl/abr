@@ -29,6 +29,7 @@ import { CustomerEditComponent } from './customer-edit/customer-edit.component';
 import { StatementNotesComponent } from './statement-notes/statement-notes.component';
 import { ItemDropdownComponent } from './item-dropdown/item-dropdown.component';
 import { CustomerFormComponent } from './customer-form/customer-form.component';
+import { ItemSelectModalComponent } from './item-select-modal/item-select-modal.component';
 
 
 export function init(api: ApiService) {
@@ -60,6 +61,10 @@ export function init(api: ApiService) {
     StatementNotesComponent,
     ItemDropdownComponent,
     CustomerFormComponent,
+    ItemSelectModalComponent,
+  ],
+  entryComponents: [
+    ItemSelectModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,61 @@
+<div class="card w-100">
+  <div class="card-header d-flex justify-content-between">
+    <div>Select Items for <strong>{{category.name}}</strong></div>
+    <button type="button" class="close" (click)="activeModal.close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="card-body">
+
+    <div class="row">
+
+      <!-- inventory items -->
+      <div class="col">
+        <div class="form-group">
+          <ng-select
+            [items]="inventoryResults"
+            [multiple]="true"
+            [closeOnSelect]="true"
+            [searchable]="true"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="selectedInventoryItems"
+            [clearable]="false"
+            (add)="itemAdded($event)"
+            (remove)="itemRemoved($event)"
+            #inventorySelect
+            bindLabel="name"
+            placeholder="Select Inventory..."
+          >
+            <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+              <app-item-dropdown [item]="item"></app-item-dropdown>
+            </ng-template>
+          </ng-select>
+        </div>
+      </div>
+
+      <!-- labor items -->
+      <div class="col">
+        <div class="form-group">
+          <ng-select
+            [items]="serviceResults"
+            [multiple]="true"
+            [closeOnSelect]="true"
+            [searchable]="true"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="selectedServiceItems"
+            [clearable]="false"
+            (add)="itemAdded($event)"
+            (remove)="itemRemoved($event)"
+            #serviceSelect
+            bindLabel="name"
+            placeholder="Select Labor..."
+          >
+            <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+              <app-item-dropdown [item]="item"></app-item-dropdown>
+            </ng-template>
+          </ng-select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
