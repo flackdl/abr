@@ -184,7 +184,6 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
     model_class = Estimate
 
     def create(self, request):
-        # TODO - signature/attachment
 
         # validate estimate data
         estimate_serializer = EstimateCreateQBOSerializer(data=request.data)

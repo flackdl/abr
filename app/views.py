@@ -29,8 +29,6 @@ def dashboard(request):
 def callback(request):
     redis_client = get_redis_client()
 
-    # TODO - handle auth exceptions (i.e without "code" or "realmId")
-
     # get OAuth2 Bearer token
     auth_client = get_qbo_auth_client(get_callback_url(request))
     auth_client.get_bearer_token(request.GET['code'], realm_id=request.GET['realmId'])
