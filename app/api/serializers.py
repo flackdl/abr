@@ -44,9 +44,13 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
 
 
 class EstimateLineQBOSerializer(serializers.Serializer):
+    LINE_TYPE_SERVICE = 'service'
+    LINE_TYPE_INVENTORY = 'inventory'
     id = serializers.IntegerField()
     name = serializers.CharField()
+    type = serializers.ChoiceField(choices=(LINE_TYPE_INVENTORY, LINE_TYPE_SERVICE))
     quantity = serializers.IntegerField()
+    price = serializers.FloatField()
     amount = serializers.FloatField()
 
 

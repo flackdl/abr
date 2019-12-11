@@ -5,7 +5,7 @@ from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
-    AttachableRef, DescriptionLine)
+    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref)
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from app.api.mixins import CustomerRefFilterMixin
 from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
-    CategoryPrefixSerializer, EstimateLineCategoryItemsQBOSerializer)
+    CategoryPrefixSerializer, EstimateLineCategoryItemsQBOSerializer, EstimateLineQBOSerializer)
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_custom_field_index_from_preferences
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -217,17 +217,19 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
 
             # append items for category
             for item in category_items['items']:
-                estimate.Line.append({
-                    "DetailType": "SalesItemLineDetail",
-                    "SalesItemLineDetail": {
-                        "Qty": item['quantity'],
-                        "ItemRef": {
-                            "name": item['name'],
-                            "value": item['id']
-                        },
-                    },
-                    "Amount": item['amount'],
-                })
+
+                sales_line = SalesItemLine()
+                sales_line.SalesItemLineDetail = SalesItemLineDetail()
+                sales_line.SalesItemLineDetail.Qty = item['quantity']
+                sales_line.SalesItemLineDetail.ItemRef = Ref()
+                sales_line.SalesItemLineDetail.ItemRef.name = item['name']
+                sales_line.SalesItemLineDetail.ItemRef.value = item['id']
+                sales_line.SalesItemLineDetail.UnitPrice = item['price']
+                sales_line.SalesItemLineDetail.TaxCodeRef = Ref()
+                sales_line.SalesItemLineDetail.TaxCodeRef.value = 'NON' if item['type'] == EstimateLineQBOSerializer.LINE_TYPE_SERVICE else 'TAX'
+                sales_line.Amount = item['amount']
+
+                estimate.Line.append(sales_line)
 
             # add subtotal for category
             subtotal_line = DescriptionLine()
