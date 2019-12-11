@@ -145,13 +145,13 @@ let estimatesMixin = {
       return 'https://qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
     },
     getCustomField: function (estimate, field) {
-      let value = '';
+      let value;
       if(estimate['CustomField'] && estimate['CustomField'].length) {
         value = _.find(estimate['CustomField'], (f) => {
           return f['Name'] === field;
         });
       }
-      return value['StringValue'];
+      return value ? value['StringValue'] : '';
     },
     totalLabor: function (estimate) {
       let total = 0;

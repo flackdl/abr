@@ -3,7 +3,9 @@ from base64 import b64decode
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException
-from quickbooks.objects import Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable, AttachableRef
+from quickbooks.objects import (
+    Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
+    AttachableRef, DescriptionLine)
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,7 +13,7 @@ from app.api.mixins import CustomerRefFilterMixin
 from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
-    CategoryPrefixSerializer, EstimateLineCreateQBOSerializer)
+    CategoryPrefixSerializer, EstimateLineCategoryItemsQBOSerializer)
 from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_custom_field_index_from_preferences
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
@@ -191,9 +193,9 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate_data = estimate_serializer.validated_data
 
         # validate estimate lines data
-        estimate_line_serializer = EstimateLineCreateQBOSerializer(data=estimate_data['items'], many=True)
-        estimate_line_serializer.is_valid(raise_exception=True)
-        lines = estimate_line_serializer.validated_data
+        estimate_category_items_serializer = EstimateLineCategoryItemsQBOSerializer(data=estimate_data['category_items'], many=True)
+        estimate_category_items_serializer.is_valid(raise_exception=True)
+        categories_items = estimate_category_items_serializer.validated_data
 
         #
         # create estimate
@@ -204,47 +206,52 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate.CustomerRef = {
             "value": estimate_data['customer_id'],
         }
-        estimate.PrivateNote = estimate_data['private_notes']
+        estimate.PrivateNote = estimate_data['private_notes'][:4000]  # 4000 max
         estimate.CustomerMemo = {
-            "value": estimate_data['public_notes'],
+            "value": estimate_data['public_notes'][:1000],  # 1000 max
         }
         estimate.ExpirationDate = estimate_data['expiration_date'].isoformat()
 
         # build lines
-        for line in lines:
-            estimate.Line.append({
-                "DetailType": "SalesItemLineDetail",
-                "SalesItemLineDetail": {
-                    "Qty": line['quantity'],
-                    "ItemRef": {
-                        "name": line['name'],
-                        "value": line['id']
+        for category_items in categories_items:
+
+            # append items for category
+            for item in category_items['items']:
+                estimate.Line.append({
+                    "DetailType": "SalesItemLineDetail",
+                    "SalesItemLineDetail": {
+                        "Qty": item['quantity'],
+                        "ItemRef": {
+                            "name": item['name'],
+                            "value": item['id']
+                        },
                     },
-                },
-                "Amount": line['amount'],
-            })
+                    "Amount": item['amount'],
+                })
+
+            # add subtotal for category
+            subtotal_line = DescriptionLine()
+            subtotal_line.Description = "Subtotal: {}".format(sum(item['amount'] for item in category_items['items']))
+            estimate.Line.append(subtotal_line)
 
         # query preferences so we can get the custom field ids
         preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
 
-        # custom field Tag #
-        estimate.CustomField.append(
-            {
-                "DefinitionId": get_custom_field_index_from_preferences('Tag #', preferences),
-                "Type": "StringType",
-                "Name": "Tag #",
-                "StringValue": estimate_data['tag_number'],
-            }
-        )
-        # custom field Expiration Time
-        estimate.CustomField.append(
-            {
-                "DefinitionId": get_custom_field_index_from_preferences('Expiration Time', preferences),
-                "Type": "StringType",
-                "Name": "Expiration Time",
-                "StringValue": estimate_data['expiration_time'].isoformat(),
-            }
-        )
+        # set custom fields
+        custom_fields = {
+            'Bike/Model': estimate_data['bike_model'],
+            'Tag #': estimate_data['tag_number'],
+            'Expiration Time': estimate_data['expiration_time'].isoformat(),
+        }
+        for name, value in custom_fields.items():
+            estimate.CustomField.append(
+                {
+                    "DefinitionId": get_custom_field_index_from_preferences(name, preferences),
+                    "Type": "StringType",
+                    "Name": name,
+                    "StringValue": value,
+                }
+            )
 
         estimate.save(qb=self.qbo_client)
 

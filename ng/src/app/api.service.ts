@@ -79,8 +79,7 @@ export class ApiService {
       this.estimateData.last_name &&
       this.estimateData.email &&
       this.estimateData.phone &&
-      this.estimateData.zip &&
-      this.estimateData.crm
+      this.estimateData.zip
     );
   }
 
@@ -227,7 +226,7 @@ export class ApiService {
     notes.push(this.estimateData.employee_initials);
 
     // timestamp
-    notes.push(moment().format());
+    notes.push(moment().format('YYYY-MM-DD HH:mm'));
 
     // additional private notes
     if (this.estimateData.private_notes) {
@@ -364,13 +363,10 @@ export class ApiService {
   }
 
   public createEstimate(data: EstimateData): Observable<any> {
-    // flatten category items into just the items themselves
-    const postData = Object.assign({}, data);
-    let items = [];
-    data.category_items.forEach((catItem) => {
-      items = items.concat(catItem.items);
-    });
-    postData['items'] = items;
+    // generate estimate & statement notes (public, private)
+    let postData = Object.assign({}, data);  // make a copy so we don't overwrite
+    postData['public_notes'] = this.getPublicNotes();
+    postData['private_notes'] = this.getPrivateNotes();
 
     return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, postData)).pipe(
       tap((data) => {

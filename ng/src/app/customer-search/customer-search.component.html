@@ -8,26 +8,26 @@
   <div class="card-body">
 
     <h5>Details</h5>
-    <div class="row d-flex justify-content-center">
+    <div class="row">
 
-      <div class="col-12 text-right my-2">
+      <div class="col-12 text-right">
         <a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']">Edit <span class="oi oi-pencil"></span></a>
       </div>
 
-      <div class="col-2 offset-4 font-weight-bold">First Name</div>
-      <div class="col-6 text-left">{{ api.estimateData.first_name}} </div>
+      <div class="col-2 font-weight-bold">First Name</div>
+      <div class="col-10 text-left">{{ api.estimateData.first_name}} </div>
 
-      <div class="col-2 offset-4 font-weight-bold">Last Name</div>
-      <div class="col-6 text-left">{{ api.estimateData.last_name}} </div>
+      <div class="col-2 font-weight-bold">Last Name</div>
+      <div class="col-10 text-left">{{ api.estimateData.last_name}} </div>
 
-      <div class="col-2 offset-4 font-weight-bold">Email</div>
-      <div class="col-6 text-left">{{ api.estimateData.email}} </div>
+      <div class="col-2 font-weight-bold">Email</div>
+      <div class="col-10 text-left">{{ api.estimateData.email}} </div>
 
-      <div class="col-2 offset-4 font-weight-bold">Phone</div>
-      <div class="col-6 text-left">{{ api.estimateData.phone}} </div>
+      <div class="col-2 font-weight-bold">Phone</div>
+      <div class="col-10 text-left">{{ api.estimateData.phone}} </div>
     </div>
 
-    <div *ngIf="invoices" class="my-3">
+    <div *ngIf="invoices" class="my-5">
       <h5>Invoices</h5>
       <div *ngIf="!invoices.length" class="alert alert-info">
         This customer has no invoices
