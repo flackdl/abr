@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import {forkJoin, Observable, of} from "rxjs";
 import {FormGroup} from "@angular/forms";
 import {LocalStorageService} from 'ngx-webstorage';
-import {EstimateData, Item} from "./estimate-data";
+import {EstimateData, EstimateItem, Item} from "./estimate-data";
 
 import * as moment from 'moment';
 
@@ -134,8 +134,8 @@ export class ApiService {
     return sum;
   }
 
-  public itemHasTax(item: any): boolean {
-    return item.type === 'Inventory';
+  public itemHasTax(item: EstimateItem): boolean {
+    return item.type === 'inventory';
   }
 
   public getTotal(): number {
