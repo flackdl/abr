@@ -1,4 +1,5 @@
 let pollingRateSeconds = parseInt('{{ polling_rate_seconds }}');
+let isDebug = '{{ debug }}'.length > 0;
 let apiHeaders = {
   'content-type': 'application/json',
   'X-CSRFToken': Cookies.get('csrftoken'),
@@ -139,9 +140,15 @@ let estimatesMixin = {
         });
     },
     estimateUrl: function (estimate) {
+      if (isDebug) {
+        return 'https://app.sandbox.qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
+      }
       return 'https://qbo.intuit.com/app/estimate?txnId=' + estimate.Id;
     },
     customerUrl: function (estimate) {
+      if (isDebug) {
+        return 'https://app.sandbox.qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
+      }
       return 'https://qbo.intuit.com/app/customerdetail?nameId=' + estimate.CustomerRef.value;
     },
     getCustomField: function (estimate, field) {

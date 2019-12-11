@@ -7,4 +7,5 @@ def processor(request):
     """
     return {
         'polling_rate_seconds': settings.ESTIMATE_QUERY_SECONDS,
+        'debug': settings.DEBUG,
     }
