@@ -152,9 +152,9 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         return Response(customer.to_dict())
 
     def list(self, request):
-        last_name = request.query_params.get('last_name')
-        if last_name:
-            objects = Customer.where("Active = True AND DisplayName LIKE '%{}%'".format(last_name), qb=self.qbo_client)
+        name = request.query_params.get('name')
+        if name:
+            objects = Customer.where("Active = True AND DisplayName LIKE '%{}%'".format(name), qb=self.qbo_client)
         else:
             objects = Customer.where("Active = True", qb=self.qbo_client)
         return Response([o.to_dict() for o in objects])
@@ -219,6 +219,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             for item in category_items['items']:
 
                 sales_line = SalesItemLine()
+                sales_line.Description = item['description']
                 sales_line.SalesItemLineDetail = SalesItemLineDetail()
                 sales_line.SalesItemLineDetail.Qty = item['quantity']
                 sales_line.SalesItemLineDetail.ItemRef = Ref()
@@ -282,6 +283,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         return Response(estimate.to_dict())
 
 
+@method_decorator(cache_page(timeout=60 * 60 * 24 * 7), name='dispatch')
 class ItemBaseQBOViewSet(QBOBaseViewSet):
     model_class = Item
     item_type = None

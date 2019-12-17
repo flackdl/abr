@@ -1,0 +1,13 @@
+<!-- django admin file overridden to include some extra links -->
+{% extends "admin/index.html" %}
+{% load i18n static %}
+{% block sidebar %}
+	{{ block.super }}
+
+	<!-- custom admin links -->
+	<h1>Admin Links</h1>
+	<ul>
+		<li><a href="{% url 'clear-cache' %}">Clear Cache</a></li>
+	</ul>
+
+{% endblock %}

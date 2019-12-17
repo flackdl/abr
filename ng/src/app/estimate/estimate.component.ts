@@ -43,11 +43,13 @@ export class EstimateComponent implements OnInit {
     // watch for quantity changes
     this.form.valueChanges.subscribe(
       (data: any) => {
-        _.forEach(data.categories, (quantities: number[], catName: string) => {
+        _.forEach(data.categories, (catControls: any, catName: string) => {
           this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
             if (catItem.name === catName) {
               catItem.items.forEach((item, i: number) => {
-                item.quantity = quantities[i];
+                item.quantity = catControls.quantities[i];
+                item.price = catControls.prices[i];
+                item.description = catControls.descriptions[i];
                 item.amount = item.price * item.quantity;
               })
             }
@@ -150,15 +152,24 @@ export class EstimateComponent implements OnInit {
 
     this.api.categories.forEach((category: any) => {
 
-      // add quantities control
+      // add controls
       const itemQuantitiesControl = new FormArray([]);
-      (this.form.get('categories') as FormGroup).addControl(category.name, itemQuantitiesControl);
+      const itemPricesControl = new FormArray([]);
+      const itemDescriptionsControl = new FormArray([]);
+      const categoryControl = this.fb.group({
+        'quantities': itemQuantitiesControl,
+        'prices': itemPricesControl,
+        'descriptions': itemDescriptionsControl,
+      });
+      (this.form.get('categories') as FormGroup).addControl(category.name, categoryControl);
 
       this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
         if (catItem.name === category.name) {
-          // add quantity control
+          // add category item controls
           catItem.items.forEach((item) => {
             itemQuantitiesControl.push(new FormControl(item.quantity));
+            itemPricesControl.push(new FormControl(item.price));
+            itemDescriptionsControl.push(new FormControl(item.description));
           });
         }
       });
@@ -166,8 +177,16 @@ export class EstimateComponent implements OnInit {
   }
 
   public removeItem(item: EstimateItem, catName: string, itemIndex: number) {
-    // remove control
-    ((this.form.get('categories') as FormGroup).get(catName) as FormArray).removeAt(itemIndex);
+    const categoriesControlGroup = this.form.get('categories') as FormGroup;
+    const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
+    const quantitiesControl = catControlGroup.get('quantities') as FormArray;
+    const pricesControl = catControlGroup.get('prices') as FormArray;
+    const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
+
+    // remove controls
+    quantitiesControl.removeAt(itemIndex);
+    pricesControl.removeAt(itemIndex);
+    descriptionsControl.removeAt(itemIndex);
 
     // remove the item from the estimate data
     this.api.estimateData.category_items.forEach((catItem) => {
@@ -248,9 +267,16 @@ export class EstimateComponent implements OnInit {
   public itemAdded(item: Item) {
     // TODO - prevent duplicates or automatically increment quantity?
 
-    // add new form control to category
+    // add new form controls to category
     const cat = this.getCategoryNameForItemName(item.name);
-    (this.form.get('categories').get(cat) as FormArray).push(new FormControl(1));
+    const categoriesControlGroup = this.form.get('categories') as FormGroup;
+    const catControlGroup = categoriesControlGroup.get(cat) as FormGroup;
+    const quantitiesControl = catControlGroup.get('quantities') as FormArray;
+    const pricesControl = catControlGroup.get('prices') as FormArray;
+    const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
+    quantitiesControl.push(new FormControl(1));
+    pricesControl.push(new FormControl(item.price));
+    descriptionsControl.push(new FormControl(item.description));
 
     // add to category items
     const category = this.api.estimateData.category_items.find((catItem) => {

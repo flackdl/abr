@@ -57,12 +57,12 @@
           </div>
           <!-- expiration date -->
           <div class="form-group">
-            <label for="expirationDate">Expiration Date</label>
+            <label for="expirationDate">Due Date</label>
             <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
           </div>
           <!-- expiration time -->
           <div class="form-group" [ngClass]="{'border border-danger': !isTimeValid}">
-            <label for="expirationTime">Expiration Time</label>
+            <label for="expirationTime">Due Time</label>
             <ngb-timepicker id="expirationTime" [(ngModel)]="expirationTime" (ngModelChange)="expirationTimeChanged()" [ngModelOptions]="{standalone: true}" [minuteStep]="15" [meridian]="true"></ngb-timepicker>
           </div>
           <!-- contact method -->

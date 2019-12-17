@@ -12,6 +12,7 @@ from quickbooks.objects.estimate import Estimate
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.core.cache import cache
 
 from app.models import OrderPart, Order
 from app.utils import (
@@ -211,3 +212,9 @@ def purge_orders(request):
 @quickbooks_auth
 def ng(request):
     return render(request, 'ng.html')
+
+
+@quickbooks_auth
+def clear_cache(request):
+    cache.clear()
+    return HttpResponse('Successfully cleared cache')

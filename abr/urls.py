@@ -37,4 +37,5 @@ urlpatterns = [
     url(r'^purge-orders$', views.purge_orders, name='purge-orders'),
     url(r'^api/', include(app.api.urls)),
     url(r'^ng/$', views.ng, name='ng'),
+    url(r'^clear-cache/$', views.clear_cache, name='clear-cache'),
 ]

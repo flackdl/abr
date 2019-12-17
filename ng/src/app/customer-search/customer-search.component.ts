@@ -48,7 +48,7 @@ export class CustomerSearchComponent implements OnInit {
         switchMap((term) => {
           let observable: Observable<any[]>;
           if (term) {
-            observable = this.api.fetchCustomers({'last_name': term}).pipe(
+            observable = this.api.fetchCustomers({'name': term}).pipe(
               tap((data) => {
                 // prompt to add a new customer if there aren't any matching results
                 if (!data.length) {
