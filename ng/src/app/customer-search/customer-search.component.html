@@ -38,6 +38,7 @@
           <tr>
             <th>Service Date</th>
             <th>Invoice #</th>
+            <th>Bike Model</th>
             <th>Invoice Notes</th>
             <th>Statement Notes</th>
             <th>Items</th>
@@ -47,6 +48,7 @@
           <tr *ngFor="let invoice of api.estimateData.invoices">
             <td class="text-nowrap">{{ invoice.date }}</td>
             <td>{{ invoice.id }}</td>
+            <td>{{ invoice.bike_model }}</td>
             <td>{{ invoice.public_notes }}</td>
             <td>{{ invoice.private_notes }}</td>
             <td>
