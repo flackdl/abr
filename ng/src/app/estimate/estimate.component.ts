@@ -201,6 +201,8 @@ export class EstimateComponent implements OnInit {
       }
     });
 
+    this._sortCategoryItems();
+
     // save to local storage
     this.api.updateEstimateData();
   }
@@ -265,22 +267,22 @@ export class EstimateComponent implements OnInit {
   }
 
   public itemAdded(item: Item) {
-    // TODO - prevent duplicates or automatically increment quantity?
 
-    // add new form controls to category
-    const cat = this.getCategoryNameForItemName(item.name);
+    const catName = this.getCategoryNameForItemName(item.name);
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
-    const catControlGroup = categoriesControlGroup.get(cat) as FormGroup;
+    const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
     const pricesControl = catControlGroup.get('prices') as FormArray;
     const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
+
+    // add new form controls to category
     quantitiesControl.push(new FormControl(1));
     pricesControl.push(new FormControl(item.price));
     descriptionsControl.push(new FormControl(item.description));
 
     // add to category items
     const category = this.api.estimateData.category_items.find((catItem) => {
-      return catItem.name === cat;
+      return catItem.name === catName;
     });
     const estimateItem: EstimateItem = {
       id: item.id,
@@ -288,7 +290,7 @@ export class EstimateComponent implements OnInit {
       full_name: item.full_name,
       type: item.type.toLowerCase(),
       price: item.price,
-      amount: item.price,
+      amount: item.price,  // same as price since it defaults to single quantity
       description: item.description,
       quantity: 1,
     };
@@ -296,18 +298,33 @@ export class EstimateComponent implements OnInit {
       category.items.push(estimateItem);
     } else {
       this.api.estimateData.category_items.push({
-        name: cat,
+        name: catName,
         items: [estimateItem],
       });
+      this._sortCategoryItems();
     }
     // save estimate to local storage
     this.api.updateEstimateData();
   }
 
+  protected _sortCategoryItems() {
+    // sort category items in same order as main categories
+    const sortedCategoryItems: CategoryItem[] = [];
+    this.api.categories.forEach((cat) => {
+      const catItemsMatch = this.api.estimateData.category_items.find((catItem: CategoryItem) => {
+        return catItem.name === cat.name && catItem.items.length > 0;
+      });
+      if (catItemsMatch) {
+        sortedCategoryItems.push(catItemsMatch);
+      }
+    });
+    this.api.estimateData.category_items = sortedCategoryItems;
+  }
+
   public itemRemoved(item: any) {
-    const cat = this.getCategoryNameForItemName(item.name);
+    const catName = this.getCategoryNameForItemName(item.name);
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
-      return catItem.name === cat;
+      return catItem.name === catName;
     });
     if (matchingCatIndex !== -1) {
       const matchingIndex = this.api.estimateData.category_items[matchingCatIndex].items.findIndex((item) => {
@@ -316,6 +333,7 @@ export class EstimateComponent implements OnInit {
       if (matchingIndex !== -1) {
         this.api.estimateData.category_items[matchingCatIndex].items.splice(matchingIndex, 1);
       }
+      this._sortCategoryItems();
       this.api.updateEstimateData();
     }
   }
