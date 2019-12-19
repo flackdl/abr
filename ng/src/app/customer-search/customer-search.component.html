@@ -27,32 +27,30 @@
       <div class="col-10 text-left">{{ api.estimateData.phone}} </div>
     </div>
 
-    <div *ngIf="invoices" class="my-5">
+    <div *ngIf="api.estimateData.invoices" class="my-5">
       <h5>Invoices</h5>
-      <div *ngIf="!invoices.length" class="alert alert-info">
+      <div *ngIf="!api.estimateData.invoices.length" class="alert alert-info">
         This customer has no invoices
       </div>
       <div class="table-responsive">
-        <table class="table table-bordered table-striped table-condensed" *ngIf="invoices.length">
+        <table class="table table-bordered table-striped table-condensed" *ngIf="api.estimateData.invoices.length">
           <thead>
           <tr>
             <th>Service Date</th>
-            <th>Estimate Number</th>
-            <th>Total Amount</th>
+            <th>Invoice #</th>
             <th>Invoice Notes</th>
             <th>Statement Notes</th>
             <th>Items</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let invoice of invoices">
-            <td>{{ invoice.TxnDate }}</td>
-            <td>{{ invoice.DocNumber }}</td>
-            <td>${{ invoice.TotalAmt }}</td>
-            <td>{{ invoice.CustomerMemo?.value }}</td>
-            <td>{{ invoice.PrivateNote }}</td>
+          <tr *ngFor="let invoice of api.estimateData.invoices">
+            <td class="text-nowrap">{{ invoice.date }}</td>
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.public_notes }}</td>
+            <td>{{ invoice.private_notes }}</td>
             <td>
-              <div *ngFor="let line of invoice.Line">{{ line.Description }}</div>
+              <div *ngFor="let item of invoice.items" class="text-nowrap">- {{ item.name }}</div>
             </td>
           </tr>
           </tbody>

@@ -16,7 +16,6 @@ export class CustomerSearchComponent implements OnInit {
   public customerInput$ = new Subject<string>();
   public customers$: Observable<any[]>;
   public needsNewCustomer = false;
-  public invoices: any[];
   public isLoading = false;
 
   constructor(
@@ -72,7 +71,7 @@ export class CustomerSearchComponent implements OnInit {
   public reset() {
     // reset a few things
     delete this.customer;
-    this.invoices = null;
+    this.api.estimateData.invoices = null;
   }
 
   public customerSelected() {
@@ -92,8 +91,28 @@ export class CustomerSearchComponent implements OnInit {
         crm: this.customer.ResaleNum,
       });
       this.api.fetchInvoices({customer_id: this.customer.Id}).subscribe(
-        (data) => {
-          this.invoices = data;
+        (invoices: any[]) => {
+          this.api.estimateData.invoices = invoices.map((invoice) => {
+            const bikeModelField = invoice.CustomField.find((field) => {
+              return field.Name === 'Bike/Model';
+            });
+            return {
+              id: invoice.DocNumber,
+              date: invoice.TxnDate,
+              public_notes: invoice.CustomerMemo ? invoice.CustomerMemo.value : '',
+              private_notes: invoice.PrivateNote,
+              bike_model: bikeModelField ? bikeModelField.StringValue : '',
+              items: invoice.Line.filter((item: any) => {
+                return item.SalesItemLineDetail;
+              }).map((item: any) => {
+                return {
+                  id: item.Id,
+                  name: item.SalesItemLineDetail.ItemRef.name,
+                };
+              }),
+            }
+          });
+          this.api.updateEstimateData();
           this.isLoading = false;
         },
         (error) => {
@@ -101,7 +120,7 @@ export class CustomerSearchComponent implements OnInit {
         }
       );
     } else {
-      this.invoices = null;
+      this.api.estimateData.invoices = null;
     }
   }
 }

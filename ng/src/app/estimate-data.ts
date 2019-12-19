@@ -1,5 +1,5 @@
 export type Item = {
-  id: string
+  id: string,
   name: string,
   full_name: string,
   type: string, // inventory|service
@@ -7,8 +7,16 @@ export type Item = {
   description: string,
   sku: string,
 };
+export type InvoiceItem = {
+  id: string,
+  date: string,
+  public_notes: string,
+  private_notes: string,
+  bike_model: string,
+  items: Item[],
+};
 export type EstimateItem = {
-  id: string
+  id: string,
   name: string,
   full_name: string,
   type: string, // inventory|service
@@ -39,6 +47,7 @@ export type EstimateData = {
   assessments?: {
     [name: string]: string,
   },
+  invoices?: InvoiceItem[],
   category_items?: CategoryItem[],
   tag_number?: string,
   expiration_date?: string,
