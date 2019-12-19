@@ -22,10 +22,10 @@
           <div class="card-title d-flex justify-content-between">
             <h5>Wear</h5>
             <div class="text-right">
-              <button class="btn btn-success mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_GOOD)">Great</button>
-              <button class="btn btn-warning mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_OK)">Advise</button>
-              <button class="btn btn-danger mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_BAD)">Poor</button>
-              <button class="btn btn-dark mx-1" type="button" (click)="setAssessmentAll(ASSESSMENT_NA)">N/A</button>
+              <button class="btn btn-success mx-1" type="button" (click)="setAssessmentAll(api.ASSESSMENT_GOOD)">Great</button>
+              <button class="btn btn-warning mx-1" type="button" (click)="setAssessmentAll(api.ASSESSMENT_OK)">Advise</button>
+              <button class="btn btn-danger mx-1" type="button" (click)="setAssessmentAll(api.ASSESSMENT_BAD)">Poor</button>
+              <button class="btn btn-dark mx-1" type="button" (click)="setAssessmentAll(api.ASSESSMENT_NA)">N/A</button>
             </div>
           </div>
           <div class="row" formGroupName="assessments" *ngFor="let category of getMainCategories()">
@@ -35,7 +35,7 @@
             <div class="col-6 my-1 text-left">
               <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [formControlName]="category.name" [class.is-invalid]="isAssessmentInputDirty(category.name) && !isAssessmentInputValid(category.name)">
                 <ng-container *ngFor="let choice of assessmentChoices">
-                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === ASSESSMENT_GOOD, 'btn-danger': choice === ASSESSMENT_BAD, 'btn-warning': choice === ASSESSMENT_OK, 'btn-dark': choice === ASSESSMENT_NA, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
+                  <label ngbButtonLabel class="oi" [ngClass]="{'btn-success': choice === api.ASSESSMENT_GOOD, 'btn-danger': choice === api.ASSESSMENT_BAD, 'btn-warning': choice === api.ASSESSMENT_OK, 'btn-dark': choice === api.ASSESSMENT_NA, 'chosen oi-check': form.value.assessments[category.name] === choice, 'oi-media-record': form.value.assessments[category.name] !== choice}">
                     <input ngbButton type="radio" [value]="choice">
                   </label>
                 </ng-container>

@@ -12,11 +12,7 @@ import {WizardStepsService} from "../wizard-steps.service";
 })
 export class QuestionnaireComponent implements OnInit {
   public form: FormGroup;
-  public ASSESSMENT_GOOD = 'good';
-  public ASSESSMENT_OK = 'ok';
-  public ASSESSMENT_BAD = 'bad';
-  public ASSESSMENT_NA = 'na';
-  public assessmentChoices = [this.ASSESSMENT_GOOD, this.ASSESSMENT_OK, this.ASSESSMENT_BAD, this.ASSESSMENT_NA];
+  public assessmentChoices = [this.api.ASSESSMENT_GOOD, this.api.ASSESSMENT_OK, this.api.ASSESSMENT_BAD, this.api.ASSESSMENT_NA];
 
   constructor(
     private fb: FormBuilder,

@@ -27,6 +27,11 @@ export class ApiService {
   public API_CATEGORY_CHILDREN = '/api/category-children/';
   public API_CATEGORY_PREFIX = '/api/category-prefix/';
 
+  public ASSESSMENT_GOOD = 'good';
+  public ASSESSMENT_OK = 'ok';
+  public ASSESSMENT_BAD = 'bad';
+  public ASSESSMENT_NA = 'na';
+
   public OPTION_PAYMENT_NOT_PAID = 'Not Paid';
   public OPTION_PAYMENT_PAID = 'Paid';
   public OPTION_PAYMENT_HALF_NOW = 'Half Now';
@@ -189,8 +194,10 @@ export class ApiService {
       // main concern
       `Main Concern: ${this.estimateData.main_concern}`,
     ];
-    // include assessments
-    notes = notes.concat(Object.keys(this.estimateData.assessments).map((assessment) => {
+    // include assessments while omitting "N/A"
+    notes = notes.concat(Object.keys(this.estimateData.assessments).filter((assessment: string) => {
+      return this.estimateData.assessments[assessment] !== this.ASSESSMENT_NA;
+    }).map((assessment) => {
       return `${assessment}: ${this.estimateData.assessments[assessment]}`;
     }));
     // additional notes notes
