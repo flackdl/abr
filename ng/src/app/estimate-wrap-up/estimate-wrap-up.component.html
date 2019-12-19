@@ -105,8 +105,9 @@
           </div>
           <!-- review details -->
           <div class="d-flex justify-content-center">
-            <div class="alert" [ngClass]="{'alert-success': api.estimateData.status === 'Accepted', 'alert-danger': api.estimateData.status === 'Rejected', 'alert-info': !api.estimateData.status}">
+            <div class="alert" [ngClass]="{'alert-success': api.estimateData.status === 'Accepted', 'alert-danger': api.estimateData.status === 'Rejected', 'alert-info': !api.estimateData.status, 'alert-info': api.estimateData.status === 'Pending'}">
               <div><strong>Estimate Status:</strong> {{ api.estimateData.status }}</div>
+              <div *ngIf="api.estimateData.need_parts"><strong>Need Parts:</strong> yes</div>
               <div><strong>Due:</strong> {{ api.estimateData.expiration_date + ' ' + api.estimateData.expiration_time | amDateFormat: 'MMM Do hh:mm a' }}</div>
               <div><strong>Phone:</strong> {{ api.estimateData.phone }}</div>
               <div><strong>Email:</strong> {{ api.estimateData.email }}</div>

@@ -120,7 +120,11 @@ export class EstimateWrapUpComponent implements OnInit {
     }
 
     if (data.review_ok) {
-      data['status'] = 'Accepted';
+      if (!data.need_parts) {
+        data['status'] = 'Accepted';
+      } else {
+        data['status'] = 'Pending';
+      }
     } else {
       data['status'] = 'Rejected';
     }
