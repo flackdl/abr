@@ -244,7 +244,7 @@ def get_html(request, bill_id):
         'rows': [items[i:i+settings.PRINT_LABEL_COLS] for i in range(0, len(items), settings.PRINT_LABEL_COLS)],
         'css': css,
     }
-    return render_to_string('labels.html', context)
+    return render_to_string('labels.html', context).encode()
 
 
 def get_items_for_bill(bill, client):
