@@ -83,7 +83,7 @@ export class CustomerSearchComponent implements OnInit {
         first_name: this.customer.GivenName,
         last_name: this.customer.FamilyName,
         email: this.customer.PrimaryEmailAddr ? this.customer.PrimaryEmailAddr.Address : '',
-        phone: this.customer.PrimaryPhone ? this.customer.PrimaryPhone.FreeFormNumber : '',
+        phone: this._getFirstPhoneNumberFromQBOCustomer(),
         address_line1: this.customer.BillAddr ? this.customer.BillAddr.Line1 : '',
         address_line2: this.customer.BillAddr ? this.customer.BillAddr.Line2 : '',
         zip: this.customer.BillAddr ? this.customer.BillAddr.PostalCode : '',
@@ -122,5 +122,16 @@ export class CustomerSearchComponent implements OnInit {
     } else {
       this.api.estimateData.invoices = null;
     }
+  }
+
+  protected _getFirstPhoneNumberFromQBOCustomer() {
+    if (this.customer.PrimaryPhone) {
+      return this.customer.PrimaryPhone.FreeFormNumber;
+    } else if (this.customer.Mobile) {
+      return this.customer.Mobile.FreeFormNumber;
+    } else if (this.customer.AlternatePhone) {
+      return this.customer.AlternatePhone.FreeFormNumber;
+    }
+    return '';
   }
 }
