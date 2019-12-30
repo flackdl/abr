@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -37,7 +38,7 @@ class CategoryChildManager(models.Manager):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     position = models.PositiveSmallIntegerField()
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     service_only = models.BooleanField(default=False)
@@ -50,6 +51,16 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'categories'
         ordering = ('position',)
+
+    def clean(self):
+        # prevent top-level category duplication
+        exclude_kwargs = {}
+        if self.id:
+            exclude_kwargs['id'] = self.id
+        existing_category = Category.parents.filter(name=self.name).exclude(**exclude_kwargs).first()
+        if not self.parent and existing_category:
+            raise ValidationError('Top Level Categories cannot be duplicated')
+        super().clean()
 
     def __str__(self):
         return self.name
