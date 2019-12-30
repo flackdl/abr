@@ -5,7 +5,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {forkJoin, merge} from "rxjs";
-import {map, tap} from "rxjs/operators";
+import {map, first} from "rxjs/operators";
 import * as _ from 'lodash';
 import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -128,12 +128,13 @@ export class EstimateComponent implements OnInit {
           }),
         )
       ).pipe(
-        tap(() => {
+        // just emit the first value so we know when all the requests are complete
+        first(),
+      ).subscribe(
+        () => {
           this.isLoading = false;
           this.openCategoryItemsModal(category);
-        }),
-      ).subscribe(
-        () => {},
+        },
         (error) => {
           console.error(error);
           this.toastr.error('An unknown error occurred');
