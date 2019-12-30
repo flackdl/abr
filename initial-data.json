@@ -1,664 +1,1414 @@
 [
-{
-  "model": "app.category",
-  "pk": 1,
-  "fields": {
-    "name": "Chain",
-    "position": 1,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 2,
-  "fields": {
-    "name": "Chainrings",
-    "position": 2,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 3,
-  "fields": {
-    "name": "Cassette/Freewheel",
-    "position": 3,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 4,
-  "fields": {
-    "name": "Bottom Bracket",
-    "position": 16,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 5,
-  "fields": {
-    "name": "Headset",
-    "position": 17,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 8,
-  "fields": {
-    "name": "Suspension",
-    "position": 19,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 11,
-  "fields": {
-    "name": "Hanger",
-    "position": 4,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 12,
-  "fields": {
-    "name": "Pulley wheels",
-    "position": 5,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 13,
-  "fields": {
-    "name": "Rear DER cable",
-    "position": 7,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 14,
-  "fields": {
-    "name": "Rear DER",
-    "position": 6,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 15,
-  "fields": {
-    "name": "Front DER",
-    "position": 8,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 16,
-  "fields": {
-    "name": "Front DER Cable",
-    "position": 9,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 17,
-  "fields": {
-    "name": "Rear Brake",
-    "position": 10,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 18,
-  "fields": {
-    "name": "Rear Brake Cable",
-    "position": 11,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 19,
-  "fields": {
-    "name": "Front Brake",
-    "position": 12,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 20,
-  "fields": {
-    "name": "Front Brake Cable",
-    "position": 13,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 21,
-  "fields": {
-    "name": "Rear Tire",
-    "position": 14,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 22,
-  "fields": {
-    "name": "Front Tire",
-    "position": 15,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 23,
-  "fields": {
-    "name": "Tubeless Sealant",
-    "position": 18,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 24,
-  "fields": {
-    "name": "Electrical",
-    "position": 20,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 25,
-  "fields": {
-    "name": "1 speed",
-    "position": 1,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 26,
-  "fields": {
-    "name": "8 speed",
-    "position": 2,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 27,
-  "fields": {
-    "name": "9 speed",
-    "position": 3,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 28,
-  "fields": {
-    "name": "10 speed",
-    "position": 4,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 33,
-  "fields": {
-    "name": "Tune-up",
-    "position": 21,
-    "parent": null,
-    "service_only": true
-  }
-},
-{
-  "model": "app.category",
-  "pk": 34,
-  "fields": {
-    "name": "Labor",
-    "position": 22,
-    "parent": null,
-    "service_only": true
-  }
-},
-{
-  "model": "app.category",
-  "pk": 35,
-  "fields": {
-    "name": "Build",
-    "position": 23,
-    "parent": null,
-    "service_only": true
-  }
-},
-{
-  "model": "app.category",
-  "pk": 36,
-  "fields": {
-    "name": "Shifters RR",
-    "position": 24,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 37,
-  "fields": {
-    "name": "Shifters FT",
-    "position": 25,
-    "parent": null,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 38,
-  "fields": {
-    "name": "11 speed",
-    "position": 5,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 39,
-  "fields": {
-    "name": "12 speed",
-    "position": 6,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.category",
-  "pk": 40,
-  "fields": {
-    "name": "other",
-    "position": 7,
-    "parent": 1,
-    "service_only": false
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 1,
-  "fields": {
-    "category": 1,
-    "prefix": "ch-install",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 2,
-  "fields": {
-    "category": 2,
-    "prefix": "chr-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 3,
-  "fields": {
-    "category": 3,
-    "prefix": "cs-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 4,
-  "fields": {
-    "category": 4,
-    "prefix": "bb-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 5,
-  "fields": {
-    "category": 5,
-    "prefix": "headset-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 8,
-  "fields": {
-    "category": 8,
-    "prefix": "fork-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 13,
-  "fields": {
-    "category": 11,
-    "prefix": "der-hanger-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 14,
-  "fields": {
-    "category": 12,
-    "prefix": "der-pulley",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 15,
-  "fields": {
-    "category": 14,
-    "prefix": "der-rr-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 16,
-  "fields": {
-    "category": 13,
-    "prefix": "der-cb-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 17,
-  "fields": {
-    "category": 15,
-    "prefix": "der-ft-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 18,
-  "fields": {
-    "category": 16,
-    "prefix": "der-cb-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 19,
-  "fields": {
-    "category": 18,
-    "prefix": "brk-cb-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 20,
-  "fields": {
-    "category": 17,
-    "prefix": "brk",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 21,
-  "fields": {
-    "category": 19,
-    "prefix": "brk-ft",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 22,
-  "fields": {
-    "category": 20,
-    "prefix": "brk-cb-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 23,
-  "fields": {
-    "category": 21,
-    "prefix": "tr-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 24,
-  "fields": {
-    "category": 22,
-    "prefix": "tr-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 25,
-  "fields": {
-    "category": 23,
-    "prefix": "tr-sealant-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 26,
-  "fields": {
-    "category": 23,
-    "prefix": "sealant-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 27,
-  "fields": {
-    "category": 24,
-    "prefix": "ele-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 28,
-  "fields": {
-    "category": 24,
-    "prefix": "ebike-",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 30,
-  "fields": {
-    "category": 26,
-    "prefix": "ch-8",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 31,
-  "fields": {
-    "category": 25,
-    "prefix": "ch-1",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 32,
-  "fields": {
-    "category": 27,
-    "prefix": "ch-9",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 33,
-  "fields": {
-    "category": 28,
-    "prefix": "ch-10",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 35,
-  "fields": {
-    "category": 33,
-    "prefix": "tuneup-",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 36,
-  "fields": {
-    "category": 34,
-    "prefix": "labor-",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 37,
-  "fields": {
-    "category": 35,
-    "prefix": "build-",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 39,
-  "fields": {
-    "category": 19,
-    "prefix": "brk",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 40,
-  "fields": {
-    "category": 36,
-    "prefix": "SHF",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 41,
-  "fields": {
-    "category": 36,
-    "prefix": "SHF-RR",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 42,
-  "fields": {
-    "category": 37,
-    "prefix": "SHF",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 43,
-  "fields": {
-    "category": 37,
-    "prefix": "SHF-FT",
-    "type": "service"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 44,
-  "fields": {
-    "category": 38,
-    "prefix": "ch-11",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 45,
-  "fields": {
-    "category": 39,
-    "prefix": "ch-12",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 46,
-  "fields": {
-    "category": 40,
-    "prefix": "ch-other",
-    "type": "inventory"
-  }
-},
-{
-  "model": "app.categoryprefix",
-  "pk": 47,
-  "fields": {
-    "category": 17,
-    "prefix": "brk-rr",
-    "type": "service"
-  }
-}
+    {
+        "model": "app.category",
+        "pk": 1,
+        "fields": {
+            "name": "Chain",
+            "position": 1,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 2,
+        "fields": {
+            "name": "Chainrings",
+            "position": 2,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 3,
+        "fields": {
+            "name": "Cassette/Freewheel",
+            "position": 3,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 4,
+        "fields": {
+            "name": "Bottom Bracket",
+            "position": 16,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 5,
+        "fields": {
+            "name": "Headset",
+            "position": 17,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 8,
+        "fields": {
+            "name": "Suspension",
+            "position": 19,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 11,
+        "fields": {
+            "name": "Hanger",
+            "position": 4,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 12,
+        "fields": {
+            "name": "Pulley wheels",
+            "position": 5,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 13,
+        "fields": {
+            "name": "Rear DER cable",
+            "position": 7,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 14,
+        "fields": {
+            "name": "Rear DER",
+            "position": 6,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 15,
+        "fields": {
+            "name": "Front DER",
+            "position": 8,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 16,
+        "fields": {
+            "name": "Front DER Cable",
+            "position": 9,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 17,
+        "fields": {
+            "name": "Rear Brake",
+            "position": 10,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 18,
+        "fields": {
+            "name": "Rear Brake Cable",
+            "position": 11,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 19,
+        "fields": {
+            "name": "Front Brake",
+            "position": 12,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 20,
+        "fields": {
+            "name": "Front Brake Cable",
+            "position": 13,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 21,
+        "fields": {
+            "name": "Rear Tire",
+            "position": 14,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 22,
+        "fields": {
+            "name": "Front Tire",
+            "position": 15,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 23,
+        "fields": {
+            "name": "Front Tube",
+            "position": 18,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 24,
+        "fields": {
+            "name": "Electrical",
+            "position": 20,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 25,
+        "fields": {
+            "name": "1 speed",
+            "position": 1,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 26,
+        "fields": {
+            "name": "8 speed",
+            "position": 2,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 27,
+        "fields": {
+            "name": "9 speed",
+            "position": 3,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 28,
+        "fields": {
+            "name": "10 speed",
+            "position": 4,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 33,
+        "fields": {
+            "name": "Tune-up",
+            "position": 21,
+            "parent": null,
+            "service_only": true
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 34,
+        "fields": {
+            "name": "Labor",
+            "position": 22,
+            "parent": null,
+            "service_only": true
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 35,
+        "fields": {
+            "name": "Build",
+            "position": 23,
+            "parent": null,
+            "service_only": true
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 36,
+        "fields": {
+            "name": "Shifters RR",
+            "position": 10,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 37,
+        "fields": {
+            "name": "Shifters FT",
+            "position": 11,
+            "parent": null,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 38,
+        "fields": {
+            "name": "11 speed",
+            "position": 5,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 39,
+        "fields": {
+            "name": "12 speed",
+            "position": 6,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 40,
+        "fields": {
+            "name": "other",
+            "position": 7,
+            "parent": 1,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 41,
+        "fields": {
+            "name": "Tube-SV",
+            "position": 1,
+            "parent": 23,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 42,
+        "fields": {
+            "name": "Tube-PV",
+            "position": 2,
+            "parent": 23,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 43,
+        "fields": {
+            "name": "Tube-TR",
+            "position": 3,
+            "parent": 23,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 44,
+        "fields": {
+            "name": "CHR-22",
+            "position": 1,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 45,
+        "fields": {
+            "name": "CHR-24",
+            "position": 2,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 46,
+        "fields": {
+            "name": "CHR-26",
+            "position": 3,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 47,
+        "fields": {
+            "name": "CHR-28",
+            "position": 4,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 48,
+        "fields": {
+            "name": "CHR-30",
+            "position": 5,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 49,
+        "fields": {
+            "name": "CHR-32",
+            "position": 6,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 50,
+        "fields": {
+            "name": "CHR-34",
+            "position": 7,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 51,
+        "fields": {
+            "name": "CHR-36",
+            "position": 8,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 52,
+        "fields": {
+            "name": "CHR--38",
+            "position": 9,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 53,
+        "fields": {
+            "name": "CHR--39",
+            "position": 10,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 54,
+        "fields": {
+            "name": "CHR-40",
+            "position": 11,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 55,
+        "fields": {
+            "name": "CHR-42",
+            "position": 12,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 56,
+        "fields": {
+            "name": "CHR-44",
+            "position": 13,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 57,
+        "fields": {
+            "name": "CHR-46",
+            "position": 14,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 58,
+        "fields": {
+            "name": "CHR-48",
+            "position": 15,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 59,
+        "fields": {
+            "name": "CHR-50",
+            "position": 16,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 60,
+        "fields": {
+            "name": "CHR-52",
+            "position": 17,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.category",
+        "pk": 61,
+        "fields": {
+            "name": "CHR-53",
+            "position": 18,
+            "parent": 2,
+            "service_only": false
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 1,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 2,
+        "fields": {
+            "category": 2,
+            "prefix": "chr-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 3,
+        "fields": {
+            "category": 3,
+            "prefix": "cs-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 4,
+        "fields": {
+            "category": 4,
+            "prefix": "bb-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 5,
+        "fields": {
+            "category": 5,
+            "prefix": "headset-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 8,
+        "fields": {
+            "category": 8,
+            "prefix": "suspension",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 13,
+        "fields": {
+            "category": 11,
+            "prefix": "der-hanger-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 14,
+        "fields": {
+            "category": 12,
+            "prefix": "der-pulleys",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 15,
+        "fields": {
+            "category": 14,
+            "prefix": "der-rr-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 16,
+        "fields": {
+            "category": 13,
+            "prefix": "der-cb-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 17,
+        "fields": {
+            "category": 15,
+            "prefix": "der-ft-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 18,
+        "fields": {
+            "category": 16,
+            "prefix": "der-cb-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 19,
+        "fields": {
+            "category": 18,
+            "prefix": "brk-cb-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 20,
+        "fields": {
+            "category": 17,
+            "prefix": "brk",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 21,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 22,
+        "fields": {
+            "category": 20,
+            "prefix": "brk-cb-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 23,
+        "fields": {
+            "category": 21,
+            "prefix": "tr-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 24,
+        "fields": {
+            "category": 22,
+            "prefix": "tr-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 25,
+        "fields": {
+            "category": 23,
+            "prefix": "Tube-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 26,
+        "fields": {
+            "category": 23,
+            "prefix": "tube-FT",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 27,
+        "fields": {
+            "category": 24,
+            "prefix": "electric-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 29,
+        "fields": {
+            "category": 25,
+            "prefix": "ch-s-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 30,
+        "fields": {
+            "category": 26,
+            "prefix": "ch-8",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 31,
+        "fields": {
+            "category": 25,
+            "prefix": "ch-1-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 32,
+        "fields": {
+            "category": 27,
+            "prefix": "ch-9",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 33,
+        "fields": {
+            "category": 28,
+            "prefix": "ch-10",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 35,
+        "fields": {
+            "category": 33,
+            "prefix": "tuneup-",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 36,
+        "fields": {
+            "category": 34,
+            "prefix": "labor-",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 37,
+        "fields": {
+            "category": 35,
+            "prefix": "build-",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 39,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 40,
+        "fields": {
+            "category": 36,
+            "prefix": "SHF-",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 41,
+        "fields": {
+            "category": 36,
+            "prefix": "SHF-RR",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 42,
+        "fields": {
+            "category": 37,
+            "prefix": "SHF",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 43,
+        "fields": {
+            "category": 37,
+            "prefix": "SHF-FT",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 44,
+        "fields": {
+            "category": 38,
+            "prefix": "ch-11",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 45,
+        "fields": {
+            "category": 39,
+            "prefix": "ch-12",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 46,
+        "fields": {
+            "category": 40,
+            "prefix": "ch-other",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 47,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 48,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-shorten",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 49,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-lengthen",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 50,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-flip",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 51,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-Adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 52,
+        "fields": {
+            "category": 1,
+            "prefix": "ch-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 53,
+        "fields": {
+            "category": 2,
+            "prefix": "chr-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 54,
+        "fields": {
+            "category": 2,
+            "prefix": "chr-tighten",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 55,
+        "fields": {
+            "category": 2,
+            "prefix": "chr-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 56,
+        "fields": {
+            "category": 3,
+            "prefix": "cs-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 57,
+        "fields": {
+            "category": 3,
+            "prefix": "cs-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 58,
+        "fields": {
+            "category": 3,
+            "prefix": "cs-tighten",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 59,
+        "fields": {
+            "category": 11,
+            "prefix": "der-hanger-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 60,
+        "fields": {
+            "category": 11,
+            "prefix": "der-hanger-align",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 61,
+        "fields": {
+            "category": 11,
+            "prefix": "der-hanger-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 62,
+        "fields": {
+            "category": 12,
+            "prefix": "der-pulleys-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 63,
+        "fields": {
+            "category": 12,
+            "prefix": "der-pulleys-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 64,
+        "fields": {
+            "category": 14,
+            "prefix": "der-rr-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 65,
+        "fields": {
+            "category": 14,
+            "prefix": "der-rr-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 66,
+        "fields": {
+            "category": 14,
+            "prefix": "der-rr-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 67,
+        "fields": {
+            "category": 14,
+            "prefix": "der-rr-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 68,
+        "fields": {
+            "category": 13,
+            "prefix": "der-cb-rr-",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 69,
+        "fields": {
+            "category": 15,
+            "prefix": "der-ft-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 70,
+        "fields": {
+            "category": 15,
+            "prefix": "der-ft-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 71,
+        "fields": {
+            "category": 15,
+            "prefix": "der-ft-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 72,
+        "fields": {
+            "category": 15,
+            "prefix": "der-ft-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 73,
+        "fields": {
+            "category": 16,
+            "prefix": "der-cb-ft",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 74,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 75,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 76,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 77,
+        "fields": {
+            "category": 18,
+            "prefix": "brk-cb-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 78,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 79,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 80,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 81,
+        "fields": {
+            "category": 20,
+            "prefix": "brk-cb-ft-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 82,
+        "fields": {
+            "category": 21,
+            "prefix": "tr-rr-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 83,
+        "fields": {
+            "category": 21,
+            "prefix": "tr-rr-tubeless",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 84,
+        "fields": {
+            "category": 21,
+            "prefix": "tr-rr-swap",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 85,
+        "fields": {
+            "category": 21,
+            "prefix": "tr-rr-refill",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 86,
+        "fields": {
+            "category": 22,
+            "prefix": "tr-ft-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 87,
+        "fields": {
+            "category": 22,
+            "prefix": "tr-ft-tubeless",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 88,
+        "fields": {
+            "category": 22,
+            "prefix": "tr-ft-swap",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 89,
+        "fields": {
+            "category": 22,
+            "prefix": "tr-ft-refill",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 90,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-align",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 91,
+        "fields": {
+            "category": 19,
+            "prefix": "brk-ft-decon",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 92,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-align",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 93,
+        "fields": {
+            "category": 17,
+            "prefix": "brk-rr-decon",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 94,
+        "fields": {
+            "category": 4,
+            "prefix": "bb-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 95,
+        "fields": {
+            "category": 4,
+            "prefix": "bb-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 96,
+        "fields": {
+            "category": 4,
+            "prefix": "bb-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 97,
+        "fields": {
+            "category": 4,
+            "prefix": "bb-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 98,
+        "fields": {
+            "category": 5,
+            "prefix": "headset-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 99,
+        "fields": {
+            "category": 5,
+            "prefix": "headset-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 100,
+        "fields": {
+            "category": 5,
+            "prefix": "headset-repair",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 101,
+        "fields": {
+            "category": 5,
+            "prefix": "headset-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 102,
+        "fields": {
+            "category": 8,
+            "prefix": "shock",
+            "type": "inventory"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 103,
+        "fields": {
+            "category": 8,
+            "prefix": "suspension-overhaul",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 104,
+        "fields": {
+            "category": 8,
+            "prefix": "suspension-install",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 105,
+        "fields": {
+            "category": 8,
+            "prefix": "suspension-adjust",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 106,
+        "fields": {
+            "category": 24,
+            "prefix": "electrical-",
+            "type": "service"
+        }
+    },
+    {
+        "model": "app.categoryprefix",
+        "pk": 107,
+        "fields": {
+            "category": 24,
+            "prefix": "di2",
+            "type": "inventory"
+        }
+    }
 ]
