@@ -1,5 +1,5 @@
 let pollingRateSeconds = parseInt('{{ polling_rate_seconds }}');
-let isDebug = '{{ debug }}'.length > 0;
+let isDebug = '{{ debug }}' === 'True';
 let apiHeaders = {
   'content-type': 'application/json',
   'X-CSRFToken': Cookies.get('csrftoken'),

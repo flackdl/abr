@@ -1,8 +1,9 @@
+import logging
 import tempfile
 from base64 import b64decode
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from quickbooks.exceptions import ObjectNotFoundException, ValidationException
+from quickbooks.exceptions import ObjectNotFoundException, ValidationException, QuickbooksException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
     AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref)
@@ -125,8 +126,9 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         # save
         try:
             updated_customer.save(qb=self.qbo_client)
-        except ValidationException as e:
-            return Response({"success": False, "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except (ValidationException, QuickbooksException) as e:
+            logging.error(e.detail)
+            return Response({"success": False, "message": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(updated_customer.to_dict())
 

@@ -200,7 +200,7 @@
 					return url.replace(9999, orderId);
 				},
         getInventoryItemUrlFromPart(estimatePart) {
-	        let isDebug = '{{ debug }}'.length > 0;
+	        let isDebug = '{{ debug }}' === 'True';
 	        if (isDebug) {
 		        return `https://https://app.sandbox.qbo.intuit.com/app/inventory_quantity_adj?itemIds=${estimatePart.part.SalesItemLineDetail.ItemRef.value}`;
 	        }
