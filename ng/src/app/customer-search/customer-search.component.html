@@ -7,24 +7,29 @@
   </div>
   <div class="card-body">
 
-    <h5>Details</h5>
-    <div class="row">
+    <div class="d-flex justify-content-end mb-3">
+      <a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']">Edit <span class="oi oi-pencil"></span></a>
+    </div>
 
-      <div class="col-12 text-right">
-        <a class="btn btn-sm btn-info" [routerLink]="['/wizard', 'customer', 'edit']">Edit <span class="oi oi-pencil"></span></a>
-      </div>
-
-      <div class="col-2 font-weight-bold">First Name</div>
-      <div class="col-10 text-left">{{ api.estimateData.first_name}} </div>
-
-      <div class="col-2 font-weight-bold">Last Name</div>
-      <div class="col-10 text-left">{{ api.estimateData.last_name}} </div>
-
-      <div class="col-2 font-weight-bold">Email</div>
-      <div class="col-10 text-left">{{ api.estimateData.email}} </div>
-
-      <div class="col-2 font-weight-bold">Phone</div>
-      <div class="col-10 text-left">{{ api.estimateData.phone}} </div>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+          <th>First</th>
+          <th>Last</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th>{{ api.estimateData.first_name }} </th>
+          <td>{{ api.estimateData.last_name }} </td>
+          <td>{{ api.estimateData.email }} </td>
+          <td>{{ api.estimateData.phone }} </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
 
     <div *ngIf="api.estimateData.invoices" class="my-5">
