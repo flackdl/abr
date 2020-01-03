@@ -1,4 +1,5 @@
 import logging
+import re
 import tempfile
 from base64 import b64decode
 from django.utils.decorators import method_decorator
@@ -213,6 +214,20 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             "value": estimate_data['public_notes'][:1000],  # 1000 max
         }
         estimate.ExpirationDate = estimate_data['expiration_date'].isoformat()
+
+        # populate DocNumber by incrementing from the most recent estimate
+        recent_estimates = [e for e in Estimate.filter(order_by='Id DESC', qb=self.qbo_client) if e.DocNumber]
+        if recent_estimates:
+            # remove non-digits
+            last_doc_number = re.sub(r'[^0-9]', '', recent_estimates[0].DocNumber)
+            try:
+                last_doc_number = int(last_doc_number)
+            except ValueError as e:
+                logging.exception(e)
+                logging.error('Could not auto increment DocNumber: {}'.format(last_doc_number))
+            else:
+                # increment
+                estimate.DocNumber = last_doc_number + 1
 
         # build lines
         for category_items in categories_items:
