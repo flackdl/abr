@@ -113,21 +113,31 @@ export class EstimateComponent implements OnInit {
       }
     });
 
-    if (inventoryQueries.concat(serviceQueries).length >= 1) {
-      zip(
-        forkJoin(inventoryQueries).pipe(
-          map((data: any[]) => {
-            this.inventoryResults = [].concat(...data);  // flatten
-            return this.inventoryResults;
-          }),
-        ),
-        forkJoin(serviceQueries).pipe(
-          map((data: any[]) => {
-            this.serviceResults = [].concat(...data);  // flatten
-            return this.serviceResults;
-          }),
+    if (inventoryQueries.concat(serviceQueries).length > 0) {
+      const forkJoins = [];
+
+      if (inventoryQueries.length > 0) {
+        forkJoins.push(
+          forkJoin(inventoryQueries).pipe(
+            map((data: any[]) => {
+              this.inventoryResults = [].concat(...data);  // flatten
+              return this.inventoryResults;
+            }),
+          ),
         )
-      ).subscribe(
+      }
+      if (serviceQueries.length > 0) {
+        forkJoins.push(
+          forkJoin(serviceQueries).pipe(
+            map((data: any[]) => {
+              this.serviceResults = [].concat(...data);  // flatten
+              return this.serviceResults;
+            }),
+          )
+        );
+      }
+
+      zip(...forkJoins).subscribe(
         () => {
           this.isLoading = false;
           this.openCategoryItemsModal(category);
