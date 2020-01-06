@@ -4,8 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {forkJoin, merge} from "rxjs";
-import {map, first} from "rxjs/operators";
+import {forkJoin, zip} from "rxjs";
+import {map} from "rxjs/operators";
 import * as _ from 'lodash';
 import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -114,7 +114,7 @@ export class EstimateComponent implements OnInit {
     });
 
     if (inventoryQueries.concat(serviceQueries).length >= 1) {
-      merge(
+      zip(
         forkJoin(inventoryQueries).pipe(
           map((data: any[]) => {
             this.inventoryResults = [].concat(...data);  // flatten
@@ -127,9 +127,6 @@ export class EstimateComponent implements OnInit {
             return this.serviceResults;
           }),
         )
-      ).pipe(
-        // just emit the first value so we know when all the requests are complete
-        first(),
       ).subscribe(
         () => {
           this.isLoading = false;
