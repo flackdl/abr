@@ -53,7 +53,7 @@ class EstimateLineQBOSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     price = serializers.FloatField()
     amount = serializers.FloatField()
-    description = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
 
 
 class EstimateLineCategoryItemsQBOSerializer(serializers.Serializer):
