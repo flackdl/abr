@@ -33,6 +33,7 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
 
     customer_id = serializers.IntegerField()
     status = serializers.ChoiceField(choices=STATUSES)
+    email = serializers.CharField()  # used for billing email for invoice
     tag_number = serializers.CharField()
     bike_model = serializers.CharField()
     expiration_date = serializers.DateField()

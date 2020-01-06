@@ -20,7 +20,7 @@ from quickbooks.exceptions import (
     AuthorizationException, UnsupportedException, GeneralException, ValidationException,
     SevereException,
 )
-from quickbooks.objects import Bill
+from quickbooks.objects import Bill, TaxCode, TaxRate
 from quickbooks.objects.item import Item
 
 
@@ -291,3 +291,28 @@ def get_custom_field_index_from_preferences(field_name: str, preferences: dict) 
                         # return the digit from the "Name" which looks something like "SalesCustomName3"
                         return field['Name'][-1]
     return -1
+
+
+def get_qbo_tax_code_rate(qbo_tax_class, qbo_client) -> dict:
+    # gets and caches qbo tax code and tax rate for San Diego
+    if qbo_tax_class is TaxCode:
+        cache_key = 'tax_code'
+    elif qbo_tax_class is TaxRate:
+        cache_key = 'tax_rate'
+    else:
+        raise Exception('unknown qbo tax class {}'.format(qbo_tax_class))
+    cached_value = cache.get(cache_key)
+    if cached_value:
+        logging.info('using cached value for {}'.format(qbo_tax_class))
+        return cached_value
+    else:
+        logging.info('querying tax object for {}'.format(qbo_tax_class))
+        # query tax code/rate
+        values = qbo_tax_class.filter(Name='San Diego', qb=qbo_client)
+        if not values:
+            error = 'Unable to find San Diego tax results'
+            logging.error(error)
+            raise Exception(error)
+        result = values[0].to_dict()
+        cache.set(cache_key, result, None)
+        return result

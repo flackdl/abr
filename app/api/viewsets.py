@@ -2,12 +2,13 @@ import logging
 import re
 import tempfile
 from base64 import b64decode
+from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException, QuickbooksException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
-    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref)
+    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref, TxnTaxDetail, TaxCode)
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -16,7 +17,7 @@ from app.models import Order, OrderPart, Category, CategoryPrefix, CategoryChild
 from app.api.serializers import (
     OrderSerializer, OrderPartSerializer, EstimateCreateQBOSerializer, CustomerCreateQBOSerializer, CategorySerializer,
     CategoryPrefixSerializer, EstimateLineCategoryItemsQBOSerializer, EstimateLineQBOSerializer)
-from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_custom_field_index_from_preferences
+from app.utils import get_qbo_client, get_callback_url, quickbooks_auth, get_custom_field_index_from_preferences, get_qbo_tax_code_rate
 
 GENERIC_VENDOR_IN_STOCK = 'IN STOCK'
 GENERIC_VENDOR_QUOTE = 'QUOTE'
@@ -205,10 +206,13 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         #
 
         estimate = Estimate()
+
         estimate.TxnStatus = estimate_data['status']
         estimate.CustomerRef = {
             "value": estimate_data['customer_id'],
         }
+        estimate.BillEmail = EmailAddress()
+        estimate.BillEmail.Address = estimate_data['email']
         estimate.PrivateNote = estimate_data['private_notes'][:4000]  # 4000 max
         estimate.CustomerMemo = {
             "value": estimate_data['public_notes'][:1000],  # 1000 max
@@ -254,8 +258,23 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             subtotal_line.Description = "Subtotal: {}".format(sum(item['amount'] for item in category_items['items']))
             estimate.Line.append(subtotal_line)
 
+        # add tax
+        tax_code = get_qbo_tax_code_rate(TaxCode, qbo_client=self.qbo_client)
+        estimate.TxnTaxDetail = TxnTaxDetail()
+        estimate.TxnTaxDetail.TxnTaxCodeRef = {
+            'name': tax_code['Name'],
+            'value': tax_code['Id'],
+        }
+
         # query preferences so we can get the custom field ids
-        preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
+        cached_preferences = cache.get('preferences')
+        if cached_preferences:
+            logging.info('using cached preferences')
+            preferences = cached_preferences
+        else:
+            logging.info('querying preferences and caching')
+            preferences = Preferences.filter(qb=self.qbo_client)[0].to_dict()
+            cache.set('preferences', preferences, None)
 
         # set custom fields
         custom_fields = {
