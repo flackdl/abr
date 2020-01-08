@@ -76,6 +76,12 @@ class CategoryChildAdmin(CategoryParentAdmin):
     inlines = (CategoryPrefixInline,)
     exclude = ()
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        # only include parent categories for the parent dropdown
+        if db_field.name == 'parent':
+            kwargs["queryset"] = Category.parents.all()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     def get_queryset(self, request):
         return Category.children.all()
 
