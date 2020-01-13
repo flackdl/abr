@@ -46,8 +46,8 @@ class CategoryPrefixInline(admin.TabularInline):
 @admin.register(Category)
 class CategoryParentAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
-    list_display = ('name', 'position', 'service_only', 'prefixes',)
-    list_filter = ('service_only',)
+    list_display = ('name', 'position', 'service_only', 'show_in_assessment', 'prefixes',)
+    list_filter = ('service_only', 'show_in_assessment',)
     exclude = ('parent',)
 
     def get_queryset(self, request):

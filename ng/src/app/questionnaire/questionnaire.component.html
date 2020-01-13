@@ -28,7 +28,7 @@
               <button class="btn btn-dark mx-1" type="button" (click)="setAssessmentAll(api.ASSESSMENT_NA)">N/A</button>
             </div>
           </div>
-          <div class="row" formGroupName="assessments" *ngFor="let category of getMainCategories()">
+          <div class="row" formGroupName="assessments" *ngFor="let category of getAssessmentCategories()">
             <div class="col-6 my-1 text-right">
               <div class="text-black-50 font-weight-bold">{{ category.name }}</div>
             </div>

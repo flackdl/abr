@@ -27,7 +27,7 @@ export class QuestionnaireComponent implements OnInit {
     const assessmentGroup = {};
 
     // build assessment form controls
-    this.getMainCategories().forEach((category) => {
+    this.getAssessmentCategories().forEach((category) => {
       assessmentGroup[category.name] = [this.getExistingAssessment(category.name), Validators.required];
     });
 
@@ -41,9 +41,9 @@ export class QuestionnaireComponent implements OnInit {
     })
   }
 
-  public getMainCategories() {
+  public getAssessmentCategories() {
     return this.api.categories.filter((cat) => {
-      return !cat.service_only;
+      return cat.show_in_assessment && !cat.service_only;
     });
   }
 

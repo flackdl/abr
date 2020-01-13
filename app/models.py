@@ -42,6 +42,7 @@ class Category(models.Model):
     position = models.PositiveSmallIntegerField()
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     service_only = models.BooleanField(default=False)
+    show_in_assessment = models.BooleanField(default=True)
 
     # managers - the first one declared is the default
     objects = models.Manager()
