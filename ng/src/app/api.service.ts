@@ -323,9 +323,10 @@ export class ApiService {
                 name: item.Name,
                 full_name: item.FullyQualifiedName,
                 price: item.UnitPrice,
-                type: item.Type, // Inventory|Service
+                type: item.Type.toLowerCase(), // inventory|service
                 description: item.Description,
                 sku: item.Sku,
+                quantity_on_hand: item.QtyOnHand,
               }
             });
           } else {

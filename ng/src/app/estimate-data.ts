@@ -4,6 +4,7 @@ export type Item = {
   full_name: string,
   type: string, // inventory|service
   price: number,
+  quantity_on_hand: number,
   description: string,
   sku: string,
 };
