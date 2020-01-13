@@ -74,7 +74,7 @@ class CategoryChildAdmin(CategoryParentAdmin):
     """
     list_display = ('name', 'parent', 'prefixes',)
     inlines = (CategoryPrefixInline,)
-    exclude = ()
+    exclude = ('show_in_assessment',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         # only include parent categories for the parent dropdown
