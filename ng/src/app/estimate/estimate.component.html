@@ -72,7 +72,7 @@
                     <ng-container [formGroupName]="category.name">
                       <tr *ngFor="let item of category.items; let i = index">
                         <td class="name">{{ item.name }}</td>
-                        <td formGroupName="descriptions" class="description"><textarea class="form-control form-control-sm" name="description" type="text" [formControlName]="i">{{item.description}}</textarea></td>
+                        <td formGroupName="descriptions" class="description"><textarea class="form-control form-control-sm" name="description" type="text" rows="5" [formControlName]="i">{{item.description}}</textarea></td>
                         <td formGroupName="quantities" class="quantity"><input class="form-control form-control-sm" name="quantity" type="number" min="1" [formControlName]="i"></td>
                         <td formGroupName="prices" class="price">
                           <div class="input-group flex-nowrap">
