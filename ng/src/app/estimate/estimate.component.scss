@@ -1,3 +1,18 @@
 input.form-control {
-  min-width: 70px;
+  min-width: 50px;
+}
+table {
+  thead {
+    th {
+      font-size: 10px;
+    }
+  }
+  td {
+    &.description {
+      width: 60%;
+    }
+    &,* {
+      font-size:  12px!important;
+    }
+  }
 }

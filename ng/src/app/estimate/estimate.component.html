@@ -71,17 +71,17 @@
                     </tr>
                     <ng-container [formGroupName]="category.name">
                       <tr *ngFor="let item of category.items; let i = index">
-                        <td>{{ item.name }}</td>
-                        <td formGroupName="descriptions"><textarea class="form-control" name="description" type="text" [formControlName]="i">{{item.description}}</textarea></td>
-                        <td formGroupName="quantities"><input class="form-control" name="quantity" type="number" min="1" [formControlName]="i"></td>
-                        <td formGroupName="prices">
+                        <td class="name">{{ item.name }}</td>
+                        <td formGroupName="descriptions" class="description"><textarea class="form-control form-control-sm" name="description" type="text" [formControlName]="i">{{item.description}}</textarea></td>
+                        <td formGroupName="quantities" class="quantity"><input class="form-control form-control-sm" name="quantity" type="number" min="1" [formControlName]="i"></td>
+                        <td formGroupName="prices" class="price">
                           <div class="input-group flex-nowrap">
-                            <div class="input-group-prepend"><span class="input-group-text">$</span></div>
-                            <input class="form-control" name="price" type="number" min="0" [formControlName]="i">
+                            <div class="input-group-prepend"><span class="input-group-text form-control-sm">$</span></div>
+                            <input class="form-control form-control-sm" name="price" type="number" min="0" [formControlName]="i">
                           </div>
                         </td>
-                        <td>${{ item.amount }}</td>
-                        <td>
+                        <td class="amount">${{ item.amount }}</td>
+                        <td class="tax">
                           <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
                         </td>
                         <td><button class="btn btn-sm btn-outline-danger" type="button" (click)="removeItem(item, category.name, i)"><span class="oi oi-x"></span></button></td>
