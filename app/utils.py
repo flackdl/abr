@@ -150,8 +150,6 @@ def qbo_access_token_needs_refreshing():
 
     access_token_date = redis_client.get('access_token_date') or ''
 
-    log(access_token_date)
-
     # parse the date
     access_token_date = dateparse.parse_datetime(access_token_date)
 
