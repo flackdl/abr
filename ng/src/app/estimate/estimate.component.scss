@@ -11,6 +11,11 @@ table {
     &.description {
       width: 60%;
     }
+    &.price {
+      input {
+        min-width: 55px;
+      }
+    }
     &,* {
       font-size:  12px!important;
     }
