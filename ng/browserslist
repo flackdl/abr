@@ -5,8 +5,21 @@
 # You can see what browsers were selected by your queries by running:
 #   npx browserslist
 
-> 0.5%
-last 2 versions
-Firefox ESR
-not dead
-not IE 9-11 # For IE 9-11 support, remove 'not'.
+# NOTE: force single es2015 bundle by only including recent chrome versions
+# https://github.com/angular/angular-cli/issues/14639#issuecomment-500458409
+# (flackdl)
+last 2 Chrome versions
+last 2 ChromeAndroid versions
+last 2 Safari versions
+last 2 iOS versions
+last 2 Firefox versions
+last 2 FirefoxAndroid versions
+last 2 Edge versions
+
+
+# disable everything else
+#> 0.5%
+#last 2 versions
+#Firefox ESR
+#not dead
+#not IE 9-11 # For IE 9-11 support, remove 'not'.
