@@ -37,8 +37,13 @@ export class WizardStepsService {
       if (matchIndex === 0) {
         return true;
       }
-      // can enter if the previous is complete
-      return this.steps[matchIndex - 1].complete();
+      // can enter if all the previous steps are complete
+      for (let i = 0; i < matchIndex; i++) {
+        if (!this.steps[i].complete()) {
+          return false;
+        }
+      }
+      return true;
     }
     return false;
   }

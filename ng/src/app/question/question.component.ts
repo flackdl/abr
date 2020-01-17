@@ -14,7 +14,7 @@ export class QuestionComponent implements OnInit, OnChanges {
   @Input('defaultAnswer') defaultAnswer: string = '';
   @Input('submitButtonClass') submitButtonClass: string = 'btn-primary';
   @Input('submitButtonLabel') submitButtonLabel: string = 'Next';
-  @Input('required') required = false;
+  @Input('required') required = true;
   @Output() submitted = new EventEmitter<string>();
   @Output() changed = new EventEmitter<string>();
 
@@ -33,6 +33,7 @@ export class QuestionComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.defaultAnswer) {
       this.input.setValue(changes.defaultAnswer.currentValue);
+      this.input.setValidators(this.required ? Validators.required : null);
     }
   }
 
