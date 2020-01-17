@@ -26,11 +26,9 @@ export class ItemSelectModalComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    if (this.category.service_only) {
-      this.serviceSelect.open();
-    } else {
-      this.inventorySelect.open();
-    }
+    // open both select drop-downs
+    this.serviceSelect.open();
+    this.inventorySelect.open();
   }
 
   public itemAdded(item: Item) {

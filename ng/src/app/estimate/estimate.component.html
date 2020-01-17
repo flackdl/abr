@@ -7,28 +7,13 @@
       <!-- left -->
       <div class="col-lg-3">
 
-        <!-- labor -->
-        <div class="card mb-3">
-          <div class="card-header">
-            <h5>Labor Categories</h5>
-          </div>
-          <div class="card-body">
-            <!-- service only categories -->
-            <div *ngFor="let category of getServiceOnlyCategories()" class="my-2">
-              <button class="btn btn-block btn-outline-secondary" type="button" (click)="categorySelected(category)">{{ category.name }}</button>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- inventory -->
         <div class="card">
           <div class="card-header">
-            <h5>Inventory Categories</h5>
+            <h5>Categories</h5>
           </div>
           <div class="card-body">
             <!-- main categories -->
-            <div *ngFor="let category of getMainCategories()" class="my-2">
+            <div *ngFor="let category of api.categories" class="my-2">
               <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
                 <button class="btn btn-block" type="button" ngbDropdownToggle [ngClass]="categoryButtonClass(category)">{{ category.name }}</button>
                 <div ngbDropdownMenu>

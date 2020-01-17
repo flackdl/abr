@@ -60,18 +60,6 @@ export class EstimateComponent implements OnInit {
     );
   }
 
-  public getMainCategories() {
-    return this.api.categories.filter((category) => {
-      return !category.service_only;
-    })
-  }
-
-  public getServiceOnlyCategories() {
-    return this.api.categories.filter((category) => {
-      return category.service_only;
-    })
-  }
-
   public categoryChildren(category: any) {
     return this.api.categoriesChildren.filter((child) => {
       return child.parent === category.id;
@@ -235,6 +223,7 @@ export class EstimateComponent implements OnInit {
       'btn-outline-warning': this.hasAssessmentResultForCategory('ok', category),
       'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
       'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
+      'btn-outline-secondary': !category.show_in_assessment,
     };
   }
 

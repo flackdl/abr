@@ -43,7 +43,7 @@ export class QuestionnaireComponent implements OnInit {
 
   public getAssessmentCategories() {
     return this.api.categories.filter((cat) => {
-      return cat.show_in_assessment && !cat.service_only;
+      return cat.show_in_assessment;
     });
   }
 
