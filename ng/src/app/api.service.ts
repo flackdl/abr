@@ -35,6 +35,7 @@ export class ApiService {
   public OPTION_PAYMENT_NOT_PAID = 'Not Paid';
   public OPTION_PAYMENT_PAID = 'Paid';
   public OPTION_PAYMENT_HALF_NOW = 'Half Now';
+  public OPTION_PAYMENT_DEPOSIT = 'Deposit';
 
   public settings: any;
   public estimateData: EstimateData;
@@ -160,15 +161,11 @@ export class ApiService {
   }
 
   public hasEstimateNotes(): boolean {
-    return Boolean(
-      this.estimateData.public_notes
-    );
+    return true;
   }
 
   public hasStatementNotes(): boolean {
-    return Boolean(
-      this.estimateData.private_notes
-    );
+    return true;
   }
 
   public currentCustomer() {

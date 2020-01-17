@@ -6,18 +6,18 @@
     <div class="card-body">
       <div class="d-flex justify-content-center">
         <div>
-          <!-- review ok? -->
+          <!-- Are we waiting for the customer to bring us more parts? -->
           <div class="form-group">
-            <label>Review OK?</label>
+            <label>Are we waiting for the customer to bring us more parts?</label>
             <div class="form-check">
-              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.review_ok.dirty && !form.controls.review_ok.valid" id="review_ok-yes" formControlName="review_ok">
-              <label class="form-check-label" for="review_ok-yes">
+              <input class="form-check-input" type="radio" [value]="true" [class.is-invalid]="form.controls.waiting_on_customer_bring_parts.dirty && !form.controls.waiting_on_customer_bring_parts.valid" id="waiting_on_customer_bring_parts-yes" formControlName="waiting_on_customer_bring_parts">
+              <label class="form-check-label" for="waiting_on_customer_bring_parts-yes">
                 Yes
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.review_ok.dirty && !form.controls.review_ok.valid" id="review_ok-no" formControlName="review_ok">
-              <label class="form-check-label" for="review_ok-no">
+              <input class="form-check-input" type="radio" [value]="false" [class.is-invalid]="form.controls.waiting_on_customer_bring_parts.dirty && !form.controls.waiting_on_customer_bring_parts.valid" id="waiting_on_customer_bring_parts-no" formControlName="waiting_on_customer_bring_parts">
+              <label class="form-check-label" for="waiting_on_customer_bring_parts-no">
                 No
               </label>
             </div>
@@ -83,6 +83,7 @@
               <option>{{api.OPTION_PAYMENT_NOT_PAID}}</option>
               <option>{{api.OPTION_PAYMENT_PAID}}</option>
               <option>{{api.OPTION_PAYMENT_HALF_NOW}}</option>
+              <option>{{api.OPTION_PAYMENT_DEPOSIT}}</option>
             </select>
           </div>
           <!-- signature -->
@@ -106,6 +107,8 @@
           <!-- review details -->
           <div class="d-flex justify-content-center">
             <div class="alert" [ngClass]="{'alert-success': api.estimateData.status === 'Accepted', 'alert-danger': api.estimateData.status === 'Rejected', 'alert-info': !api.estimateData.status, 'alert-info': api.estimateData.status === 'Pending'}">
+              <div><strong>First Name:</strong> {{ api.estimateData.first_name }}</div>
+              <div><strong>Last Name:</strong> {{ api.estimateData.last_name }}</div>
               <div><strong>Estimate Status:</strong> {{ api.estimateData.status }}</div>
               <div *ngIf="api.estimateData.need_parts"><strong>Need Parts:</strong> yes</div>
               <div><strong>Due:</strong> {{ api.estimateData.expiration_date + ' ' + api.estimateData.expiration_time | amDateFormat: 'MMM Do hh:mm a' }}</div>

@@ -14,13 +14,14 @@ export class QuestionComponent implements OnInit, OnChanges {
   @Input('defaultAnswer') defaultAnswer: string = '';
   @Input('submitButtonClass') submitButtonClass: string = 'btn-primary';
   @Input('submitButtonLabel') submitButtonLabel: string = 'Next';
+  @Input('required') required = false;
   @Output() submitted = new EventEmitter<string>();
   @Output() changed = new EventEmitter<string>();
 
   public input: FormControl;
 
   constructor() {
-    this.input = new FormControl('', Validators.required);
+    this.input = new FormControl('', this.required ? Validators.required : null);
     this.input.valueChanges.subscribe((data) => {
       this.changed.emit(data);
     })

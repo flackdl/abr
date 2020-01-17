@@ -56,7 +56,7 @@ export type EstimateData = {
   employee_initials?: string,
   need_parts?: boolean,
   parts_in_inventory?: boolean,
-  review_ok?: boolean,
+  waiting_on_customer_bring_parts?: boolean,
   contact_method?: string,
   signature?: string,
   payment_option?: string,

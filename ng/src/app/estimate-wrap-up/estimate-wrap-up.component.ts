@@ -51,7 +51,7 @@ export class EstimateWrapUpComponent implements OnInit {
       employee_initials: [this.api.estimateData.employee_initials, Validators.required],
       need_parts: [this.api.estimateData.need_parts, Validators.required],
       parts_in_inventory: [this.api.estimateData.parts_in_inventory],  // conditionally required if need_parts is true
-      review_ok: [this.api.estimateData.review_ok, Validators.required],
+      waiting_on_customer_bring_parts: [this.api.estimateData.waiting_on_customer_bring_parts, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
       payment_option: [this.api.estimateData.payment_option, Validators.required],
     });
@@ -119,15 +119,12 @@ export class EstimateWrapUpComponent implements OnInit {
       data['signature'] = this.signature.toDataURL();
     }
 
-    if (data.review_ok) {
-      if (!data.need_parts) {
-        data['status'] = 'Accepted';
-      } else {
-        data['status'] = 'Pending';
-      }
+    if (data.waiting_on_customer_bring_parts || data.need_parts) {
+      data['status'] = 'Pending';
     } else {
-      data['status'] = 'Rejected';
+      data['status'] = 'Accepted';
     }
+
     this.api.updateEstimateData(data);
   }
 
