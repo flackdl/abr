@@ -280,7 +280,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         custom_fields = {
             'Bike/Model': estimate_data['bike_model'],
             'Tag #': estimate_data['tag_number'],
-            'Expiration Time': estimate_data['expiration_time'].isoformat(),
+            'Expiration Time': estimate_data['expiration_time'].strftime('%I:%M %p'),  # i.e 04:14 PM
         }
         for name, value in custom_fields.items():
             estimate.CustomField.append(
