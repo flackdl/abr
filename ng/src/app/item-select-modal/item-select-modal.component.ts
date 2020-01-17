@@ -10,7 +10,7 @@ import {NgSelectComponent} from "@ng-select/ng-select";
   styleUrls: ['./item-select-modal.component.scss']
 })
 export class ItemSelectModalComponent implements OnInit {
-  @Input('category') category: any;
+  @Input('title') title: any;
   @Input('inventoryResults') inventoryResults = [];
   @Input('serviceResults') serviceResults = [];
   @Output() addItemChange = new EventEmitter();

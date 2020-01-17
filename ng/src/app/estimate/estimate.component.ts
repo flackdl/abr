@@ -144,6 +144,7 @@ export class EstimateComponent implements OnInit {
     // build form
     this.form = this.fb.group({
       'categories': this.fb.group({}),
+      'customSearch': new FormControl(''),
     });
 
     this.api.categories.forEach((category: any) => {
@@ -239,7 +240,7 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.category = category;
+    this.modalRef.componentInstance.title = category.name;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
@@ -260,6 +261,34 @@ export class EstimateComponent implements OnInit {
       .finally(() => {
         this.modalService.dismissAll();
         window.scrollTo(0, 0);
+      });
+  }
+
+  public submitCustomSearch() {
+    this.isLoading = true;
+    const searchValue = this.form.get('customSearch').value;
+    const queries = [
+      this.api.fetchService({name: searchValue}).pipe(
+        map((data) => {
+          this.serviceResults = data;
+          return this.serviceResults;
+        })
+      ),
+      this.api.fetchInventory({name: searchValue}).pipe(
+        map((data) => {
+          this.inventoryResults = data;
+          return this.inventoryResults;
+        })
+      ),
+    ];
+    zip(...queries).pipe().subscribe(
+      (data) => {
+        this.isLoading = false;
+        this.openCategoryItemsModal(searchValue);
+      },
+      (error) => {
+        this.isLoading = false;
+        this.toastr.error('An unknown error occurred');
       });
   }
 
