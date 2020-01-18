@@ -12,7 +12,7 @@
             <strong>Categories</strong>
           </div>
           <div class="card-body">
-            <div class="categories">
+            <div class="categories mb-2">
               <!-- categories -->
               <div *ngFor="let category of api.categories" class="my-2">
                 <div ngbDropdown class="d-inline-block" *ngIf="categoryChildren(category).length > 0">
@@ -24,10 +24,12 @@
                 <button class="btn btn-sm btn-block" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
               </div>
             </div>
-            <label class="mt-2">Custom Search</label>
-            <div class="d-flex">
-              <input type="text" class="form-control form-control-sm" formControlName="customSearch">
-              <button type="button" class="btn btn-sm btn-link" (click)="submitCustomSearch()" [disabled]="!form.get('customSearch')">Search</button>
+            <div class="p-2 border border-info">
+              <label class="mt-2">Custom Search</label>
+              <div class="d-flex">
+                <input type="text" class="form-control form-control-sm" formControlName="customSearch">
+                <button type="button" class="btn btn-sm btn-link" (click)="submitCustomSearch()" [disabled]="!form.get('customSearch')">Search</button>
+              </div>
             </div>
           </div>
         </div>
@@ -91,8 +93,28 @@
         </div>
         <div class="text-right">
           <div class="d-flex justify-content-end my-2">
+            <div class="form-group form-inline">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend"><span class="input-group-text">% discount</span></div>
+                <input class="form-control" name="discount" type="number" min="0" max="100" formControlName="discountPercent">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end my-2">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="discountAppliedAll" formControlName="discountAppliedAll">
+              <label class="form-check-label" for="discountAppliedAll">
+                <small class="text-black-50">Apply to entire estimate?</small>
+              </label>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end my-2">
             <strong class="mr-3">Subtotal: </strong>
             <strong>{{ api.getSubTotal() | currency }}</strong>
+          </div>
+          <div class="d-flex justify-content-end my-2">
+            <strong class="mr-3">Tax: </strong>
+            <strong>{{ api.getTax() | currency }}</strong>
           </div>
           <div class="d-flex justify-content-end my-2">
             <strong class="mr-3">Total: </strong>

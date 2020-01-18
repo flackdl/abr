@@ -3,7 +3,7 @@ import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {forkJoin, zip} from "rxjs";
 import {map} from "rxjs/operators";
 import * as _ from 'lodash';
@@ -43,6 +43,8 @@ export class EstimateComponent implements OnInit {
     // watch for quantity changes
     this.form.valueChanges.subscribe(
       (data: any) => {
+        this.api.estimateData.discount_percent = data.discountPercent;
+        this.api.estimateData.discount_applied_to_all = data.discountAppliedAll;
         _.forEach(data.categories, (catControls: any, catName: string) => {
           this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
             if (catItem.name === catName) {
@@ -128,7 +130,7 @@ export class EstimateComponent implements OnInit {
       zip(...forkJoins).subscribe(
         () => {
           this.isLoading = false;
-          this.openCategoryItemsModal(category);
+          this.openItemsModal(category.name);
         },
         (error) => {
           console.error(error);
@@ -145,6 +147,8 @@ export class EstimateComponent implements OnInit {
     this.form = this.fb.group({
       'categories': this.fb.group({}),
       'customSearch': new FormControl(''),
+      'discountPercent': new FormControl(this.api.estimateData.discount_percent, Validators.pattern('[\d.]+')),
+      'discountAppliedAll': new FormControl(!!this.api.estimateData.discount_applied_to_all),
     });
 
     this.api.categories.forEach((category: any) => {
@@ -228,7 +232,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public openCategoryItemsModal(category: any) {
+  public openItemsModal(title: string) {
 
     // unsubscribe any existing subscriptions
     if (this.modalRef && this.modalRef.componentInstance) {
@@ -240,7 +244,7 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.title = category.name;
+    this.modalRef.componentInstance.title = title;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
@@ -284,7 +288,7 @@ export class EstimateComponent implements OnInit {
     zip(...queries).pipe().subscribe(
       (data) => {
         this.isLoading = false;
-        this.openCategoryItemsModal(searchValue);
+        this.openItemsModal(searchValue);
       },
       (error) => {
         this.isLoading = false;
@@ -294,7 +298,9 @@ export class EstimateComponent implements OnInit {
 
   public itemAdded(item: Item) {
 
-    const catName = this.getCategoryNameForItemName(item.name);
+    // TODO - handle unassigned item
+
+    const catName = this.getCategoryNameForItemName(item.name) || 'Unknown';
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
@@ -348,6 +354,7 @@ export class EstimateComponent implements OnInit {
   }
 
   public itemRemoved(item: any) {
+    // TODO - handle unassigned item
     const catName = this.getCategoryNameForItemName(item.name);
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === catName;
@@ -376,7 +383,7 @@ export class EstimateComponent implements OnInit {
     }
 
     // return parent category this is a child category
-    if (category.parent) {
+    if (category && category.parent) {
       category = this.api.categories.find((cat) => {
         return cat.id === category.parent;
       })
