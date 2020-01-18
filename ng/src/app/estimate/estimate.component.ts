@@ -12,6 +12,8 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ItemSelectModalComponent} from "../item-select-modal/item-select-modal.component";
 import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap/modal/modal-ref";
 
+const CATEGORY_UNASSIGNED = 'Unassigned';
+
 
 @Component({
   selector: 'app-estimator',
@@ -143,6 +145,7 @@ export class EstimateComponent implements OnInit {
   }
 
   public buildForm() {
+
     // build form
     this.form = this.fb.group({
       'categories': this.fb.group({}),
@@ -151,7 +154,10 @@ export class EstimateComponent implements OnInit {
       'discountAppliedAll': new FormControl(!!this.api.estimateData.discount_applied_to_all),
     });
 
-    this.api.categories.forEach((category: any) => {
+    // also include an "unassigned" category group for things that were manually searched for
+    const categories = this.api.categories.concat({name: CATEGORY_UNASSIGNED});
+
+    categories.forEach((category: any) => {
 
       // add controls
       const itemQuantitiesControl = new FormArray([]);
@@ -298,9 +304,7 @@ export class EstimateComponent implements OnInit {
 
   public itemAdded(item: Item) {
 
-    // TODO - handle unassigned item
-
-    const catName = this.getCategoryNameForItemName(item.name) || 'Unknown';
+    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
@@ -316,6 +320,7 @@ export class EstimateComponent implements OnInit {
     const category = this.api.estimateData.category_items.find((catItem) => {
       return catItem.name === catName;
     });
+
     const estimateItem: EstimateItem = {
       id: item.id,
       name: item.name,
@@ -326,6 +331,7 @@ export class EstimateComponent implements OnInit {
       description: item.description,
       quantity: 1,
     };
+
     if (category) {
       category.items.push(estimateItem);
     } else {
@@ -342,6 +348,10 @@ export class EstimateComponent implements OnInit {
   protected _sortCategoryItems() {
     // sort category items in same order as main categories
     const sortedCategoryItems: CategoryItem[] = [];
+    // capture any unassigned category items that were manually searched for
+    let unassignedCategoryItems: CategoryItem = this.api.estimateData.category_items.find((catItem) => {
+      return catItem.name === CATEGORY_UNASSIGNED;
+    });
     this.api.categories.forEach((cat) => {
       const catItemsMatch = this.api.estimateData.category_items.find((catItem: CategoryItem) => {
         return catItem.name === cat.name && catItem.items.length > 0;
@@ -351,11 +361,14 @@ export class EstimateComponent implements OnInit {
       }
     });
     this.api.estimateData.category_items = sortedCategoryItems;
+    // include any "Unassigned" items
+    if (unassignedCategoryItems) {
+      this.api.estimateData.category_items.push(unassignedCategoryItems);
+    }
   }
 
   public itemRemoved(item: any) {
-    // TODO - handle unassigned item
-    const catName = this.getCategoryNameForItemName(item.name);
+    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === catName;
     });
