@@ -238,7 +238,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public openItemsModal(title: string) {
+  public openItemsModal(categoryName: string) {
 
     // unsubscribe any existing subscriptions
     if (this.modalRef && this.modalRef.componentInstance) {
@@ -250,19 +250,19 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.title = title;
+    this.modalRef.componentInstance.categoryName = categoryName;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
     // outputs
     this.modalRef.componentInstance.removeItemChange.subscribe(
-      (item) => {
-        this.itemRemoved(item);
+      (data) => {
+        this.itemRemoved(data);
       }
     );
     this.modalRef.componentInstance.addItemChange.subscribe(
-      (item) => {
-        this.itemAdded(item);
+      (data) => {
+        this.itemAdded(data);
       }
     );
 
@@ -302,9 +302,10 @@ export class EstimateComponent implements OnInit {
       });
   }
 
-  public itemAdded(item: Item) {
+  public itemAdded(data) {
+    const item: Item = data.item;
+    const catName: string = this.getParentCategoryNameForCategory(data.categoryName) || CATEGORY_UNASSIGNED;
 
-    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
@@ -367,8 +368,8 @@ export class EstimateComponent implements OnInit {
     }
   }
 
-  public itemRemoved(item: any) {
-    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
+  public itemRemoved(data: any) {
+    const catName: string = this.getParentCategoryNameForCategory(data.categoryName) || CATEGORY_UNASSIGNED;
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === catName;
     });
@@ -384,16 +385,10 @@ export class EstimateComponent implements OnInit {
     }
   }
 
-  public getCategoryNameForItemName(name: string) {
-    let category;
-    const prefixMatch = this.api.categoryPrefixes.find((prefix) => {
-      return name.toLowerCase().startsWith(prefix.prefix.toLowerCase());
+  public getParentCategoryNameForCategory(name: string) {
+    let category = this.api.categories.concat(this.api.categoriesChildren).find((cat) => {
+      return cat.name === name;
     });
-    if (prefixMatch) {
-      category = this.api.categories.concat(this.api.categoriesChildren).find((cat) => {
-        return cat.id === prefixMatch.category;
-      });
-    }
 
     // return parent category this is a child category
     if (category && category.parent) {

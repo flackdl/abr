@@ -10,7 +10,7 @@ import {NgSelectComponent} from "@ng-select/ng-select";
   styleUrls: ['./item-select-modal.component.scss']
 })
 export class ItemSelectModalComponent implements OnInit {
-  @Input('title') title: any;
+  @Input('categoryName') categoryName: any;
   @Input('inventoryResults') inventoryResults = [];
   @Input('serviceResults') serviceResults = [];
   @Output() addItemChange = new EventEmitter();
@@ -32,11 +32,17 @@ export class ItemSelectModalComponent implements OnInit {
   }
 
   public itemAdded(item: Item) {
-    this.addItemChange.emit(item);
+    this.addItemChange.emit({
+      item: item,
+      categoryName: this.categoryName,
+    });
   }
 
   public itemRemoved(event: any) {
     const item = event.value;  // "item" is event.value
-    this.removeItemChange.emit(item);
+    this.removeItemChange.emit({
+      item: item,
+      categoryName: this.categoryName,
+    });
   }
 }
