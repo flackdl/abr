@@ -24,11 +24,11 @@
                 <button class="btn btn-sm btn-block" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)" [ngClass]="categoryButtonClass(category)" >{{ category.name }}</button>
               </div>
             </div>
-            <div class="p-2 border border-info">
+            <div class="p-2 border border-info bg-light">
               <label class="mt-2">Custom Search</label>
               <div class="d-flex">
                 <input type="text" class="form-control form-control-sm" formControlName="customSearch">
-                <button type="button" class="btn btn-sm btn-link" (click)="submitCustomSearch()" [disabled]="!form.get('customSearch')">Search</button>
+                <button type="button" class="btn btn-sm btn-outline-info ml-1" (click)="submitCustomSearch()" [disabled]="!form.get('customSearch')">Search</button>
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@
             <div class="form-group form-inline">
               <div class="input-group flex-nowrap">
                 <strong class="mr-3">Discount:</strong>
-                <input class="form-control" name="discount" type="number" min="0" max="100" formControlName="discountPercent">
+                <input class="form-control discount" name="discount" type="number" min="0" max="100" formControlName="discountPercent">
                 <div class="input-group-append">
                   <span class="input-group-text">%</span>
                 </div>

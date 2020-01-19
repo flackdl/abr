@@ -5,6 +5,9 @@
 }
 input.form-control {
   min-width: 50px;
+  &.discount {
+    min-width: 75px;
+  }
 }
 table {
   thead {
