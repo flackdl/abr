@@ -3,7 +3,7 @@ import {WizardStepsService} from "../wizard-steps.service";
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {forkJoin, zip} from "rxjs";
 import {map} from "rxjs/operators";
 import * as _ from 'lodash';
@@ -11,6 +11,8 @@ import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ItemSelectModalComponent} from "../item-select-modal/item-select-modal.component";
 import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap/modal/modal-ref";
+
+const CATEGORY_UNASSIGNED = 'Unassigned';
 
 
 @Component({
@@ -43,6 +45,8 @@ export class EstimateComponent implements OnInit {
     // watch for quantity changes
     this.form.valueChanges.subscribe(
       (data: any) => {
+        this.api.estimateData.discount_percent = data.discountPercent;
+        this.api.estimateData.discount_applied_to_all = data.discountAppliedAll;
         _.forEach(data.categories, (catControls: any, catName: string) => {
           this.api.estimateData.category_items.forEach((catItem: CategoryItem) => {
             if (catItem.name === catName) {
@@ -128,7 +132,7 @@ export class EstimateComponent implements OnInit {
       zip(...forkJoins).subscribe(
         () => {
           this.isLoading = false;
-          this.openCategoryItemsModal(category);
+          this.openItemsModal(category.name);
         },
         (error) => {
           console.error(error);
@@ -141,13 +145,19 @@ export class EstimateComponent implements OnInit {
   }
 
   public buildForm() {
+
     // build form
     this.form = this.fb.group({
       'categories': this.fb.group({}),
       'customSearch': new FormControl(''),
+      'discountPercent': new FormControl(this.api.estimateData.discount_percent, Validators.pattern('[0-9.]+')),
+      'discountAppliedAll': new FormControl(!!this.api.estimateData.discount_applied_to_all),
     });
 
-    this.api.categories.forEach((category: any) => {
+    // also include an "unassigned" category group for things that were manually searched for
+    const categories = this.api.categories.concat({name: CATEGORY_UNASSIGNED});
+
+    categories.forEach((category: any) => {
 
       // add controls
       const itemQuantitiesControl = new FormArray([]);
@@ -228,7 +238,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public openCategoryItemsModal(category: any) {
+  public openItemsModal(title: string) {
 
     // unsubscribe any existing subscriptions
     if (this.modalRef && this.modalRef.componentInstance) {
@@ -240,7 +250,7 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.title = category.name;
+    this.modalRef.componentInstance.title = title;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
@@ -284,7 +294,7 @@ export class EstimateComponent implements OnInit {
     zip(...queries).pipe().subscribe(
       (data) => {
         this.isLoading = false;
-        this.openCategoryItemsModal(searchValue);
+        this.openItemsModal(searchValue);
       },
       (error) => {
         this.isLoading = false;
@@ -294,7 +304,7 @@ export class EstimateComponent implements OnInit {
 
   public itemAdded(item: Item) {
 
-    const catName = this.getCategoryNameForItemName(item.name);
+    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
@@ -310,6 +320,7 @@ export class EstimateComponent implements OnInit {
     const category = this.api.estimateData.category_items.find((catItem) => {
       return catItem.name === catName;
     });
+
     const estimateItem: EstimateItem = {
       id: item.id,
       name: item.name,
@@ -320,6 +331,7 @@ export class EstimateComponent implements OnInit {
       description: item.description,
       quantity: 1,
     };
+
     if (category) {
       category.items.push(estimateItem);
     } else {
@@ -336,6 +348,10 @@ export class EstimateComponent implements OnInit {
   protected _sortCategoryItems() {
     // sort category items in same order as main categories
     const sortedCategoryItems: CategoryItem[] = [];
+    // capture any unassigned category items that were manually searched for
+    let unassignedCategoryItems: CategoryItem = this.api.estimateData.category_items.find((catItem) => {
+      return catItem.name === CATEGORY_UNASSIGNED;
+    });
     this.api.categories.forEach((cat) => {
       const catItemsMatch = this.api.estimateData.category_items.find((catItem: CategoryItem) => {
         return catItem.name === cat.name && catItem.items.length > 0;
@@ -345,10 +361,14 @@ export class EstimateComponent implements OnInit {
       }
     });
     this.api.estimateData.category_items = sortedCategoryItems;
+    // include any "Unassigned" items
+    if (unassignedCategoryItems) {
+      this.api.estimateData.category_items.push(unassignedCategoryItems);
+    }
   }
 
   public itemRemoved(item: any) {
-    const catName = this.getCategoryNameForItemName(item.name);
+    const catName = this.getCategoryNameForItemName(item.name) || CATEGORY_UNASSIGNED;
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === catName;
     });
@@ -376,7 +396,7 @@ export class EstimateComponent implements OnInit {
     }
 
     // return parent category this is a child category
-    if (category.parent) {
+    if (category && category.parent) {
       category = this.api.categories.find((cat) => {
         return cat.id === category.parent;
       })

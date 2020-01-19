@@ -62,4 +62,6 @@ export type EstimateData = {
   payment_option?: string,
   public_notes?: string,
   private_notes?: string,
+  discount_percent?: number,
+  discount_applied_to_all?: boolean,
 };

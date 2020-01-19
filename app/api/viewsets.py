@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException, QuickbooksException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
-    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref, TxnTaxDetail, TaxCode)
+    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref, TxnTaxDetail, TaxCode, DiscountLine, DiscountLineDetail)
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -233,6 +233,9 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
                 # increment
                 estimate.DocNumber = last_doc_number + 1
 
+        # keep track in case there's a discount applied
+        inventory_sub_total = .0
+
         # build lines
         for category_items in categories_items:
 
@@ -240,6 +243,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             for item in category_items['items']:
 
                 sales_line = SalesItemLine()
+                sales_line.Amount = item['amount']
                 sales_line.Description = item['description']
                 sales_line.SalesItemLineDetail = SalesItemLineDetail()
                 sales_line.SalesItemLineDetail.Qty = item['quantity']
@@ -248,8 +252,12 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
                 sales_line.SalesItemLineDetail.ItemRef.value = item['id']
                 sales_line.SalesItemLineDetail.UnitPrice = item['price']
                 sales_line.SalesItemLineDetail.TaxCodeRef = Ref()
-                sales_line.SalesItemLineDetail.TaxCodeRef.value = 'NON' if item['type'] == EstimateLineQBOSerializer.LINE_TYPE_SERVICE else 'TAX'
-                sales_line.Amount = item['amount']
+
+                if item['type'] == EstimateLineQBOSerializer.LINE_TYPE_INVENTORY:
+                    sales_line.SalesItemLineDetail.TaxCodeRef.value = 'TAX'
+                    inventory_sub_total += item['amount']
+                else:
+                    sales_line.SalesItemLineDetail.TaxCodeRef.value = 'NON'
 
                 estimate.Line.append(sales_line)
 
@@ -257,6 +265,21 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             subtotal_line = DescriptionLine()
             subtotal_line.Description = "Subtotal: {}".format(sum(item['amount'] for item in category_items['items']))
             estimate.Line.append(subtotal_line)
+
+        # discount
+        if estimate_data['discount_percent']:
+            discount_line = DiscountLine()
+            discount_line.DiscountLineDetail = DiscountLineDetail()
+
+            # applied to whole estimate
+            if estimate_data['discount_applied_to_all']:
+                discount_line.DiscountLineDetail.PercentBased = True
+                discount_line.DiscountLineDetail.DiscountPercent = estimate_data['discount_percent']
+            # applied only to inventory items
+            else:
+                discount_line.Amount = inventory_sub_total * estimate_data['discount_percent'] / 100
+
+            estimate.Line.append(discount_line)
 
         # add tax
         tax_code = get_qbo_tax_code_rate(TaxCode, qbo_client=self.qbo_client)
@@ -295,7 +318,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate.save(qb=self.qbo_client)
 
         # save signature (data uri) to temporary file so we can upload and attach it to the estimate
-        with tempfile.NamedTemporaryFile(delete=False) as fh:
+        with tempfile.NamedTemporaryFile() as fh:
 
             # save to image
             header, encoded = estimate_data['signature'].split(",", 1)

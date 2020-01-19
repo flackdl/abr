@@ -145,19 +145,59 @@ export class ApiService {
   }
 
   public getTotal(): number {
-    let tax = 0;
-    this.estimateData.category_items.forEach((catItem) => {
-      tax += _.sum(catItem.items.filter((item) => {
-        return this.itemHasTax(item);
-      }).map((item) => {
-        return this.getItemTax(item);
-      }));
-    });
-    return this.getSubTotal() + tax;
+    let tax = this.getTax();
+    let serviceSubTotal = this.getServiceSubTotal();
+    let inventorySubTotal = this.getInventorySubTotal();
+
+    if (this.estimateData.discount_percent) {
+      inventorySubTotal = inventorySubTotal - inventorySubTotal * this.estimateData.discount_percent / 100;
+      if (this.estimateData.discount_applied_to_all) {
+        serviceSubTotal = serviceSubTotal - serviceSubTotal * this.estimateData.discount_percent / 100;
+      }
+    }
+
+    return serviceSubTotal + inventorySubTotal + tax;
+  }
+
+  public getServiceSubTotal() {
+    return this.getSubTotalForItems(this.getServiceItems());
+  }
+
+  public getInventorySubTotal() {
+    return this.getSubTotalForItems(this.getInventoryItems());
+  }
+
+  public getTax(): number {
+    return _.sum(this.getInventoryItems().map((item) => {
+      return this.getItemTax(item);
+    }));
   }
 
   public getItemTax(item: any) {
     return item.amount * .0775;
+  }
+
+  public getInventoryItems() {
+    return this.getItems().filter((item) => {
+      return item.type === 'inventory';
+    })
+  }
+
+  public getServiceItems() {
+    return this.getItems().filter((item) => {
+      return item.type === 'service';
+    })
+  }
+
+  public getItems() {
+    // returns a flattened item list (no categories)
+    const items = [];
+    this.estimateData.category_items.forEach((catItem) => {
+      catItem.items.forEach((item) => {
+        items.push(item);
+      });
+    });
+    return items;
   }
 
   public hasEstimateNotes(): boolean {
@@ -291,11 +331,6 @@ export class ApiService {
         return _.sortBy(data, (d) => d.TxnDate).reverse();
       }),
     ));
-  }
-
-  public fetchEstimates(params?: any): Observable<any> {
-    const httpParams = new HttpParams({fromObject: params});
-    return this._responseProxy(this.http.get(this.API_QBO_ESTIMATE, {params: httpParams}));
   }
 
   public fetchInventory(params?: any): Observable<Item[]> {
