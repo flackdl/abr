@@ -42,6 +42,8 @@ class EstimateCreateQBOSerializer(serializers.Serializer):
     public_notes = serializers.CharField()
     private_notes = serializers.CharField()
     signature = serializers.CharField()  # data uri
+    discount_percent = serializers.FloatField(default=0)  # i.e "10.5" for "10.5%"
+    discount_applied_all = serializers.BooleanField(default=False)
 
 
 class EstimateLineQBOSerializer(serializers.Serializer):

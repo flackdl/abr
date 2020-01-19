@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException, QuickbooksException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
-    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref, TxnTaxDetail, TaxCode)
+    AttachableRef, DescriptionLine, SalesItemLineDetail, SalesItemLine, Ref, TxnTaxDetail, TaxCode, DiscountLine, DiscountLineDetail)
 from rest_framework import viewsets, status, exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -257,6 +257,14 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
             subtotal_line = DescriptionLine()
             subtotal_line.Description = "Subtotal: {}".format(sum(item['amount'] for item in category_items['items']))
             estimate.Line.append(subtotal_line)
+
+        # discount
+        if estimate_data['discount_percent'] and estimate_data['discount_applied_all']:
+            discount_line = DiscountLine()
+            discount_line.DiscountLineDetail = DiscountLineDetail()
+            discount_line.DiscountLineDetail.PercentBased = True
+            discount_line.DiscountLineDetail.DiscountPercent = estimate_data['discount_percent']
+            estimate.Line.append(discount_line)
 
         # add tax
         tax_code = get_qbo_tax_code_rate(TaxCode, qbo_client=self.qbo_client)
