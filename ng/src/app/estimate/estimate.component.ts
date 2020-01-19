@@ -150,7 +150,7 @@ export class EstimateComponent implements OnInit {
     this.form = this.fb.group({
       'categories': this.fb.group({}),
       'customSearch': new FormControl(''),
-      'discountPercent': new FormControl(this.api.estimateData.discount_percent, Validators.pattern('[\d.]+')),
+      'discountPercent': new FormControl(this.api.estimateData.discount_percent, Validators.pattern('[0-9.]+')),
       'discountAppliedAll': new FormControl(!!this.api.estimateData.discount_applied_to_all),
     });
 

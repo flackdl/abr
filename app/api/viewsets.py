@@ -295,7 +295,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         estimate.save(qb=self.qbo_client)
 
         # save signature (data uri) to temporary file so we can upload and attach it to the estimate
-        with tempfile.NamedTemporaryFile(delete=False) as fh:
+        with tempfile.NamedTemporaryFile() as fh:
 
             # save to image
             header, encoded = estimate_data['signature'].split(",", 1)
