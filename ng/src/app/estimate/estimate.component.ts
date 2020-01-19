@@ -132,7 +132,7 @@ export class EstimateComponent implements OnInit {
       zip(...forkJoins).subscribe(
         () => {
           this.isLoading = false;
-          this.openItemsModal(category.name);
+          this.openItemsModal(category.name, category);
         },
         (error) => {
           console.error(error);
@@ -238,7 +238,7 @@ export class EstimateComponent implements OnInit {
     };
   }
 
-  public openItemsModal(categoryName: string) {
+  public openItemsModal(title: string, category?: any) {
 
     // unsubscribe any existing subscriptions
     if (this.modalRef && this.modalRef.componentInstance) {
@@ -250,7 +250,8 @@ export class EstimateComponent implements OnInit {
     this.modalRef = this.modalService.open(ItemSelectModalComponent, {size: 'xl'});
 
     // inputs
-    this.modalRef.componentInstance.categoryName = categoryName;
+    this.modalRef.componentInstance.title = title;
+    this.modalRef.componentInstance.category = category;
     this.modalRef.componentInstance.inventoryResults = this.inventoryResults;
     this.modalRef.componentInstance.serviceResults = this.serviceResults;
 
@@ -304,7 +305,12 @@ export class EstimateComponent implements OnInit {
 
   public itemAdded(data) {
     const item: Item = data.item;
-    const catName: string = this.getParentCategoryNameForCategory(data.categoryName) || CATEGORY_UNASSIGNED;
+    let catName: string;
+    if (data.category) {
+      catName = this.getParentCategoryForCategory(data.category).name;
+    } else {
+      catName = this.getParentCategoryNameForCategory(data.title) || CATEGORY_UNASSIGNED;
+    }
 
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
@@ -369,7 +375,12 @@ export class EstimateComponent implements OnInit {
   }
 
   public itemRemoved(data: any) {
-    const catName: string = this.getParentCategoryNameForCategory(data.categoryName) || CATEGORY_UNASSIGNED;
+    let catName: string;
+    if (data.category) {
+      catName = this.getParentCategoryForCategory(data.category).name;
+    } else {
+      catName = this.getParentCategoryNameForCategory(data.title) || CATEGORY_UNASSIGNED;
+    }
     const matchingCatIndex = this.api.estimateData.category_items.findIndex((catItem) => {
       return catItem.name === catName;
     });
@@ -383,6 +394,16 @@ export class EstimateComponent implements OnInit {
       this._sortCategoryItems();
       this.api.updateEstimateData();
     }
+  }
+
+  public getParentCategoryForCategory(category: any) {
+    // return parent category this is a child category
+    if (category.parent) {
+      category = this.api.categories.find((cat) => {
+        return cat.id === category.parent;
+      })
+    }
+    return category;
   }
 
   public getParentCategoryNameForCategory(name: string) {
