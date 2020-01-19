@@ -4,6 +4,6 @@
     <h3>New Customer</h3>
   </div>
   <div class="card-body">
-    <app-customer-form (validSubmit)="submit($event)"></app-customer-form>
+    <app-customer-form (validSubmit)="submit($event)" [initial]="initialValues"></app-customer-form>
   </div>
 </div>

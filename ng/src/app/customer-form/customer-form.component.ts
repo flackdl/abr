@@ -21,6 +21,8 @@ export class CustomerFormComponent implements OnInit {
 
   ngOnInit() {
 
+    this.initial = this.initial || {};
+
     // remove non-digits from phone
     let phone = this.initial.phone || '';
     phone = phone.replace(/\D/g,'');

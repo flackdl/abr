@@ -1,7 +1,7 @@
 import { ToastrService } from 'ngx-toastr';
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../api.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
 import {EstimateData} from "../estimate-data";
 import {FormGroup} from "@angular/forms";
 
@@ -12,14 +12,34 @@ import {FormGroup} from "@angular/forms";
 })
 export class CustomerCreateComponent implements OnInit {
   public isLoading = false;
+  public initialValues: any;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     public api: ApiService,
     private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
+
+    // populate any initial data from query params
+    if (this.route.snapshot.queryParams['customerSearchValue']) {
+      // try and split by first and last name
+      const searchValueSplit = this.route.snapshot.queryParams['customerSearchValue'].split(' ');
+      let firstName = '';
+      let lastName = '';
+      if (searchValueSplit.length === 1) {
+        lastName = searchValueSplit[0];
+      } else if (searchValueSplit.length > 1) {
+        firstName = searchValueSplit[0];
+        lastName = searchValueSplit.slice(1).join( ' ');
+      }
+      this.initialValues = {
+        first_name: firstName,
+        last_name: lastName,
+      };
+    }
   }
 
   public submit(form: FormGroup) {

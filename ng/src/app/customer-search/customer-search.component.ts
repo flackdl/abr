@@ -17,6 +17,7 @@ export class CustomerSearchComponent implements OnInit {
   public customers$: Observable<any[]>;
   public needsNewCustomer = false;
   public isLoading = false;
+  public customerInputValue: string;
 
   constructor(
     private api: ApiService,
@@ -34,6 +35,13 @@ export class CustomerSearchComponent implements OnInit {
         }
       }
     );
+
+    // update current search value which helps to send along to "create a new customer" page when customer isn't found
+    this.customerInput$.subscribe((data) => {
+      if (data) {
+        this.customerInputValue = data;
+      }
+    });
 
     // customer search
     this.customers$ = concat(

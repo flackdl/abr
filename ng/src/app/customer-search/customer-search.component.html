@@ -104,7 +104,7 @@
     <div class="d-flex justify-content-center mt-5" *ngIf="needsNewCustomer">
       <div class="alert alert-info">
         Can't find the customer?
-        <button class="btn btn-primary ml-3" [routerLink]="['/wizard', 'customer', 'create']">Create a new one</button>
+        <a class="btn btn-primary ml-3" [routerLink]="['/wizard', 'customer', 'create']" [queryParams]="{'customerSearchValue': customerInputValue}">Create a new one</a>
       </div>
     </div>
   </div>
