@@ -4,6 +4,14 @@ Django settings for abr project.
 
 import os
 import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    "https://2489b96bf3124289ad8f66eb852205fb@sentry.io/1889122",
+    integrations=[DjangoIntegration()],
+    send_default_pii=True,
+)
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
