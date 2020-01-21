@@ -266,6 +266,9 @@ export class ApiService {
       }
     }
 
+    // contact method
+    notes.push(`Contact Method: ${this.estimateData.contact_method}`);
+
     // initials
     notes.push(this.estimateData.employee_initials);
 
