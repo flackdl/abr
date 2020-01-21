@@ -63,7 +63,7 @@
           <!-- expiration time -->
           <div class="form-group" [ngClass]="{'border border-danger': !isTimeValid}">
             <label for="expirationTime">Due Time</label>
-            <ngb-timepicker id="expirationTime" [(ngModel)]="expirationTime" (ngModelChange)="expirationTimeChanged()" [ngModelOptions]="{standalone: true}" [minuteStep]="15" [meridian]="true"></ngb-timepicker>
+            <ngb-timepicker id="expirationTime" [(ngModel)]="expirationTime" (ngModelChange)="expirationTimeChanged()" [ngModelOptions]="{standalone: true}" [minuteStep]="60" [meridian]="true"></ngb-timepicker>
           </div>
           <!-- contact method -->
           <div class="form-group">
