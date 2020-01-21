@@ -279,13 +279,13 @@ export class EstimateComponent implements OnInit {
     this.isLoading = true;
     const searchValue = this.form.get('customSearch').value;
     const queries = [
-      this.api.fetchService({name: searchValue}).pipe(
+      this.api.fetchService({search: searchValue}).pipe(
         map((data) => {
           this.serviceResults = data;
           return this.serviceResults;
         })
       ),
-      this.api.fetchInventory({name: searchValue}).pipe(
+      this.api.fetchInventory({search: searchValue}).pipe(
         map((data) => {
           this.inventoryResults = data;
           return this.inventoryResults;

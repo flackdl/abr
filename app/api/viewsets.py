@@ -350,9 +350,13 @@ class ItemBaseQBOViewSet(QBOBaseViewSet):
     def list(self, request):
         wheres = []
 
+        # prefer the "name" prefix, then the general "search"
         name = request.query_params.get('name')
+        search = request.query_params.get('search')
         if name:
             wheres.append("Name LIKE '{}%'".format(name))
+        elif search:
+            wheres.append("Name LIKE '%{}%'".format(search))
 
         if wheres:
             # always include the item type
