@@ -56,6 +56,8 @@ export class EstimateWrapUpComponent implements OnInit {
       payment_option: [this.api.estimateData.payment_option, Validators.required],
     });
 
+    console.log(this.form);
+
     // update estimate data in local storage on update
     this.form.valueChanges.subscribe((data) => {
       this.formChanges(data);
