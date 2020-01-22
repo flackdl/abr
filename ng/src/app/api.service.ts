@@ -255,6 +255,8 @@ export class ApiService {
       notes.push('* NOT PAID *');
     } else if (this.estimateData.payment_option === this.OPTION_PAYMENT_HALF_NOW) {
       notes.push('* PAID HALF *');
+    } else if (this.estimateData.payment_option === this.OPTION_PAYMENT_DEPOSIT) {
+      notes.push('* DEPOSIT *');
     }
 
     // need to order parts
