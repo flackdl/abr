@@ -45,9 +45,6 @@ export type EstimateData = {
   zip?: string,
   main_concern?: string,
   bike_model?: string,
-  assessments?: {
-    [name: string]: string,
-  },
   invoices?: InvoiceItem[],
   category_items?: CategoryItem[],
   tag_number?: string,

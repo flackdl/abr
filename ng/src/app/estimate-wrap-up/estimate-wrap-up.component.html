@@ -94,6 +94,11 @@
               <button class="d-block btn btn-sm btn-outline-warning" type="button" (click)="clearSignature()">Clear</button>
             </div>
           </div>
+          <!-- bike/model -->
+          <div class="form-group">
+            <label for="bike-model">Bike/Model</label>
+            <input type="text" id="bike-model" class="form-control" [class.is-invalid]="form.controls.bike_model.dirty && !form.controls.bike_model.valid" formControlName="bike_model">
+          </div>
           <!-- tag number -->
           <div class="form-group">
             <label for="tag-number">Tag #</label>

@@ -6,7 +6,6 @@ import {CustomerCreateComponent} from "./customer-create/customer-create.compone
 import {WizardComponent} from "./wizard/wizard.component";
 import {PageNotFoundComponent} from "./page-not-found/page-not-found.component";
 import {MainConcernComponent} from "./main-concern/main-concern.component";
-import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {CustomerComponent} from "./customer/customer.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 import {WizardGuard} from "./wizard.guard";
@@ -33,7 +32,6 @@ const routes: Routes = [
           { path: 'edit', component: CustomerEditComponent },
         ]},
       { path: 'main-concern', component: MainConcernComponent },
-      { path: 'questionnaire', component: QuestionnaireComponent },
       { path: 'estimate', component: EstimateComponent },
       { path: 'wrap-up', component: EstimateWrapUpComponent },
       { path: 'estimate-notes', component: EstimateNotesComponent },

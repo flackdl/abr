@@ -141,6 +141,7 @@ export class EstimateComponent implements OnInit {
       );
     } else {
       this.isLoading = false;
+      this.toastr.warning(`No associated items for ${category.name} category`);
     }
   }
 
@@ -212,30 +213,6 @@ export class EstimateComponent implements OnInit {
 
     // save to local storage
     this.api.updateEstimateData();
-  }
-
-  public hasAssessmentResultForCategory(result: string, category: any): boolean {
-    // checks if there are any assessments for this category matching "result"
-    // result: "good", "ok", "bad" etc
-    const assessments = this.api.categories.filter((cat) => {
-      if (cat.id === category.id) {
-        if (this.api.estimateData.assessments[category.name] === result) {
-          return true;
-        }
-      }
-      return false;
-    });
-    return assessments.length > 0;
-  }
-
-  public categoryButtonClass(category: any) {
-    return {
-      'btn-outline-danger': this.hasAssessmentResultForCategory('bad', category),
-      'btn-outline-warning': this.hasAssessmentResultForCategory('ok', category),
-      'btn-outline-success': this.hasAssessmentResultForCategory('good', category),
-      'btn-outline-dark': this.hasAssessmentResultForCategory('na', category),
-      'btn-outline-secondary': !category.show_in_assessment,
-    };
   }
 
   public openItemsModal(title: string, category?: any) {

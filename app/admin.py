@@ -46,8 +46,7 @@ class CategoryPrefixInline(admin.TabularInline):
 @admin.register(Category)
 class CategoryParentAdmin(admin.ModelAdmin):
     inlines = (CategoryChildInline, CategoryPrefixInline,)
-    list_display = ('name', 'position', 'show_in_assessment', 'prefixes',)
-    list_filter = ('show_in_assessment',)
+    list_display = ('name', 'position', 'prefixes',)
     exclude = ('parent',)
 
     def get_queryset(self, request):
@@ -74,7 +73,6 @@ class CategoryChildAdmin(CategoryParentAdmin):
     """
     list_display = ('name', 'parent', 'prefixes',)
     inlines = (CategoryPrefixInline,)
-    exclude = ('show_in_assessment',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         # only include parent categories for the parent dropdown

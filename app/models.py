@@ -41,7 +41,6 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     position = models.PositiveSmallIntegerField()
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
-    show_in_assessment = models.BooleanField(default=True)
 
     # managers - the first one declared is the default
     objects = models.Manager()

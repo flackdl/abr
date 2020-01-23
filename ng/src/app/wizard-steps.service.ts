@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import {ApiService} from "./api.service";
 import {CustomerSearchComponent} from "./customer-search/customer-search.component";
 import {MainConcernComponent} from "./main-concern/main-concern.component";
-import {QuestionnaireComponent} from "./questionnaire/questionnaire.component";
 import {EstimateComponent} from "./estimate/estimate.component";
 import {EstimateWrapUpComponent} from "./estimate-wrap-up/estimate-wrap-up.component";
 import {EstimateNotesComponent} from "./estimate-notes/estimate-notes.component";
@@ -22,7 +21,6 @@ export class WizardStepsService {
   public steps = [
     {name: "Customer", component: CustomerSearchComponent, url: "/wizard/customer/search", complete: () => { return this.api.hasCurrentCustomer() }},
     {name: "Main Concern", component: MainConcernComponent, url: "/wizard/main-concern", complete: () => { return this.api.hasMainConcern() }},
-    {name: "Assessment", component: QuestionnaireComponent, url: "/wizard/questionnaire",  complete: () => { return this.api.hasQuestionnaire() }},
     {name: "Estimate", component: EstimateComponent, url: "/wizard/estimate",  complete: () => { return this.api.hasEstimate() }},
     {name: "Wrap Up", component: EstimateWrapUpComponent, url: "/wizard/wrap-up",  complete: () => { return this.api.hasEstimateWrapUp() }},
     {name: "Estimate Notes", component: EstimateNotesComponent, url: "/wizard/estimate-notes",  complete: () => { return this.api.hasEstimateNotes() }},

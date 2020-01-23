@@ -54,9 +54,8 @@ export class EstimateWrapUpComponent implements OnInit {
       waiting_on_customer_bring_parts: [this.api.estimateData.waiting_on_customer_bring_parts, Validators.required],
       contact_method: [this.api.estimateData.contact_method, Validators.required],
       payment_option: [this.api.estimateData.payment_option, Validators.required],
+      bike_model: [this.api.estimateData.bike_model, Validators.required],
     });
-
-    console.log(this.form);
 
     // update estimate data in local storage on update
     this.form.valueChanges.subscribe((data) => {

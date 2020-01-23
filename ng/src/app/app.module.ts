@@ -21,7 +21,6 @@ import {ApiService} from "./api.service";
 import {ToastrModule} from "ngx-toastr";
 import { MainConcernComponent } from './main-concern/main-concern.component';
 import { QuestionComponent } from './question/question.component';
-import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { CustomerComponent } from './customer/customer.component';
 import { EstimateWrapUpComponent } from './estimate-wrap-up/estimate-wrap-up.component';
 import { EstimateNotesComponent } from './estimate-notes/estimate-notes.component';
@@ -53,7 +52,6 @@ export function init(api: ApiService) {
     PageNotFoundComponent,
     MainConcernComponent,
     QuestionComponent,
-    QuestionnaireComponent,
     CustomerComponent,
     EstimateWrapUpComponent,
     EstimateNotesComponent,
