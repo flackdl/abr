@@ -366,10 +366,8 @@ export class EstimateComponent implements OnInit {
         return item.id === item.id;
       });
       if (matchingIndex !== -1) {
-        this.api.estimateData.category_items[matchingCatIndex].items.splice(matchingIndex, 1);
+        this.removeItem(data.item, catName, matchingIndex);
       }
-      this._sortCategoryItems();
-      this.api.updateEstimateData();
     }
   }
 
