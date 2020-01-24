@@ -185,34 +185,26 @@ export class EstimateComponent implements OnInit {
   }
 
   public removeItem(item: EstimateItem, catName: string, itemIndex: number) {
+    // remove the item from the category
+    this.api.estimateData.category_items.forEach((catItem) => {
+      if (catItem.name === catName) {
+        catItem.items.splice(itemIndex, 1);
+      }
+    });
+
+    // sort and save to local storage
+    this._sortCategoryItems();
+    this.api.updateEstimateData();
+
+    // remove controls
     const categoriesControlGroup = this.form.get('categories') as FormGroup;
     const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
     const quantitiesControl = catControlGroup.get('quantities') as FormArray;
     const pricesControl = catControlGroup.get('prices') as FormArray;
     const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
-
-    // remove controls
     quantitiesControl.removeAt(itemIndex);
     pricesControl.removeAt(itemIndex);
     descriptionsControl.removeAt(itemIndex);
-
-    // remove the item from the estimate data
-    this.api.estimateData.category_items.forEach((catItem) => {
-      let catItemIndex = -1;
-      catItem.items.forEach((it, i) => {
-        if (it.id === item.id) {
-          catItemIndex = i;
-        }
-      });
-      if (catItemIndex >= 0) {
-        catItem.items.splice(catItemIndex, 1);
-      }
-    });
-
-    this._sortCategoryItems();
-
-    // save to local storage
-    this.api.updateEstimateData();
   }
 
   public openItemsModal(title: string, category?: any) {
@@ -363,7 +355,7 @@ export class EstimateComponent implements OnInit {
     });
     if (matchingCatIndex !== -1) {
       const matchingIndex = this.api.estimateData.category_items[matchingCatIndex].items.findIndex((item) => {
-        return item.id === item.id;
+        return data.item.id === item.id;
       });
       if (matchingIndex !== -1) {
         this.removeItem(data.item, catName, matchingIndex);
