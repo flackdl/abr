@@ -74,8 +74,9 @@
 
 <!-- search for customer -->
 <div class="card" *ngIf="!api.hasCurrentCustomer()">
-  <div class="card-header">
+  <div class="card-header d-flex justify-content-between">
     <h4>Search for a customer</h4>
+    <a class="btn btn-outline-success" [routerLink]="['/wizard', 'customer', 'create']">Add +</a>
   </div>
   <div class="card-body">
     <form>
@@ -104,7 +105,7 @@
     <div class="d-flex justify-content-center mt-5" *ngIf="needsNewCustomer">
       <div class="alert alert-info">
         Can't find the customer?
-        <a class="btn btn-primary ml-3" [routerLink]="['/wizard', 'customer', 'create']" [queryParams]="{'customerSearchValue': customerInputValue}">Create a new one</a>
+        <a class="btn btn-success ml-3" [routerLink]="['/wizard', 'customer', 'create']" [queryParams]="{'customerSearchValue': customerInputValue}">Add a new one</a>
       </div>
     </div>
   </div>
