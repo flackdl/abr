@@ -12,13 +12,13 @@
             <strong>Categories</strong>
           </div>
           <div class="card-body">
-            <div class="categories mb-2">
+            <div class="mb-2">
               <!-- categories -->
               <div *ngFor="let category of api.categories" class="my-2">
-                <div ngbDropdown placement="bottom" *ngIf="categoryChildren(category).length > 0">
+                <div ngbDropdown placement="right" *ngIf="categoryChildren(category).length > 0">
                   <button class="btn btn-sm btn-block btn-outline-secondary" type="button" ngbDropdownToggle>{{ category.name }}</button>
                   <div ngbDropdownMenu>
-                    <button ngbDropdownItem type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
+                    <button ngbDropdownItem class="btn btn-sm btn-info" type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
                   </div>
                 </div>
                 <button class="btn btn-sm btn-block btn-outline-secondary" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)">{{ category.name }}</button>
