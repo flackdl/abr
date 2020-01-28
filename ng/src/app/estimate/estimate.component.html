@@ -74,7 +74,7 @@
                             <input class="form-control form-control-sm" name="price" type="number" min="0" [formControlName]="i">
                           </div>
                         </td>
-                        <td class="amount">${{ item.amount }}</td>
+                        <td class="amount">{{ item.amount | currency }}</td>
                         <td class="tax">
                           <span *ngIf="api.itemHasTax(item)" class="oi oi-check"></span>
                         </td>
