@@ -351,8 +351,9 @@ class ItemBaseQBOViewSet(QBOBaseViewSet):
         wheres = []
 
         # prefer the "name" prefix, then the general "search"
-        name = request.query_params.get('name')
-        search = request.query_params.get('search')
+        # replace spaces with hyphen, like "bottle cage" should return "Bottle-Cage-AL-Blk"
+        name = '-'.join(request.query_params.get('name', '').split(' '))
+        search = '-'.join(request.query_params.get('search', '').split(' '))
         if name:
             wheres.append("Name LIKE '{}%'".format(name))
         elif search:
