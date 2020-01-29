@@ -27,12 +27,9 @@ export class ItemSelectModalComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    // automatically open inventory drop-down if it has any, otherwise service
-    if (this.inventoryResults.length > 0) {
-      this.inventorySelect.open();
-    } else if (this.serviceResults.length > 0) {
-      this.serviceSelect.open();
-    }
+    // open both select drop-downs
+    this.serviceSelect.open();
+    this.inventorySelect.open();
   }
 
   public itemAdded(item: Item) {

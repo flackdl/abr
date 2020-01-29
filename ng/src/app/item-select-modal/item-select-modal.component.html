@@ -10,7 +10,7 @@
     <div class="row">
 
       <!-- inventory items -->
-      <div class="col-12">
+      <div class="col-12 col-lg">
         <div class="form-group">
           <ng-select
             [items]="inventoryResults"
@@ -24,7 +24,7 @@
             (remove)="itemRemoved($event)"
             #inventorySelect
             bindLabel="name"
-            [placeholder]="inventoryResults.length > 0 ? 'Select Inventory...' : 'No inventory items found'"
+            placeholder="Select Inventory..."
           >
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
               <app-item-dropdown [item]="item"></app-item-dropdown>
@@ -34,7 +34,7 @@
       </div>
 
       <!-- labor items -->
-      <div class="col-12">
+      <div class="col-12 col-lg">
         <div class="form-group">
           <ng-select
             [items]="serviceResults"
@@ -48,7 +48,7 @@
             (remove)="itemRemoved($event)"
             #serviceSelect
             bindLabel="name"
-            [placeholder]="serviceResults.length > 0 ? 'Select Labor...' : 'No labor items found'"
+            placeholder="Select Labor..."
           >
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
               <app-item-dropdown [item]="item"></app-item-dropdown>
