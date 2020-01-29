@@ -155,6 +155,10 @@ export class EstimateComponent implements OnInit {
       'discountAppliedAll': new FormControl(!!this.api.estimateData.discount_applied_to_all),
     });
 
+    // mark as touched to avoid the strange error: ExpressionChangedAfterItHasBeenCheckedError
+    // https://github.com/angular/angular/issues/23657
+    this.form.get('customSearch').markAsTouched();
+
     // also include an "unassigned" category group for things that were manually searched for
     const categories = this.api.categories.concat({name: CATEGORY_UNASSIGNED});
 
@@ -236,7 +240,7 @@ export class EstimateComponent implements OnInit {
       }
     );
 
-    // model closed
+    // modal closed
     this.modalRef.result
       .finally(() => {
         this.modalService.dismissAll();
@@ -321,28 +325,6 @@ export class EstimateComponent implements OnInit {
     this.api.updateEstimateData();
   }
 
-  protected _sortCategoryItems() {
-    // sort category items in same order as main categories
-    const sortedCategoryItems: CategoryItem[] = [];
-    // capture any unassigned category items that were manually searched for
-    let unassignedCategoryItems: CategoryItem = this.api.estimateData.category_items.find((catItem) => {
-      return catItem.name === CATEGORY_UNASSIGNED;
-    });
-    this.api.categories.forEach((cat) => {
-      const catItemsMatch = this.api.estimateData.category_items.find((catItem: CategoryItem) => {
-        return catItem.name === cat.name && catItem.items.length > 0;
-      });
-      if (catItemsMatch) {
-        sortedCategoryItems.push(catItemsMatch);
-      }
-    });
-    this.api.estimateData.category_items = sortedCategoryItems;
-    // include any "Unassigned" items
-    if (unassignedCategoryItems) {
-      this.api.estimateData.category_items.push(unassignedCategoryItems);
-    }
-  }
-
   public itemRemoved(data: any) {
     let catName: string;
     if (data.category) {
@@ -395,6 +377,28 @@ export class EstimateComponent implements OnInit {
       this.router.navigate([this.wizardSteps.nextStep(this)]);
     } else {
       this.toastr.error('Invalid form');
+    }
+  }
+
+  protected _sortCategoryItems() {
+    // sort category items in same order as main categories
+    const sortedCategoryItems: CategoryItem[] = [];
+    // capture any unassigned category items that were manually searched for
+    let unassignedCategoryItems: CategoryItem = this.api.estimateData.category_items.find((catItem) => {
+      return catItem.name === CATEGORY_UNASSIGNED;
+    });
+    this.api.categories.forEach((cat) => {
+      const catItemsMatch = this.api.estimateData.category_items.find((catItem: CategoryItem) => {
+        return catItem.name === cat.name && catItem.items.length > 0;
+      });
+      if (catItemsMatch) {
+        sortedCategoryItems.push(catItemsMatch);
+      }
+    });
+    this.api.estimateData.category_items = sortedCategoryItems;
+    // include any "Unassigned" items
+    if (unassignedCategoryItems) {
+      this.api.estimateData.category_items.push(unassignedCategoryItems);
     }
   }
 }

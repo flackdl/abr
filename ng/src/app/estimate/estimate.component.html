@@ -1,42 +1,43 @@
 <div class="position-relative">
   <ngx-loading [show]="isLoading"></ngx-loading>
-  <form [formGroup]="form">
+  <div class="row">
 
-    <div class="row">
+    <!-- left -->
+    <div class="col-lg-3">
 
-      <!-- left -->
-      <div class="col-lg-3">
-
-        <div class="card">
-          <div class="card-header">
-            <strong>Categories</strong>
-          </div>
-          <div class="card-body">
-            <div class="mb-2">
-              <!-- categories -->
-              <div *ngFor="let category of api.categories" class="my-2">
-                <div ngbDropdown placement="right" *ngIf="categoryChildren(category).length > 0">
-                  <button class="btn btn-sm btn-block btn-outline-secondary" type="button" ngbDropdownToggle>{{ category.name }}</button>
-                  <div ngbDropdownMenu>
-                    <button ngbDropdownItem class="btn btn-sm btn-info" type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
-                  </div>
+      <div class="card">
+        <div class="card-header">
+          <strong>Categories</strong>
+        </div>
+        <div class="card-body">
+          <div class="mb-2">
+            <!-- categories -->
+            <div *ngFor="let category of api.categories" class="my-2">
+              <div ngbDropdown placement="right" *ngIf="categoryChildren(category).length > 0">
+                <button class="btn btn-sm btn-block btn-outline-secondary" type="button" ngbDropdownToggle>{{ category.name }}</button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem class="btn btn-sm btn-info" type="button" *ngFor="let child of categoryChildren(category)" (click)="categorySelected(child)">{{ child.name }}</button>
                 </div>
-                <button class="btn btn-sm btn-block btn-outline-secondary" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)">{{ category.name }}</button>
               </div>
+              <button class="btn btn-sm btn-block btn-outline-secondary" type="button" *ngIf="categoryChildren(category).length === 0" (click)="categorySelected(category)">{{ category.name }}</button>
             </div>
-            <div class="p-2 border border-info bg-light">
-              <label class="mt-2">Custom Search</label>
+          </div>
+          <div class="p-2 border border-info bg-light">
+            <form [formGroup]="form" (ngSubmit)="submitCustomSearch()">
+              <label class="mt-2">Manual Search</label>
               <div class="d-flex">
                 <input type="text" class="form-control form-control-sm" formControlName="customSearch">
-                <button type="button" class="btn btn-sm btn-outline-info ml-1" (click)="submitCustomSearch()" [disabled]="!form.get('customSearch')">Search</button>
+                <button class="btn btn-sm btn-outline-info ml-1" [disabled]="!form.get('customSearch').value">Search</button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- right -->
-      <div class="col-lg-9 order-first order-lg-last">
+    <!-- right -->
+    <div class="col-lg-9 order-first order-lg-last">
+      <form [formGroup]="form">
 
         <!-- line items -->
         <div class="card">
@@ -128,7 +129,7 @@
           <button class="btn btn-primary" type="button" (click)="submit()">Next</button>
         </div>
 
-      </div>
+      </form>
     </div>
-  </form>
+  </div>
 </div>
