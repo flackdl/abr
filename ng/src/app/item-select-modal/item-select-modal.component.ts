@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation} from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {Item} from "../estimate-data";
 import {NgSelectComponent} from "@ng-select/ng-select";
@@ -7,7 +7,10 @@ import {NgSelectComponent} from "@ng-select/ng-select";
 @Component({
   selector: 'app-item-select-modal',
   templateUrl: './item-select-modal.component.html',
-  styleUrls: ['./item-select-modal.component.scss']
+  styleUrls: ['./item-select-modal.component.scss'],
+  // it's necessary to remove view encapsulation so we can add custom styles to ng-select
+  // https://github.com/ng-select/ng-select#custom-styles
+  encapsulation: ViewEncapsulation.None
 })
 export class ItemSelectModalComponent implements OnInit {
   @Input('category') category: any;

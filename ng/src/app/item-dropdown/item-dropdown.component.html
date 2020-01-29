@@ -1,10 +1,8 @@
-<div class="card item-dropdown">
-  <div class="card-body">
-    <div class="card-title"><strong>{{ item.name }}</strong></div>
-    <p class="card-text">{{item.description}}</p>
-    <div class="d-flex justify-content-between">
-      <div class="card-subtitle text-muted">Price: {{ item.price | currency }}</div>
-      <div *ngIf="item.type === 'inventory'" class="card-subtitle text-muted">Quantity: {{ item.quantity_on_hand }}</div>
-    </div>
+<div class="list-group-item item-dropdown">
+  <div><strong>{{ item.name }}</strong></div>
+  <div class="description">{{item.description}}</div>
+  <div class="d-flex justify-content-between">
+    <div class="text-muted">Price: {{ item.price | currency }}</div>
+    <div *ngIf="item.type === 'inventory'" class="text-muted">Quantity: {{ item.quantity_on_hand }}</div>
   </div>
 </div>
