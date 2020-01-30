@@ -285,12 +285,6 @@ export class EstimateComponent implements OnInit {
       catName = this.getParentCategoryNameForCategory(data.title) || CATEGORY_UNASSIGNED;
     }
 
-    const categoriesControlGroup = this.form.get('categories') as FormGroup;
-    const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
-    const quantitiesControl = catControlGroup.get('quantities') as FormArray;
-    const pricesControl = catControlGroup.get('prices') as FormArray;
-    const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
-
     //
     // add to category items
     //
@@ -335,6 +329,12 @@ export class EstimateComponent implements OnInit {
     //
     // add new form controls to category
     //
+
+    const categoriesControlGroup = this.form.get('categories') as FormGroup;
+    const catControlGroup = categoriesControlGroup.get(catName) as FormGroup;
+    const quantitiesControl = catControlGroup.get('quantities') as FormArray;
+    const pricesControl = catControlGroup.get('prices') as FormArray;
+    const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
 
     // service items go first
     if (item.type === 'service') {
