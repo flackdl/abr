@@ -291,16 +291,16 @@ export class EstimateComponent implements OnInit {
     const pricesControl = catControlGroup.get('prices') as FormArray;
     const descriptionsControl = catControlGroup.get('descriptions') as FormArray;
 
-    // add new form controls to category
-    quantitiesControl.push(new FormControl(1));
-    pricesControl.push(new FormControl(item.price));
-    descriptionsControl.push(new FormControl(item.description));
-
+    //
     // add to category items
+    //
+
+    // find the matching category
     const category = this.api.estimateData.category_items.find((catItem) => {
       return catItem.name === catName;
     });
 
+    // define the new estimate item
     const estimateItem: EstimateItem = {
       id: item.id,
       name: item.name,
@@ -312,17 +312,40 @@ export class EstimateComponent implements OnInit {
       quantity: 1,
     };
 
+    // existing category
     if (category) {
-      category.items.push(estimateItem);
+      // service items go first
+      if (item.type === 'service') {
+        category.items.unshift(estimateItem);
+      } else {
+        category.items.push(estimateItem);
+      }
     } else {
+      // create new category / items
       this.api.estimateData.category_items.push({
         name: catName,
         items: [estimateItem],
       });
       this._sortCategoryItems();
     }
+
     // save estimate to local storage
     this.api.updateEstimateData();
+
+    //
+    // add new form controls to category
+    //
+
+    // service items go first
+    if (item.type === 'service') {
+      quantitiesControl.insert(0, new FormControl(1));
+      pricesControl.insert(0, new FormControl(item.price));
+      descriptionsControl.insert(0, new FormControl(item.description));
+    } else {
+      quantitiesControl.push(new FormControl(1));
+      pricesControl.push(new FormControl(item.price));
+      descriptionsControl.push(new FormControl(item.description));
+    }
   }
 
   public itemRemoved(data: any) {

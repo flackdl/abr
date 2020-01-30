@@ -7,12 +7,6 @@ import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-sentry_sdk.init(
-    "https://2489b96bf3124289ad8f66eb852205fb@sentry.io/1889122",
-    integrations=[DjangoIntegration()],
-    send_default_pii=True,
-)
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,8 +17,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'ssshhhh')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'DEBUG' in os.environ
 
-ALLOWED_HOSTS = ['*']
+# conditionally configure sentry logging
+if not DEBUG:
+    sentry_sdk.init(
+        "https://2489b96bf3124289ad8f66eb852205fb@sentry.io/1889122",
+        integrations=[DjangoIntegration()],
+        send_default_pii=True,
+    )
 
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
