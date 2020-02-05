@@ -34,9 +34,6 @@ export class CustomerFormComponent implements OnInit {
       email: new FormControl(this.initial.email, [Validators.email, Validators.required]),
       phone: new FormControl(phone, [Validators.pattern(/^\d{10}$/), Validators.required]),
       crm: [this.initial.crm, Validators.required],
-      address_line1: [this.initial.address_line1],
-      address_line2: [this.initial.address_line2],
-      city: [this.initial.city],
       zip: [this.initial.zip, Validators.required],
     });
   }

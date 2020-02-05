@@ -170,9 +170,6 @@ class CustomerQBOViewSet(QBOBaseViewSet):
         phone = PhoneNumber()
         phone.FreeFormNumber = data['phone']
         address = Address()
-        address.Line1 = data.get('address_line1')
-        address.Line2 = data.get('address_line2')
-        address.City = data.get('city')
         address.PostalCode = data['zip']
 
         customer.PrimaryEmailAddr = email

@@ -29,9 +29,6 @@ export class CustomerEditComponent implements OnInit {
       email: this.api.estimateData.email,
       phone: this.api.estimateData.phone,
       crm: this.api.estimateData.crm,
-      address_line1: this.api.estimateData.address_line1,
-      address_line2: this.api.estimateData.address_line2,
-      city: this.api.estimateData.city,
       zip: this.api.estimateData.zip,
     };
   }

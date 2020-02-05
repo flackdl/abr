@@ -19,21 +19,6 @@
     <label for="phone">Phone</label>
     <input minlength="10" maxlength="10" class="form-control" [class.is-invalid]="form.controls.phone.dirty && !form.controls.phone.valid" id="phone" formControlName="phone" autocomplete="false">
   </div>
-  <!-- address line 1 -->
-  <div class="form-group">
-    <label for="addressLine1">Address Line 1</label>
-    <input type="text" class="form-control" id="addressLine1" [class.is-invalid]="form.controls.address_line1.dirty && !form.controls.address_line1.valid" formControlName="address_line1">
-  </div>
-  <!-- address line 2 -->
-  <div class="form-group">
-    <label for="addressLine2">Address Line 2</label>
-    <input type="text" class="form-control" id="addressLine2" [class.is-invalid]="form.controls.address_line2.dirty && !form.controls.address_line2.valid" formControlName="address_line2">
-  </div>
-  <!-- city -->
-  <div class="form-group">
-    <label for="city">City</label>
-    <input type="text" class="form-control" id="city" [class.is-invalid]="form.controls.city.dirty && !form.controls.city.valid" formControlName="city">
-  </div>
   <!-- zip -->
   <div class="form-group">
     <label for="zip">Zip</label>
