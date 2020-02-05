@@ -83,23 +83,8 @@ let estimatesMixin = {
                 // wipe and rebuild
                 this.estimates = [];
 
-                // attempt to create a "due date+time" using the ExpirationDate and a custom time field
-                _.forEach(json.estimates, (estimate) => {
-                  let due_time = moment(this.getCustomField(estimate, 'Expiration Time'), 'h:mma');
-                  if (due_time.isValid()) {
-                    estimate.ExpirationDate = moment(estimate.ExpirationDate).hour(due_time.hours()).minute(due_time.minutes()).format();
-                  }
-                });
-
                 // group by statuses
                 let statusGroups = _.groupBy(json.estimates, 'TxnStatus');
-
-                // sort estimates by due date
-                _.forEach(statusGroups, (group) => {
-                  group.sort((a, b) => {
-                    return new Date(a.ExpirationDate) - new Date(b.ExpirationDate);
-                  });
-                });
 
                 // distinguish in-shop vs not-in-shop "Pending" estimates
                 statusGroups['Pending-In'] = [];
@@ -110,6 +95,24 @@ let estimatesMixin = {
                 });
                 // remove since we're splitting it out into two groups
                 delete statusGroups['Pending'];
+
+                //
+                // sort each group's estimates by due date
+                //
+
+                // attempt to create a "due date+time" using the ExpirationDate and a custom time field
+                _.forEach(json.estimates, (estimate) => {
+                  let due_time = moment(this.getCustomField(estimate, 'Expiration Time'), 'h:mma');
+                  if (due_time.isValid()) {
+                    estimate.ExpirationDate = moment(estimate.ExpirationDate).hour(due_time.hours()).minute(due_time.minutes()).format();
+                  }
+                });
+                // sort each group
+                _.forEach(statusGroups, (group) => {
+                  group.sort((a, b) => {
+                    return new Date(a.ExpirationDate) - new Date(b.ExpirationDate);
+                  });
+                });
 
                 // build by status order preference
                 _.forEach(['Accepted', 'Pending-In', 'Pending-Out', 'Closed'], (status) => {
