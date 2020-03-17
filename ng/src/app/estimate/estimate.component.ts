@@ -11,6 +11,7 @@ import {CategoryItem, EstimateItem, Item} from "../estimate-data";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ItemSelectModalComponent} from "../item-select-modal/item-select-modal.component";
 import {NgbModalRef} from "@ng-bootstrap/ng-bootstrap/modal/modal-ref";
+import * as moment from 'moment';
 
 const CATEGORY_UNASSIGNED = 'Unassigned';
 
@@ -392,12 +393,38 @@ export class EstimateComponent implements OnInit {
     return category ? category.name : null;
   }
 
-  public submit() {
+  public submit(submitAsRejected?: boolean) {
     // mark all controls as dirty to force validation
     this.api.markFormDirty(this.form);
 
     if (this.form.valid) {
-      this.router.navigate([this.wizardSteps.nextStep(this)]);
+      // submit the estimate as rejected
+      if (submitAsRejected) {
+        this.isLoading = true;
+        this.api.estimateData.status = 'Rejected';
+
+        // populate dummy values for required fields
+        this.api.estimateData.bike_model = '<REJECTED>';
+        this.api.estimateData.tag_number = '<REJECTED>';
+        // transparent/blank image https://stackoverflow.com/a/13139830
+        this.api.estimateData.signature = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        this.api.estimateData.expiration_date = moment().format('YYYY-MM-DD');
+        this.api.estimateData.expiration_time = '00:00';
+
+        this.api.createEstimate(this.api.estimateData).subscribe(
+          (data) => {
+            this.isLoading = false;
+            this.toastr.success('Successfully rejected estimate');
+            this.router.navigate(['/wizard']);
+          }, (error) => {
+            this.toastr.error('An unknown error occurred');
+          }
+        );
+      }
+      // continue to the next step
+      else {
+        this.router.navigate([this.wizardSteps.nextStep(this)]);
+      }
     } else {
       this.toastr.error('Invalid form');
     }
