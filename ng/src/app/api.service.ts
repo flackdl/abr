@@ -392,7 +392,7 @@ export class ApiService {
     return this._responseProxy(this.http.post(this.API_QBO_CUSTOMER, data));
   }
 
-  public createEstimate(data: EstimateData): Observable<any> {
+  public createEstimate(data: EstimateData, keepEstimateDataOnSuccess?: boolean): Observable<any> {
     // generate estimate & statement notes (public, private)
     let postData = Object.assign({}, data);  // make a copy so we don't overwrite
     postData['public_notes'] = this.getPublicNotes();
@@ -400,8 +400,10 @@ export class ApiService {
 
     return this._responseProxy(this.http.post(this.API_QBO_ESTIMATE, postData)).pipe(
       tap((data) => {
-        // clear estimate from local storage
-        this.clearEstimateData();
+        if (!keepEstimateDataOnSuccess) {
+          // clear estimate from local storage
+          this.clearEstimateData();
+        }
       })
     );
   }

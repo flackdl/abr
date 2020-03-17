@@ -28,9 +28,9 @@ export class StatementNotesComponent implements OnInit {
     });
   }
 
-  public submit() {
+  public submit(keepEstimateDataOnSuccess?: boolean) {
     this.isLoading = true;
-    this.api.createEstimate(this.api.estimateData).subscribe(
+    this.api.createEstimate(this.api.estimateData, keepEstimateDataOnSuccess).subscribe(
       (data) => {
         this.isLoading = false;
         this.toastr.success('Successfully created estimate');
