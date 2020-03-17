@@ -1,10 +1,12 @@
 import logging
 import re
 import tempfile
+import phonenumbers
 from base64 import b64decode
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from phonenumbers import NumberParseException
 from quickbooks.exceptions import ObjectNotFoundException, ValidationException, QuickbooksException
 from quickbooks.objects import (
     Customer, Estimate, Item, Preferences, Invoice, EmailAddress, PhoneNumber, Address, Attachable,
@@ -167,8 +169,18 @@ class CustomerQBOViewSet(QBOBaseViewSet):
 
         email = EmailAddress()
         email.Address = data['email']
+
+        # attempt to format the phone number
+        try:
+            phone_parsed = phonenumbers.parse(data['phone'], 'US')
+        except NumberParseException:
+            phone_formatted = data['phone']
+        else:
+            phone_formatted = phonenumbers.format_number(phone_parsed, phonenumbers.PhoneNumberFormat.NATIONAL)
+
         phone = PhoneNumber()
-        phone.FreeFormNumber = data['phone']
+        phone.FreeFormNumber = phone_formatted
+
         address = Address()
         address.PostalCode = data['zip']
 
@@ -339,7 +351,7 @@ class EstimateQBOViewSet(CustomerRefFilterMixin, QBOBaseViewSet):
         return Response(estimate.to_dict())
 
 
-@method_decorator(cache_page(timeout=60 * 60 * 24 * 7), name='dispatch')
+@method_decorator(cache_page(timeout=60 * 60 * 24), name='dispatch')
 class ItemBaseQBOViewSet(QBOBaseViewSet):
     model_class = Item
     item_type = None
