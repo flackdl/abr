@@ -172,7 +172,7 @@ class CustomerQBOViewSet(QBOBaseViewSet):
 
         # attempt to format the phone number
         try:
-            phone_parsed = phonenumbers.parse(data['phone'], 'US')
+            phone_parsed = phonenumbers.parse(str(data['phone']), 'US')
         except NumberParseException:
             phone_formatted = data['phone']
         else:

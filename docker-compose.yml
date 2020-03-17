@@ -9,10 +9,12 @@ services:
     container_name: redis-abr
 
   postgres:
-    image: postgres
+    image: postgres:12
     ports:
       - "5432:5432"
     container_name: postgres-abr
+    environment:
+      POSTGRES_PASSWORD: postgres
     volumes:
       - abr-postgres:/var/lib/postgresql/data
 

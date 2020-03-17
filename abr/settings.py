@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'abr.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://postgres@localhost:5432/postgres'),
+    'default': dj_database_url.config(default='postgres://postgres:postgres@localhost:5432/postgres'),
 }
 
 
