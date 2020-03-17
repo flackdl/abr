@@ -61,9 +61,9 @@
             <input type="date" class="form-control" id="expirationDate" [class.is-invalid]="form.controls.expiration_date.dirty && !form.controls.expiration_date.valid" formControlName="expiration_date">
           </div>
           <!-- expiration time -->
-          <div class="form-group" [ngClass]="{'border border-danger': !isTimeValid}">
+          <div class="form-group">
             <label for="expirationTime">Due Time</label>
-            <ngb-timepicker id="expirationTime" [(ngModel)]="expirationTime" (ngModelChange)="expirationTimeChanged()" [ngModelOptions]="{standalone: true}" [minuteStep]="60" [meridian]="true"></ngb-timepicker>
+            <input type="time" class="form-control" id="expirationTime" step="3600" [class.is-invalid]="form.controls.expiration_time.dirty && !form.controls.expiration_time.valid" formControlName="expiration_time">
           </div>
           <!-- contact method -->
           <div class="form-group">

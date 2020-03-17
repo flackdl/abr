@@ -16,8 +16,6 @@ import * as moment from 'moment';
 })
 export class EstimateWrapUpComponent implements OnInit {
   public form: FormGroup;
-  public expirationTime: any;
-  public isTimeValid = true;
   public signature: SignaturePad;
   public signatureValid = true;
 
@@ -47,6 +45,7 @@ export class EstimateWrapUpComponent implements OnInit {
 
     this.form = this.fb.group({
       expiration_date: [this.api.estimateData.expiration_date, Validators.required],
+      expiration_time: [this.api.estimateData.expiration_time || '18:00', Validators.required],
       tag_number: [this.api.estimateData.tag_number, Validators.required],
       employee_initials: [this.api.estimateData.employee_initials, Validators.required],
       need_parts: [this.api.estimateData.need_parts, Validators.required],
@@ -71,28 +70,9 @@ export class EstimateWrapUpComponent implements OnInit {
       }
     });
 
-    const time = moment(this.api.estimateData.expiration_time, 'HH:mm');
-    if (time.isValid()) {
-      this.expirationTime = {
-        hour: time.hour(),
-        minute: time.minute(),
-      };
-    }
-  }
-
-  public expirationTimeChanged() {
-    const time = moment(this.expirationTime);
-    if (time.isValid()) {
-      this.isTimeValid = true;
-      this.api.updateEstimateData({
-        expiration_time: time.format('HH:mm'),
-      });
-    }
   }
 
   public submit() {
-    this.isTimeValid = !!this.expirationTime;
-
     this.signatureValid = !this.signature.isEmpty();
 
     // mark form dirty
@@ -106,7 +86,7 @@ export class EstimateWrapUpComponent implements OnInit {
       this.form.get('parts_in_inventory').clearValidators();
     }
 
-    if (!this.form.valid || !this.isTimeValid) {
+    if (!this.form.valid) {
       this.toastr.error('Invalid form');
       return;
     }
