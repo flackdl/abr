@@ -29,4 +29,10 @@ export class WizardComponent implements OnInit {
     }
   }
 
+  public getQBOCustomerURL() {
+    if (this.api.settings.is_debug) {
+      return `https://c50.sandbox.qbo.intuit.com/app/customerdetail?nameId=${this.api.estimateData.customer_id}`;
+    }
+    return `https://c21.qbo.intuit.com/app/customerdetail?nameId=${this.api.estimateData.customer_id}`;
+  }
 }

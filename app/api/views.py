@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import views
@@ -14,4 +15,5 @@ class SettingsView(views.APIView):
         return Response({
             'crms': CRMS,
             'statuses': EstimateCreateQBOSerializer.STATUSES,
+            'is_debug': settings.DEBUG,
         })
