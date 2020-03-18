@@ -24,13 +24,13 @@ RUN apt-get update && \
         libz-dev \
         libpango1.0-0 \
     && true && \
-    npm install -g --ignore-scripts @angular/cli && \
-    # build angular app
+    # install and build angular app
+    npm --prefix ng install --silent && \
     mkdir -p ng-assets && \
     npm --prefix ng run build && \
     # install python dependencies
     pip3 install -r requirements.txt && \
-    # remove
+    # remove things
     apt-get remove -y \
         git \
         nodejs \
