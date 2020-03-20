@@ -1,20 +1,27 @@
-version: '2.1'
+version: '2.4'
 
 services:
 
   abr:
-    build: .
     image: flackdl/abr
     ports:
       - "80:80"
     container_name: abr
     env_file: .env
+    labels:
+      deck-chores.dump.command: python3 manage.py db-backup
+      deck-chores.dump.interval: daily
+    restart: always
+    logging:
+      options:
+        max-size: 10m
 
   redis:
     image: redis
     expose:
       - "6379"
     container_name: redis
+    restart: always
 
   postgres:
     image: postgres:12
@@ -26,7 +33,19 @@ services:
     volumes:
       - abr-postgres:/var/lib/postgresql/data
     env_file: .env
+    restart: always
 
+  deck-chores:
+    image: funkyfuture/deck-chores:1.0
+    container_name: deck-chores
+    restart: always
+    environment:
+      TIMEZONE: US/Pacific
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      options:
+        max-size: 10m
 
 volumes:
   abr-postgres:
