@@ -1,22 +1,31 @@
-version: '2'
+version: '2.1'
 
 services:
 
+  abr:
+    build: .
+    image: flackdl/abr
+    ports:
+      - "80:80"
+    container_name: abr
+    env_file: .env
+
   redis:
     image: redis
-    ports:
-      - "6379:6379"
-    container_name: redis-abr
+    expose:
+      - "6379"
+    container_name: redis
 
   postgres:
     image: postgres:12
-    ports:
-      - "5432:5432"
-    container_name: postgres-abr
+    expose:
+      - "5432"
+    container_name: postgres
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
     volumes:
       - abr-postgres:/var/lib/postgresql/data
+    env_file: .env
 
 
 volumes:

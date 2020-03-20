@@ -18,54 +18,33 @@ A dynamic listing of all active/complete/pending repairs
 
 ### Estimate orders and parts
 
-Supports the management/tracking of vendor orders.
+Supports the management & tracking of vendor orders.
 
 
 #### Deployment Notes
 
-*Deploy to Heroku*
+##### Initial Steps
 
-    # push image
-    heroku container:push -a XXX web
+Copy/create the `.env.template` file to `.env` which `docker-compose.yml` reads.
+
+    cp .env.template .env
     
-    # trigger a release 
-    heroku container:release -a XXX web
-   
-Run one-off command in a new dyno:
+Then edit `.env` accordingly.
 
-    heroku  run -a XXX bash
-  
-*Capture auth values from production redis server* (allows dev instance to piggy back on authenticated session)
+##### Deploy
 
-    heroku redis:cli -a XXX -c XXX
-    mget access_token refresh_token realm_id
- 
-*Insert production auth values into dev redis instance*
+Login to VPS and run:
 
-    docker-compose exec redis redis-cli mset access_token @@@ refresh_token @@@ realm_id @@@
+    # pull master
+    git pull origin master
     
-*Init App*
+    # build/rebuild app and run abr
+    docker-compose up -d --build --force-recreate abr
 
-    # activate virtual env
-    workon abr
-    
-    # create initial tables
-    python manage.py migrate
+#### Helpers
     
     # create super user
     python manage.py createsuperuser
-    
-    # create default user with permissions
-    python manage.py init
-    
-Dump initial data:
-
-    python manage.py dumpdata --indent 2 app.category app.categoryprefix > initial-data.json
-    
-Load initial data:
-
-    python manage.py loaddata initial-data.json
-
 
 #### Developing notes
 
