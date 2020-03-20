@@ -10,7 +10,8 @@ services:
     env_file: .env
     labels:
       deck-chores.dump.command: python3 manage.py db-backup
-      deck-chores.dump.interval: daily
+      # https://deck-chores.readthedocs.io/en/stable/usage.html#cron
+      deck-chores.dump.cron: "* * * * * 3 * *"
     restart: always
     logging:
       options:
