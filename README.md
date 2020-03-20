@@ -35,11 +35,11 @@ Then edit `.env` accordingly.
 
 Login to VPS and run:
 
-    # pull master
-    git pull origin master
+    # pull updated image
+    docker-compose pull abr
     
-    # build/rebuild app and run abr
-    docker-compose up -d --build --force-recreate abr
+    # restart app
+    docker-compose up -d --force-recreate abr
 
 #### Helpers
     
