@@ -1,0 +1,17 @@
+dist: xenial
+
+language: minimal
+
+jobs:
+  include:
+    - stage: build and push image
+      script:
+        - set -e
+        # derive the docker image tag name from the git branch name
+        - if [[ $TRAVIS_BRANCH == 'master' ]]; then tag='latest'; else tag="$TRAVIS_BRANCH"; fi
+        # build image
+        - docker build -t flackdl/abr:$tag .
+        # authenticate with docker
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+        # push image to docker hub
+        - docker push flackdl/abr:$tag
