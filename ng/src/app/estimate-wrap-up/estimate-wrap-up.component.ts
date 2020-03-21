@@ -48,6 +48,7 @@ export class EstimateWrapUpComponent implements OnInit {
       expiration_time: [this.api.estimateData.expiration_time || '18:00', Validators.required],
       tag_number: [this.api.estimateData.tag_number, Validators.required],
       employee_initials: [this.api.estimateData.employee_initials, Validators.required],
+      waiting_on_approval: [this.api.estimateData.waiting_on_approval, Validators.required],
       need_parts: [this.api.estimateData.need_parts, Validators.required],
       parts_in_inventory: [this.api.estimateData.parts_in_inventory],  // conditionally required if need_parts is true
       waiting_on_customer_bring_parts: [this.api.estimateData.waiting_on_customer_bring_parts, Validators.required],
@@ -100,7 +101,7 @@ export class EstimateWrapUpComponent implements OnInit {
       data['signature'] = this.signature.toDataURL();
     }
 
-    if (data.waiting_on_customer_bring_parts || data.need_parts) {
+    if (data.waiting_on_approval || data.waiting_on_customer_bring_parts || data.need_parts) {
       data['status'] = 'Pending';
     } else {
       data['status'] = 'Accepted';

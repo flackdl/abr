@@ -10,7 +10,7 @@
   <div *ngIf="api.hasCurrentCustomer()">
     <div>
       <span class="text-muted">Customer: </span><a class="text-info" [href]="getQBOCustomerURL()" target="_blank">{{ api.currentCustomer() }}</a>
-      <button class="btn btn-sm btn-outline-warning" (click)="reset()"><span class="oi oi-x"></span></button>
+      <button class="btn btn-sm btn-outline-warning ml-2" (click)="reset()"><span class="oi oi-x"></span></button>
     </div>
     <div *ngIf="api.hasEstimate()">
       <span class="text-muted">Total: </span><span class="text-dark">{{ api.getTotal() | currency }} </span>

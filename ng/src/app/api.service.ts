@@ -101,6 +101,7 @@ export class ApiService {
       this.estimateData.contact_method &&
       this.estimateData.payment_option &&
       this.estimateData.status &&
+      this.estimateData.waiting_on_approval !== undefined &&
       this.estimateData.need_parts !== undefined
     );
   }
@@ -242,6 +243,16 @@ export class ApiService {
       notes.push('* PAID HALF *');
     } else if (this.estimateData.payment_option === this.OPTION_PAYMENT_DEPOSIT) {
       notes.push('* DEPOSIT *');
+    }
+
+    // waiting on customer approval
+    if (this.estimateData.waiting_on_approval) {
+      notes.push('Waiting for customer approval');
+    }
+
+    // waiting on customer to bring parts
+    if (this.estimateData.waiting_on_customer_bring_parts) {
+      notes.push('We are waiting for the customer to bring in parts');
     }
 
     // need to order parts
